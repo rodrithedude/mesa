@@ -444,11 +444,13 @@ body.public .m-act { display: none; }
   #tab-bets { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   body.has-pane #tab-bets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* El logo junto al nombre: el mismo del ícono */
+.mark { height: .78em; width: auto; margin-right: .36em; vertical-align: -.04em; fill: var(--ink); flex: none; } .mark .g { fill: var(--green); }
 </style>
 </head>
 <body>
 <aside class="dock" id="dock">
-  <div class="dock-top"><h1>Rodrindex</h1><span class="pulse" id="pulse2"><i></i><span id="pulse-text2">Cargando</span></span><span id="account3"></span></div>
+  <div class="dock-top"><h1><svg class="mark" viewBox="0 0 58 46" aria-hidden="true"><rect y="24" width="14" height="22" rx="4"/><rect x="22" y="12" width="14" height="34" rx="4"/><rect class="g" x="44" width="14" height="46" rx="4"/></svg><span class="nm">Rodrindex</span></h1><span class="pulse" id="pulse2"><i></i><span id="pulse-text2">Cargando</span></span><span id="account3"></span></div>
   <nav class="tabs" role="tablist" id="tabs">
     <button role="tab" aria-selected="true" data-tab="bets">Mis apuestas<i id="n-bets"></i></button>
     <button role="tab" aria-selected="false" data-tab="signals">Señales<i id="n-signals"></i></button>
@@ -460,7 +462,7 @@ body.public .m-act { display: none; }
 </aside>
 <div class="wrap" id="wrap">
   <header class="topbar">
-    <div class="r1"><h1>Rodrindex</h1><p class="figs"><span id="pill-k">Bank</span><b id="pill-bank">…</b> · Hoy<b id="pill-day">…</b></p></div>
+    <div class="r1"><h1><svg class="mark" viewBox="0 0 58 46" aria-hidden="true"><rect y="24" width="14" height="22" rx="4"/><rect x="22" y="12" width="14" height="34" rx="4"/><rect class="g" x="44" width="14" height="46" rx="4"/></svg><span class="nm">Rodrindex</span></h1><p class="figs"><span id="pill-k">Bank</span><b id="pill-bank">…</b> · Hoy<b id="pill-day">…</b></p></div>
     <div class="r2"><span class="pulse" id="pulse"><i></i><span id="pulse-text">Cargando</span></span><span id="account"></span></div>
   </header>
   <div class="intro" id="intro" role="note" hidden><p><b id="intro-name"></b> apuesta en Kalshi, un mercado donde se compra SÍ o NO de un resultado, siguiendo un modelo estadístico.</p>
@@ -580,7 +582,7 @@ const DETAIL = {bets: null, signals: null};  // el detalle abierto en el panel d
 const SHEETS = new Map();  // el detalle de cada apuesta y de cada señal en este repintado, para el panel
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
-const BUILD = 1794864422;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
+const BUILD = 1794865211;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
 let PAGEV = null;  // versión de la primera foto vista: solo se usa con BUILD en 0
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
@@ -1377,7 +1379,7 @@ document.addEventListener("click", e => {
 function renderAccount() {
   if (PUBLIC) {  // la copia pública no sabe nada de la cuenta: dice de quién es y que no se toca
     const name = "Rodrindex", tag = '<span class="chip">Solo lectura</span>';
-    document.title = name; for (const h of document.querySelectorAll("h1")) h.textContent = name;
+    document.title = name; for (const h of document.querySelectorAll("h1 .nm")) h.textContent = name;  // solo el nombre: el logo se queda
     document.querySelector('[data-tab="bets"]').firstChild.textContent = "Apuestas"; document.querySelector('[data-tab="bank"]').textContent = "Cuenta";
     $("foot").textContent = "Página de solo lectura con la foto que publica el panel de " + owner() + ". No opera y no es una recomendación de entrar ni de cuánto.";
     $("pill-k").textContent = "Saldo de " + owner(); $("side-k").textContent = "Saldo de " + owner(); $("intro-name").textContent = cap(owner()); $("intro").hidden = introSeen;
