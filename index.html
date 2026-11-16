@@ -158,6 +158,12 @@ details[open] > summary::before { transform: rotate(45deg); } details > summary:
 .h .d { order: 1; } .h .w { order: 2; } .h .p { order: 3; font-weight: 600; } .h .q { order: 4; } .h .o { order: 5; }
 .h .r { order: 6; font: 600 16px/1.2 var(--display); text-align: right; } .h .x { order: 7; }
 
+/* Historial de predicciones: cada partido terminado con lo que decía el modelo, si atinó y si era señal fuerte */
+.pr { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.7fr) minmax(0, 1.7fr); gap: 6px 16px; align-items: center; padding: 12px 20px; border-top: 1px solid var(--line); font: var(--t-sub); }
+.pr:first-child { border-top: 0; } .pr .m { font: 600 16px/1.2 var(--display); } .pr .m b { font-weight: 700; }
+.pr .pk { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; } .pr .pk .k { font: var(--t-label); color: var(--muted); } .pr .pk b { font-weight: 600; } .pr .chip { font-size: 12px; padding: 3px 8px; }
+@media (max-width: 760px) { .pr { grid-template-columns: minmax(0, 1fr); padding-left: 16px; padding-right: 16px; } }
+
 /* Mi caja */
 .hero { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 6px 28px; }
 .hero .k { font: var(--t-label); color: var(--muted); } .hero .v { font: 600 44px/1 var(--display); } .hero .d { font: var(--t-sub); color: var(--muted); }
@@ -219,6 +225,7 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
   <section id="tab-games" class="stack" role="tabpanel" hidden>
     <div class="sub" id="games-sub"></div>
     <div id="games" class="stack"><div class="empty">Cargando partidos.</div></div>
+    <div id="picks" class="stack"></div>
   </section>
   <section id="tab-bank" class="stack" role="tabpanel" hidden>
     <div id="account2"></div>
@@ -235,6 +242,7 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
       <p><b>Kalshi.</b> El precio del contrato ahora mismo. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
       <p class="own"><b>Llave completa.</b> La llave con que el panel lee tu cuenta de Kalshi también podría operar. El panel solo lee.</p>
       <p><b>Señales.</b> Lo que el modelo previo ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. El precio de ahora ya trae el movimiento de la línea.</p>
+      <p><b>Historial de predicciones.</b> En la pestaña Partidos. De cada partido terminado dice qué lado eligió el modelo en el hándicap y en el total, si atinó y si era señal fuerte. Cubre los últimos 14 días.</p>
       <p><b>El porqué.</b> Son las cosas que el modelo previo sabe del partido, dichas en palabras y de la que más pesa a la que menos. No dice lo que va a pasar: dice de dónde sale su ventaja contra la línea de apertura.</p>
       <p><b>Lesionados.</b> El último reporte oficial de la NBA que guardó la PC, que lo baja cada hora. "Le falta" es la parte de la producción habitual del equipo que el modelo da por ausente con ese reporte.</p>
     </div></details>
@@ -562,6 +570,26 @@ function renderGames() {
   put("games", html);
 }
 
+// Historial de predicciones: cada partido terminado con lo que decía el modelo, si atinó y si era señal fuerte.
+let picksSeeded = false;
+function renderPicks() {
+  const rows = S.history || [];
+  if (!rows.length) { put("picks", ""); return; }
+  const count = list => list.filter(c => c.result === "ganó").length + " de " + list.length, live = list => list.filter(c => c.result !== "empate");
+  const all = live(rows.flatMap(r => r.calls)), strong = all.filter(c => c.strength), days = [...new Set(rows.map(r => r.day))];
+  if (!picksSeeded) { OPEN.add("picks-" + days[0]); picksSeeded = true; }  // el día más reciente arranca desplegado
+  const name = c => c.market === "total" ? cap(c.text) + " puntos" : cap(c.text);
+  const mark = c => `<span class="chip ${c.result === "ganó" ? "good" : c.result === "perdió" ? "bad" : ""}">${c.result === "ganó" ? "Atinó" : c.result === "perdió" ? "Falló" : "Empate"}</span>`;
+  const cell = c => !c ? "<span></span>" : `<span class="pk"><span class="k">${c.market === "spread" ? "Hándicap" : "Total"}</span><b>${esc(name(c))}</b>${mark(c)}${c.strength ? `<span class="chip info">${c.strength === "0.1" ? "Señal muy fuerte" : "Señal fuerte"}</span>` : ""}</span>`;
+  const block = d => {
+    const games = rows.filter(r => r.day === d), calls = live(games.flatMap(g => g.calls));
+    return `<details data-keep="picks-${d}"${keep("picks-" + d)}><summary>${cap(day(d + "T12:00:00", {weekday: "long", day: "numeric", month: "short"}))} · atinó ${count(calls)}</summary><div class="card">` +
+      games.map(g => `<div class="pr"><span class="m">${esc(g.away)} <b>${g.away_score}</b> · ${esc(g.home)} <b>${g.home_score}</b></span>${cell(g.calls.find(c => c.market === "spread"))}${cell(g.calls.find(c => c.market === "total"))}</div>`).join("") + "</div></details>";
+  };
+  put("picks", `<div class="head"><h2>Historial de predicciones</h2><span class="sub">Hándicap ${count(all.filter(c => c.market === "spread"))} · total ${count(all.filter(c => c.market === "total"))} · señales fuertes ${strong.length ? count(strong) : "sin terminar"}</span></div>` +
+    days.map(block).join("") + '<p class="note">Son todos los pronósticos del modelo contra la línea de apertura, no solo las señales fuertes. Los que no son señal fuerte aciertan poco más de la mitad y no alcanzan para apostar.</p>');
+}
+
 function renderBank() {
   const b = S.bank, tone = v => `<span class="${cls(v)}">${money(v, true)}</span>`;
   $("pill-bank").textContent = money(b.equity);
@@ -622,7 +650,7 @@ function renderAccount() {
 }
 function render() {
   FEE = S.fee_rate || FEE;
-  renderAccount(); renderBank(); renderBets(); renderSignals(); renderGames(); renderHistory();
+  renderAccount(); renderBank(); renderBets(); renderSignals(); renderGames(); renderPicks(); renderHistory();
   const a = S.account || {}, ages = S.ages || {}, board = Object.entries(ages).filter(e => e[0].startsWith("marcador")).map(e => e[1]);
   const errors = Object.keys(S.errors || {}), broken = S.bank.broken || [], gaps = a.mismatch || [], late = [];
   const names = {max_position_pct: "una apuesta pasa tu tope por apuesta", max_open_pct: "lo que tienes en juego pasa tu tope", max_day_loss_pct: "la pérdida de hoy pasó tu freno del día"};
