@@ -286,7 +286,7 @@ body.public .m-act { display: none; }
 .shsheet .sub { margin: 10px 2px 0; }
 .shsheet .acts { display: flex; gap: 10px; margin-top: 12px; }
 .shsheet .acts > * { flex: 1; min-height: 50px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 14px; background: var(--card2); color: var(--ink); font: 600 16px/1 var(--font); text-decoration: none; cursor: pointer; }
-.shsheet .acts > [data-sh="send"] { background: var(--blue); }
+.shsheet .acts > [data-sh="send"], .shsheet .acts > [data-sh="copy"] { background: var(--blue); }
 </style>
 </head>
 <body>
@@ -1114,16 +1114,25 @@ function picLogo(url) { return new Promise(done => { if (!url) return done(null)
 const picBlob = c => new Promise((ok, no) => { try { c.toBlob(b => b ? ok(b) : no(new Error("sin imagen")), "image/png"); } catch (e) { no(e); } });
 let SHEET = null;
 function closeSheet() { if (!SHEET) return; SHEET.el.remove(); URL.revokeObjectURL(SHEET.url); document.documentElement.style.overflow = ""; if (SHEET.back && SHEET.back.isConnected) SHEET.back.focus(); SHEET = null; }
+// Copia la imagen al portapapeles, para pegarla en un chat desde la PC.
+function copyImage(button, blob) {
+  const done = text => { button.textContent = text; setTimeout(() => { if (button.isConnected) button.textContent = "Copiar"; }, 2000); };
+  try { navigator.clipboard.write([new ClipboardItem({"image/png": blob})]).then(() => done("Copiada"), () => done("No se pudo")); } catch (e) { done("No se pudo"); }
+}
 // La hoja de vista previa. Enviar llama a navigator.share dentro del clic, con el archivo ya listo: así funciona en iPhone.
 function openSheet(blob, name, back) {
   closeSheet();
-  const url = URL.createObjectURL(blob), file = new File([blob], name, {type: "image/png"}), send = !!(navigator.canShare && navigator.canShare({files: [file]}));
-  const save = !send || !matchMedia("(pointer: coarse)").matches;  // en teléfono con Enviar, guardar ya viene en la hoja del sistema
+  const url = URL.createObjectURL(blob), file = new File([blob], name, {type: "image/png"}), touch = matchMedia("(pointer: coarse)").matches;
+  // En teléfono la imagen se manda por la hoja del sistema, que ya trae guardar. En PC esa hoja no sirve: la imagen baja sola y se puede copiar.
+  const send = touch && !!(navigator.canShare && navigator.canShare({files: [file]})), copy = !touch && !!(navigator.clipboard && window.ClipboardItem), save = !send;
   const el = document.createElement("div"); el.className = "shsheet"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Imagen para compartir");
-  el.innerHTML = '<div><div class="pv"><img src="' + url + '" alt="Imagen para compartir"></div><p class="sub">' + (send ? "Así se va a ver. Toca Enviar para mandarla." : "Mantén presionada la imagen para guardarla o compartirla, o usa Guardar.") + '</p><div class="acts">' + (send ? '<button type="button" data-sh="send">Enviar</button>' : "") + (save ? '<a data-sh="save" href="' + url + '" download="' + esc(name) + '">Guardar</a>' : "") + '<button type="button" data-sh="close">Cerrar</button></div></div>';
-  el.addEventListener("click", e => { if (e.target === el || e.target.closest('[data-sh="close"]')) closeSheet(); else if (e.target.closest('[data-sh="send"]')) navigator.share({files: [file]}).catch(() => {}); });
+  el.innerHTML = '<div><div class="pv"><img src="' + url + '" alt="Imagen para compartir"></div><p class="sub">' + (send ? "Así se va a ver. Toca Enviar para mandarla." : touch ? "Mantén presionada la imagen para guardarla o compartirla, o usa Guardar." :
+    "Se descargó la imagen. Si no la ves en tus descargas, usa Guardar." + (copy ? " También puedes copiarla y pegarla en un chat." : "")) + '</p><div class="acts">' + (send ? '<button type="button" data-sh="send">Enviar</button>' : "") + (copy ? '<button type="button" data-sh="copy">Copiar</button>' : "") + (save ? '<a data-sh="save" href="' + url + '" download="' + esc(name) + '">Guardar</a>' : "") + '<button type="button" data-sh="close">Cerrar</button></div></div>';
+  el.addEventListener("click", e => { if (e.target === el || e.target.closest('[data-sh="close"]')) closeSheet(); else if (e.target.closest('[data-sh="send"]')) navigator.share({files: [file]}).catch(() => {});
+    else if (e.target.closest('[data-sh="copy"]')) copyImage(e.target.closest('[data-sh="copy"]'), blob); });
   document.body.appendChild(el); SHEET = {el, url, back};
   document.documentElement.style.overflow = "hidden"; el.querySelector("[data-sh]").focus();  // el fondo no se mueve y el teclado cae en la hoja
+  if (!touch) el.querySelector('[data-sh="save"]').click();  // en PC, compartir es generar la imagen: baja sola
 }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
 async function shareImage(button) {
