@@ -251,6 +251,7 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
       <p><b>La barra.</b> La marca negra es la meta. El relleno es por dónde va el partido y el círculo punteado es dónde terminaría a este paso.</p>
       <p><b>La probabilidad.</b> Antes del partido viene del modelo previo (union_v1). Ya en juego viene del modelo en vivo (vivo_v1), que usa la línea previa, el marcador y el reloj. Se revisó con tres temporadas que no había visto. En el último medio minuto de un final cerrado es poco precisa.</p>
       <p><b>Kalshi.</b> El precio del contrato ahora mismo. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
+      <p><b>Kalshi y una casa como Bet365.</b> Es la misma apuesta dicha de dos formas. En Kalshi compras SÍ o NO de un contrato y pagas su precio. En una casa eliges el equipo con su hándicap, como +5.5 o −5.5, o "más" y "menos", y la cuota la pone la casa. Comprar NO de «PHI gana por más de 5.5» es lo mismo que Brooklyn +5.5. El panel no lee los precios de Bet365: solo te dice cómo se llama ahí la apuesta.</p>
       <p class="own"><b>Llave completa.</b> La llave con que el panel lee tu cuenta de Kalshi también podría operar. El panel solo lee.</p>
       <p><b>Señales.</b> Lo que el modelo previo ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. El precio de ahora ya trae el movimiento de la línea.</p>
       <p><b>Como app en el teléfono.</b> En el menú del navegador elige "Agregar a pantalla de inicio". En iPhone es el botón de compartir de Safari. Se abre a pantalla completa y con su ícono.</p>
@@ -518,7 +519,7 @@ function ticket(p) {
   const chance = main == null ? "" : `<div class="chance"><span class="big ${st.tone}">${big(main)}<i>%</i></span><span class="txt"><b>de probabilidad de ganar</b>, ${p.p != null ? source[p.p_source] || "según el modelo" : "según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la tiene en " + prob(p.mid) + "." : ""}${PUBLIC && g && g.state === "in" ? " La probabilidad es la de la última foto." : ""}</span></div>`;
   const fact = (k, v) => `<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
   const more = `<details data-keep="pos-${p.id}"${keep("pos-" + p.id)}><summary>Ver detalle</summary><div class="more-body">${betWhy(p)}${injuryBlock(g)}<div class="facts">` +
-    fact(you("En Kalshi compraste", "En Kalshi compró"), `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("Cuánto", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
+    fact(you("En Kalshi compraste", "En Kalshi compró"), `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("En una casa como Bet365 sería", (p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + esc(p.label)) + fact("Cuánto", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
     fact(you("Te costó cada contrato", "Le costó cada contrato"), cents(p.needed) + " con comisión") + fact(you("Si vendes ahora", "Si vende ahora"), p.sale == null ? "Nadie compra ahora" : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`) +
     (p.expected == null ? "" : fact("Lo que vale según el modelo", `<span class="${cls(p.expected)}">${money(p.expected, true)}</span> esperado`)) +
     (p.p_overtime > 0.02 ? fact("Chance de tiempo extra", pct(p.p_overtime)) : "") + (p.note ? fact("Nota", esc(p.note)) : "") + `</div>${spark(p)}
@@ -576,10 +577,22 @@ function belief(s, g) {
   return line < 0 ? `${who} gana por ${n + 1} o más` : line > 0 ? `${who} pierde por ${n} o menos, o gana` : `${who} gana`;
 }
 const signalName = s => s.market === "total" ? cap(s.text) + " puntos" : cap(s.text);
+// La misma apuesta dicha como en una casa tradicional (Bet365 y parecidas): el equipo con su hándicap, o más y menos.
+function bookBet(s, o) {
+  if (s.market === "total") return "Total · " + (o.yes ? "Más de " : "Menos de ") + o.strike;
+  const [away, home] = s.game.split(" @ "), team = o.team || (s.side === "home" ? home : away), other = team === home ? away : home;
+  return "Hándicap · " + (o.yes ? team + " −" + o.strike : other + " +" + o.strike);
+}
+function bookBox(s, o) {
+  const [away, home] = s.game.split(" @ "), mine = s.side === "home" ? home : away;
+  const now = s.now == null ? "" : s.market === "total" ? String(s.now) : mine + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now);
+  const note = s.now != null && Math.abs(s.now) !== o.strike ? "Ahí la línea de ahora va en " + now + "." : "La cuota la pone la casa.";
+  return `<div class="kalshi"><div><small>Lo mismo en una casa como Bet365</small><b>${esc(bookBet(s, o))}</b><span class="sub" style="display:block">${esc(note)}</span></div></div>`;
+}
 function dealBox(s, o) {
   const held = S.positions.some(p => !p.exit && p.ticker === o.ticker), edge = o.p_model != null && o.needed != null ? Math.round(100 * (o.p_model - o.needed)) : null;
   const verdict = edge == null ? "" : edge === 0 ? "El modelo la ve igual a lo que cuesta." : `El modelo la ve <b>${plural(Math.abs(edge), "punto", "puntos")} por ${edge > 0 ? "encima" : "debajo"}</b> de lo que cuesta.`;
-  return `<div class="kalshi"><div><small>Cómo se compra en Kalshi${held ? you(" · ya la tienes", " · " + esc(owner()) + " ya la tiene") : ""}</small><b><span class="side">${o.yes ? "SÍ" : "NO"}</span>en «${esc(o.title_es || o.title)}»</b></div><div class="price">${o.price == null ? '<span class="sub">sin oferta</span>' : cents(o.price)}</div></div>` +
+  return `<div class="kalshi"><div><small>Cómo se compra en Kalshi${held ? you(" · ya la tienes", " · " + esc(owner()) + " ya la tiene") : ""}</small><b><span class="side">${o.yes ? "SÍ" : "NO"}</span>en «${esc(o.title_es || o.title)}»</b></div><div class="price">${o.price == null ? '<span class="sub">sin oferta</span>' : cents(o.price)}</div></div>` + bookBox(s, o) +
     (o.p_model == null || o.needed == null ? "" : `<div class="versus"><span>Modelo${s.p_source === "marcador" ? " en vivo" : ""}</span><div class="b"><i style="width:${100 * o.p_model}%"></i></div><b>${prob(o.p_model)}</b>
       <span>Tu costo sería</span><div class="b"><i class="cost" style="width:${100 * o.needed}%"></i></div><b>${cents(o.needed)}</b></div>`) +
     (verdict ? `<p class="verdict">${verdict}</p>` : "") + `<div class="card-actions"><button data-act="buy" data-game="${s.game_id}" data-ticker="${esc(o.ticker)}" data-side="${o.yes ? "yes" : "no"}">${held ? "Anotar otra compra" : "Anotar compra"}</button></div>`;
