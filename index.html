@@ -723,7 +723,7 @@ function resultsBox() {
 function changesBox() {
   const c = S.changes || [];
   return !c.length ? "" : `<details data-keep="changes"${keep("changes")}><summary>Qué ha cambiado en el modelo</summary><div class="group news">` +
-    c.map(x => `<div class="mini" style="grid-template-columns:minmax(0,1fr)"><span class="gm">${day(x.date + "T12:00:00", {day: "numeric", month: "short", year: "numeric"})}</small>${esc(x.text)}</div>`).join("") + "</div></details>";
+    c.map(x => `<div><small>${day(x.date + "T12:00:00", {day: "numeric", month: "short", year: "numeric"})}</small>${esc(x.text)}</div>`).join("") + "</div></details>";
 }
 function renderSignals() {
   const rec = S.record.map(r => `<span class="nw">${esc(r.market.toLowerCase())} <b>${r.wins} de ${r.bets}</b></span>`).join(", ");
