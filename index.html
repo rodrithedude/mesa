@@ -384,6 +384,7 @@ body.public .m-act { display: none; }
 let S = null, lastOk = 0, contracts = [], selling = null, FEE = 0.07, TAB = "bets";
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
+let PAGEV = null;  // versión de la página: si el panel trae otra, se recarga sola
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
 if (PUBLIC) document.body.classList.add("public");
@@ -842,7 +843,7 @@ function render() {
   const a = S.account || {}, ages = S.ages || {}, board = Object.entries(ages).filter(e => e[0].startsWith("marcador")).map(e => e[1]);
   const errors = Object.keys(S.errors || {}), broken = S.bank.broken || [], gaps = a.mismatch || [], late = [];
   const names = {max_position_pct: "una apuesta pasa tu tope por apuesta", max_open_pct: "lo que tienes en juego pasa tu tope", max_day_loss_pct: "la pérdida de hoy pasó tu freno del día"};
-  if (board.length && Math.min(...board) > 60) late.push("El marcador lleva " + Math.min(...board) + " s sin actualizarse.");
+  if (S.live && board.length && Math.min(...board) > 60) late.push("El marcador lleva " + Math.min(...board) + " s sin actualizarse.");
   if (S.live && ages.precios > 120) late.push("Los precios de Kalshi llevan " + ages.precios + " s sin actualizarse.");
   put("alerts", (stale() ? `<div class="warn">La última foto del panel de ${esc(owner())} es de ${stamp(S.now)} y ahora no está publicando: los marcadores y los precios pueden estar viejos.</div>` : "") +
     (broken.length ? `<div class="warn">Contra tus topes: ${broken.map(k => names[k]).join(", ")}.</div>` : "") +
@@ -898,7 +899,7 @@ async function load() {
     const r = await fetch(PUBLIC ? "estado.json?t=" + Date.now() : "/api/estado", {cache: "no-store"});
     if (!r.ok) throw new Error(r.status);
     const data = await r.json();
-    if (data.ready) { S = data; lastOk = Date.now(); applyLive(); render(); if (PUBLIC && !LIVE.at) liveScores(); } else setTimeout(load, 1000);
+    if (data.ready) { if (PAGEV == null) PAGEV = data.page; else if (data.page && data.page !== PAGEV) { location.replace(location.pathname + "?v=" + data.page); return; } S = data; lastOk = Date.now(); applyLive(); render(); if (PUBLIC && !LIVE.at) liveScores(); } else setTimeout(load, 1000);
   } catch (e) { /* el aviso lo pone tick() cuando pasa el tiempo */ }
 }
 async function post(path, body) {
