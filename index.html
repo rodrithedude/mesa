@@ -2,191 +2,250 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
 <meta name="robots" content="noindex, nofollow">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Rodrindex">
-<meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0a0f18" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#000000">
 <title>Rodrindex</title>
 <style>
-/* Cuatro pestañas en vez de una página larga. Cada apuesta es una boleta: una franja dice cómo va, la apuesta
-   se lee en palabras, una barra muestra el avance hacia la meta y el dinero se dice como en una casa de apuestas.
-   Lo fino queda detrás de "Ver detalle". Nada baja de 12 px. */
+/* Lenguaje de Apple: fondo negro, títulos grandes, listas agrupadas y casi nada de adorno. Cada apuesta es la tarjeta
+   de su partido, con el color de los dos equipos, el marcador grande, la apuesta en palabras y su probabilidad.
+   El detalle se despliega en la misma tarjeta. Solo tema oscuro. Nada baja de 12 px. */
 :root {
-  --bg: #eef1f6; --surface: #ffffff; --sunk: #e9edf4; --ink: #101828; --muted: #4f5a72; --line: #d6dce7;
-  --accent: #2545c9; --accent-soft: #e2e8fc; --good: #0a6b49; --good-soft: #dcf3e9; --bad: #b3261e; --bad-soft: #fce5e3;
-  --mid: #8a4b00; --mid-soft: #fdecd2; --shadow: 0 1px 2px rgb(16 24 40 / .05), 0 6px 18px rgb(16 24 40 / .05);
-  --display: Bahnschrift, "DIN Alternate", "Roboto Condensed", "sans-serif-condensed", "Segoe UI", system-ui, sans-serif;
-  --body: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
-  --t-sub: 400 14px/1.45 var(--body); --t-label: 600 12px/1.3 var(--body);
-  color-scheme: light;
+  --bg: #000; --card: #1c1c1e; --card2: #2c2c2e; --ink: #fff; --ink2: rgb(235 235 245 / .62);
+  --line: rgb(84 84 88 / .6); --green: #30d158; --red: #ff453a; --orange: #ff9f0a; --blue: #0a84ff;
+  --base: #161618; --sec: rgb(255 255 255 / .85); --soft: rgb(255 255 255 / .14);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI Variable Display", "Segoe UI", Roboto, sans-serif;
+  color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0a0f18; --surface: #131a28; --sunk: #1c2536; --ink: #e9eef7; --muted: #9eaac0; --line: #2a3550;
-    --accent: #93a7ff; --accent-soft: #1d2a4f; --good: #4fd19b; --good-soft: #113325; --bad: #ff8a8f; --bad-soft: #40191e;
-    --mid: #f5b352; --mid-soft: #3a2a0f; --shadow: none;
-    color-scheme: dark;
-  }
-}
-* { box-sizing: border-box; font-variant-numeric: tabular-nums !important; }
-html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--body); }
-.wrap { max-width: 920px; margin: 0 auto; padding: 0 16px 64px; }
-h1 { font: 600 20px/1.2 var(--display); margin: 0; }
-h2 { font: 600 18px/1.25 var(--display); margin: 0; }
-p { margin: 0; }
-.sub { font: var(--t-sub); color: var(--muted); }
-.nw { white-space: nowrap; } .grow { flex: 1; }
-.pos { color: var(--good); } .neg { color: var(--bad); }
+* { box-sizing: border-box; font-variant-numeric: tabular-nums; }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 15px/1.4 var(--font); -webkit-font-smoothing: antialiased; overflow-wrap: break-word; }
+h1, h2, h3, h4, p { margin: 0; }
+.wrap { max-width: 680px; margin: 0 auto; padding: calc(10px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) calc(104px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
 [hidden] { display: none !important; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
-.stack { display: flex; flex-direction: column; gap: 16px; }
-.pad { padding: 18px 20px; }
-.empty { border: 1px dashed var(--line); border-radius: 18px; padding: 22px 20px; color: var(--muted); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.warn { background: var(--mid-soft); color: var(--ink); border-radius: 12px; padding: 10px 14px; font: var(--t-sub); }
+.nw { white-space: nowrap; } .grow { flex: 1; }
+.pos { color: var(--green) !important; } .neg { color: var(--red) !important; }
+.t-good { color: var(--green); } .t-bad { color: var(--red); } .t-mid { color: var(--orange); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.lede { color: var(--ink2); font-size: 15px; } .lede b { color: var(--ink); font-weight: 600; } .lede:empty { display: none; }
+.sub { color: var(--ink2); font-size: 13px; line-height: 1.4; } .sub:empty { display: none; }
+.note { color: var(--ink2); font-size: 13px; text-align: center; padding: 4px 12px; }
+.cap { font: 600 13px/1.25 var(--font); color: var(--ink2); letter-spacing: .02em; text-transform: uppercase; margin: 14px 4px 0; }
+.cap-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 12px; margin: 14px 4px 0; }
+.cap-row .cap { margin: 0; } .capr { color: var(--ink2); font-size: 13px; } .capr:empty { display: none; }
+.stack > .cap, .stack > .cap-row { margin-bottom: -4px; }
+.h-sec { font: 700 22px/1.2 var(--font); letter-spacing: -.3px; }
+.sec-head { display: flex; flex-direction: column; gap: 4px; margin-top: 22px; }
+.empty { background: var(--card); border-radius: 16px; padding: 24px 16px; color: var(--ink2); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.warn { position: relative; background: var(--card); border-radius: 14px; padding: 12px 16px 12px 44px; color: var(--ink); font-size: 15px; }
+.warn::before { content: "!"; position: absolute; left: 14px; top: 13px; width: 20px; height: 20px; border-radius: 50%; background: var(--orange); color: #000; font: 700 13px/20px var(--font); text-align: center; }
+#alerts { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; } #alerts:empty { display: none; }
+#account, #account2 { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
 #account2:empty { display: none; }
 @media (min-width: 561px) { #account2 { display: none; } }
-#alerts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; } #alerts:empty { display: none; }
-.note { color: var(--muted); font: var(--t-sub); text-align: center; }
-.head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
 
-/* Arriba: nombre, estado, y el bank y el día siempre a la vista */
-.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 16px 0 12px; }
-.pulse { display: inline-flex; align-items: center; gap: 8px; font: var(--t-sub); color: var(--muted); }
-.pulse i { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); flex: none; }
-.pulse.on i { background: var(--mid); box-shadow: 0 0 0 4px var(--mid-soft); } .pulse.off i { background: var(--bad); }
-.pill { background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px; font: var(--t-sub); color: var(--muted); white-space: nowrap; }
-.pill b { font: 600 17px/1 var(--display); color: var(--ink); margin-left: 6px; } .pill b.pos { color: var(--good); } .pill b.neg { color: var(--bad); }
-.chip { display: inline-flex; align-items: center; gap: 6px; font: 600 13px/1.25 var(--body); padding: 5px 10px; border-radius: 999px; background: var(--sunk); color: var(--muted); }
-.chip b { color: var(--ink); } .chip.good { background: var(--good-soft); color: var(--good); } .chip.bad { background: var(--bad-soft); color: var(--bad); }
-.chip.mid { background: var(--mid-soft); color: var(--mid); } .chip.info { background: var(--accent-soft); color: var(--accent); }
-.chip.bad b, .chip.good b { color: inherit; } .chip.dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.tabs { position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; background: var(--sunk); padding: 6px; border-radius: 14px; margin-bottom: 18px; box-shadow: 0 0 0 6px var(--bg); }
-.tabs button { border: 0; background: transparent; color: var(--muted); font: 600 15px/1.2 var(--body); padding: 12px 6px; border-radius: 10px; cursor: pointer; min-height: 44px; }
-.tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgb(16 24 40 / .14); }
-.tabs i { font-style: normal; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 1px 8px; margin-left: 5px; font-size: 13px; } .tabs i:empty { display: none; }
+/* Arriba: el nombre, el bank y el día siempre a la vista, y el pulso del panel */
+.topbar { display: flex; flex-direction: column; gap: 4px; padding: 6px 4px 0; }
+.topbar .r1 { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 14px; }
+.topbar h1 { font: 600 17px/1.3 var(--font); letter-spacing: -.2px; }
+.figs { color: var(--ink2); font-size: 15px; } .figs b { color: var(--ink); font-weight: 600; margin-left: 4px; }
+.topbar .r2 { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+.pulse { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink2); }
+.pulse i { width: 8px; height: 8px; border-radius: 50%; background: var(--ink2); flex: none; }
+.pulse.on i { background: var(--orange); } .pulse.off i { background: var(--red); }
+.chip { display: inline-flex; align-items: center; gap: 6px; font: 500 13px/1.3 var(--font); color: var(--ink2); }
+.chip.dot::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ink2); flex: none; }
+.chip.dot.good::before { background: var(--green); } .chip.dot.mid::before { background: var(--orange); } .chip.dot.bad::before { background: var(--red); }
+.when .chip { font-weight: 600; color: inherit; } .when .chip.mid { color: var(--orange); }
+
+/* Título grande de cada pestaña */
+.title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 18px; }
+.title { font: 700 34px/1.15 var(--font); letter-spacing: -.5px; }
+.title-row + .lede { margin-top: -6px; }
+body:not(.public) .pub { display: none; }
+
+/* La barra de pestañas, fija abajo */
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; display: grid; grid-template-columns: repeat(4, minmax(0, 150px)); justify-content: center;
+  padding: 6px max(6px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
+  background: rgb(22 22 24 / .88); -webkit-backdrop-filter: blur(22px) saturate(1.6); backdrop-filter: blur(22px) saturate(1.6); border-top: .5px solid var(--line); }
+.tabs button { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 50px; padding: 4px 2px;
+  border: 0; border-radius: 10px; background: transparent; color: var(--ink2); font: 500 12px/1.1 var(--font); white-space: nowrap; cursor: pointer; }
+.tabs button:hover { background: transparent; color: var(--ink); }
+.tabs button[aria-selected="true"] { color: var(--ink); }
+.tabs button::before { content: ""; width: 26px; height: 26px; flex: none; background: currentColor; -webkit-mask: var(--ic) center / contain no-repeat; mask: var(--ic) center / contain no-repeat; }
+.tabs [data-tab="bets"] { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 8h18v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z'/%3E%3Cpath d='M15 8v10' stroke-dasharray='1.5 3'/%3E%3C/svg%3E"); }
+.tabs [data-tab="signals"] { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14 3 6 15h6l-1 8 8-12h-6z'/%3E%3C/svg%3E"); }
+.tabs [data-tab="games"] { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='13' cy='13' r='9'/%3E%3Cpath d='M4 13h18M13 4v18M6.5 6.5c3 3 3 10 0 13M19.5 6.5c-3 3-3 10 0 13'/%3E%3C/svg%3E"); }
+.tabs [data-tab="bank"] { --ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 26' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3.5' y='6.5' width='19' height='14' rx='3'/%3E%3Cpath d='M3.5 11h19M17 15.5h2'/%3E%3C/svg%3E"); }
+.tabs i { position: absolute; top: 2px; left: calc(50% + 7px); min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: #fff; color: #000; font: 600 12px/18px var(--font); font-style: normal; text-align: center; }
+.tabs i:empty { display: none; }
 
 /* Botones y formularios */
-button { font: 600 14px/1 var(--body); padding: 10px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
-button:hover { border-color: var(--accent); }
-button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-button.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
-button.quiet { border-color: transparent; background: transparent; color: var(--muted); padding: 10px 8px; } button.quiet:hover { color: var(--ink); border-color: var(--line); }
-dialog { border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--ink); padding: 22px; width: min(480px, calc(100vw - 28px)); }
-dialog::backdrop { background: rgb(8 12 20 / .6); }
-dialog h3 { font: 600 18px/1.25 var(--display); margin: 0 0 4px; }
-form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
-label { display: flex; flex-direction: column; gap: 5px; font: var(--t-sub); color: var(--muted); }
-input, select { font: 400 16px/1.5 var(--body); padding: 9px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.sides { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.sides label { flex-direction: row; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 10px; padding: 10px; color: var(--ink); cursor: pointer; }
-.sides input { width: auto; } .sides label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
-.calc { background: var(--sunk); border-radius: 10px; padding: 10px 12px; font: var(--t-sub); display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; } .calc b { text-align: right; }
-.error { color: var(--bad); font: var(--t-sub); min-height: 1.2em; }
-.dialog-actions, .card-actions { display: flex; flex-wrap: wrap; gap: 8px; } .dialog-actions { justify-content: flex-end; }
+button { font: 600 15px/1.2 var(--font); min-height: 44px; padding: 10px 16px; border-radius: 12px; border: 0; background: var(--card2); color: var(--ink); cursor: pointer; }
+button:hover { background: #3a3a3c; }
+button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+button.primary { background: #fff; color: #000; } button.primary:hover { background: #e5e5ea; }
+button.link, button.quiet { background: transparent; color: var(--blue); font-weight: 500; padding: 10px 6px; } button.link:hover, button.quiet:hover { background: transparent; opacity: .8; }
+button.danger { color: var(--red); }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+dialog { border: 0; border-radius: 20px; background: var(--card); color: var(--ink); padding: 22px 20px; width: min(480px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto; }
+dialog::backdrop { background: rgb(0 0 0 / .65); }
+dialog h3 { font: 700 20px/1.25 var(--font); margin: 0 0 4px; }
+form { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink2); }
+input, select { font: 400 16px/1.3 var(--font); min-height: 44px; padding: 10px 12px; border-radius: 10px; border: 0; background: var(--card2); color: var(--ink); width: 100%; }
+input::placeholder { color: var(--ink2); }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.sides { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.sides label { flex-direction: row; align-items: center; gap: 10px; min-height: 44px; padding: 10px 12px; border-radius: 10px; border: 2px solid transparent; background: var(--card2); color: var(--ink); font-size: 15px; cursor: pointer; }
+.sides input { width: auto; min-height: 0; padding: 0; accent-color: var(--blue); flex: none; } .sides label:has(input:checked) { border-color: var(--blue); }
+.calc { background: rgb(0 0 0 / .4); border-radius: 12px; padding: 12px 14px; font-size: 13px; color: var(--ink2); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; }
+.calc:empty { display: none; } .calc b { color: var(--ink); font-weight: 600; text-align: right; }
+.error { color: var(--red); font-size: 13px; min-height: 1.2em; }
+.dialog-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 0 14px; }
 
-/* La boleta de una apuesta */
-.strip { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 20px; font: 600 14px/1.2 var(--body); }
-.strip.good { background: var(--good-soft); color: var(--good); } .strip.bad { background: var(--bad-soft); color: var(--bad); }
-.strip.mid { background: var(--mid-soft); color: var(--mid); } .strip.info { background: var(--accent-soft); color: var(--accent); }
-.strip .state { display: flex; align-items: center; gap: 8px; font-size: 15px; } .strip .state::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: currentColor; flex: none; }
-.body { padding: 18px 20px 12px; display: grid; gap: 16px; }
-.score { display: flex; align-items: center; justify-content: center; gap: 14px; }
-.score b { font: 700 30px/1 var(--display); } .score img { width: 40px; height: 40px; object-fit: contain; }
-.score span { font: 600 15px/1 var(--display); color: var(--muted); letter-spacing: .04em; } .score em { font-style: normal; color: var(--muted); font-size: 16px; }
-.score.name { font: 600 18px/1.25 var(--display); text-align: center; }
-.bet { text-align: center; } .bet h3 { font: 600 22px/1.2 var(--display); margin: 0 0 4px; text-wrap: balance; } .bet p { color: var(--muted); } .bet p b { color: var(--ink); }
-.track { position: relative; padding-top: 22px; margin: 0 4px; }
-.track .rail { height: 14px; border-radius: 7px; background: var(--sunk); overflow: hidden; }
-.track .fill { display: block; height: 100%; border-radius: 7px; background: var(--accent); }
-.track .fill.good { background: var(--good); } .track .fill.bad { background: var(--bad); } .track .fill.mid { background: var(--mid); }
-.track .goal { position: absolute; top: 14px; width: 4px; margin-left: -2px; height: 30px; border-radius: 2px; background: var(--ink); box-shadow: 0 0 0 2px var(--surface); }
-.track .top { position: absolute; top: 0; transform: translateX(-50%); font: var(--t-label); white-space: nowrap; }
-.track .top.start { transform: translateX(-8px); } .track .top.end { transform: translateX(calc(-100% + 8px)); }
-.track .ghost { position: absolute; top: 23px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; border: 2px solid var(--ink); background: var(--surface); }
-.track .tags { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; font: var(--t-label); color: var(--muted); }
-.money { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.money div { background: var(--sunk); border-radius: 12px; padding: 12px 8px; text-align: center; } .money small { display: block; font: var(--t-label); color: var(--muted); } .money b { font: 600 22px/1.25 var(--display); }
-.chance { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; border-top: 1px solid var(--line); padding-top: 14px; }
-.chance .big { font: 600 34px/1 var(--display); } .chance .big i { font-style: normal; font-size: .6em; }
-.chance .big.good { color: var(--good); } .chance .big.bad { color: var(--bad); } .chance .big.mid { color: var(--mid); } .chance .big.info { color: var(--accent); }
-.chance .txt { flex: 1; min-width: 180px; color: var(--muted); font: var(--t-sub); } .chance .txt b { color: var(--ink); }
-details > summary { cursor: pointer; font: 600 14px/1.2 var(--body); color: var(--muted); list-style: none; display: flex; align-items: center; gap: 10px; min-height: 44px; }
+/* Lo desplegable: fila con flecha, como en Ajustes */
+details > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; padding: 0 4px; font: 500 15px/1.3 var(--font); color: var(--ink); }
 details > summary::-webkit-details-marker { display: none; }
-details > summary::before { content: ""; width: 7px; height: 7px; border: solid currentColor; border-width: 0 2px 2px 0; transform: rotate(-45deg); flex: none; margin-left: 3px; }
-details[open] > summary::before { transform: rotate(45deg); } details > summary:hover { color: var(--ink); }
-.more-body { display: flex; flex-direction: column; gap: 12px; padding-bottom: 12px; }
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 18px; }
-.facts .k { font: var(--t-label); color: var(--muted); } .facts .v { font: 600 15px/1.35 var(--body); margin-top: 2px; }
-.spark-box { display: grid; grid-template-columns: auto minmax(0, 1fr) 98px; gap: 8px; align-items: stretch; }
-.spark-box .ends { position: relative; height: 76px; } .spark-box .ends span { position: absolute; left: 0; font: 600 12px/16px var(--body); white-space: nowrap; }
-.read { font: 600 14px/1.45 var(--body); }
-.spark-box .scale { display: flex; flex-direction: column; justify-content: space-between; font: var(--t-label); color: var(--muted); text-align: right; }
-.spark { width: 100%; height: 76px; display: block; background: var(--sunk); border-radius: 8px; }
+details > summary::after { content: ""; flex: none; width: 8px; height: 8px; border: solid var(--ink2); border-width: 0 2px 2px 0; transform: rotate(-45deg); margin-right: 6px; }
+details[open] > summary::after { transform: rotate(45deg); }
+details > .group { margin-top: 4px; }
+details.cap-sum > summary { font: 600 13px/1.25 var(--font); color: var(--ink2); letter-spacing: .02em; text-transform: uppercase; }
 
-/* El porqué de una señal y los lesionados del partido, dentro de "Ver detalle" */
-.why, .inj { display: grid; gap: 8px; } .why h4, .inj h4 { font: 600 15px/1.3 var(--body); margin: 0; }
-.why ul, .inj ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
-.why li { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 10px; align-items: start; font: var(--t-sub); }
-.why .tag { font: var(--t-label); border-radius: 999px; padding: 4px 0; text-align: center; }
-.why .tag.pro { background: var(--good-soft); color: var(--good); } .why .tag.con { background: var(--bad-soft); color: var(--bad); }
-.why .stale { display: block; margin-top: 2px; color: var(--mid); font-weight: 600; }
-.inj .tm { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 4px; font: 600 14px/1.3 var(--body); } .inj .tm img { width: 20px; height: 20px; object-fit: contain; }
-.inj li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font: var(--t-sub); } .inj li b { font-weight: 600; } .inj .chip { font-size: 12px; padding: 3px 8px; }
+/* Listas agrupadas: etiqueta a la izquierda, dato a la derecha */
+/* Resultados del modelo por tipo de señal, y la lista de cambios */
+.res > div { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); gap: 8px; align-items: center; padding: 10px 16px; font-size: 14px; }
+.res > div:first-child { color: var(--ink2); font-size: 12px; font-weight: 600; padding-top: 8px; padding-bottom: 8px; } .res span + span { text-align: right; }
+.res b { display: block; font-weight: 700; font-size: 17px; letter-spacing: -.2px; } .res small { display: block; color: var(--ink2); font-size: 12px; }
+.news > div { padding: 12px 16px; font-size: 15px; line-height: 1.4; } .news small { display: block; color: var(--ink2); font-size: 12px; margin-bottom: 2px; }
+.group { background: var(--card); border-radius: 14px; overflow: hidden; }
+.group > * + * { border-top: .5px solid var(--line); }
+.row { display: flex; align-items: baseline; justify-content: space-between; gap: 4px 14px; padding: 11px 16px; min-height: 44px; }
+.row > span { color: var(--ink2); }
+.row > b { font-weight: 500; }
+.row > span:first-child:not(:only-child) { flex: 0 0 auto; max-width: 48%; }
+.row > span:first-child + b { flex: 1 1 0; min-width: 0; }
+.row > :last-child:not(:first-child) { text-align: right; }
+.row b small { display: block; color: var(--ink2); font-size: 13px; font-weight: 400; margin-top: 2px; }
+.row.msg > span { color: var(--ink2); text-align: left; }
+.row > .hr { display: flex; flex-direction: column; align-items: flex-end; flex: none; color: var(--ink); } .row > .hr > b { font-weight: 600; }
+.h .x button { margin: 0 -6px -8px 0; }
+.ghead { padding: 12px 16px; font-weight: 600; }
+.gnote { padding: 11px 16px; color: var(--ink2); font-size: 13px; }
+.gfoot { color: var(--ink2); font-size: 13px; margin: 8px 4px 0; }
+.cell { padding: 14px 16px; display: grid; gap: 10px; }
+.why { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; padding: 12px 16px; }
+.why > i { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 700 15px/1 var(--font); font-style: normal; color: #000; background: var(--green); margin-top: 1px; }
+.why > i.no { background: var(--red); }
+.why em { display: block; font-style: normal; color: var(--orange); font-size: 13px; margin-top: 3px; }
+.who { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--card2); font-weight: 600; }
+.who img { width: 22px; height: 22px; object-fit: contain; } .who .mis { margin-left: auto; color: var(--ink2); font-weight: 400; font-size: 13px; text-align: right; }
+.mk { font-style: normal; flex: none; width: 20px; height: 20px; border-radius: 50%; display: inline-grid; place-items: center; font: 700 12px/1 var(--font); color: #000; background: var(--green); }
+.mk.no { background: var(--red); } .mk.eq { background: #636366; color: #fff; }
+.res { display: inline-flex; align-items: center; gap: 6px; }
+
+/* La tarjeta de un partido: el color sale de los dos equipos y el marcador manda */
+.game { --a: #3a3a3c; --h: #3a3a3c; position: relative; border-radius: 22px; padding: 16px 16px 4px; background-color: var(--base); background-repeat: no-repeat; background-size: 100% 420px;
+  background-image: linear-gradient(180deg, rgb(22 22 24 / 0) 160px, var(--base) 420px), linear-gradient(120deg, #2a2a2c, #1a1a1c 52%, #2a2a2c);
+  background-image: linear-gradient(180deg, rgb(22 22 24 / 0) 160px, var(--base) 420px), linear-gradient(120deg, color-mix(in srgb, var(--a) 42%, var(--base)), #1a1a1c 52%, color-mix(in srgb, var(--h) 36%, var(--base))); }
+.top { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 8px; }
+.team { display: flex; align-items: center; gap: 10px; min-width: 0; } .team.h { flex-direction: row-reverse; } .team.h > div { text-align: right; }
+.team img { width: 44px; height: 44px; object-fit: contain; flex: none; }
+.team b { display: block; font: 800 40px/1 var(--font); letter-spacing: -1px; }
+.team b.lose { color: var(--ink2); }
+.team small { display: block; font: 600 13px/1.1 var(--font); color: var(--sec); margin-top: 3px; }
+.when { text-align: center; font: 600 13px/1.3 var(--font); color: var(--sec); max-width: 112px; }
+.live { display: flex; align-items: center; justify-content: center; gap: 5px; color: var(--ink); color: color-mix(in srgb, var(--red) 70%, #fff); font: 700 12px/1.2 var(--font); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
+.live i { width: 7px; height: 7px; border-radius: 50%; background: var(--red); flex: none; }
+.score.name { font: 700 20px/1.25 var(--font); text-align: center; padding: 4px 0; text-wrap: balance; }
+.bet { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; background: rgb(0 0 0 / .3); border-radius: 16px; padding: 12px 14px; margin-top: 14px; }
+.bet h3 { font: 600 17px/1.25 var(--font); letter-spacing: -.2px; text-wrap: balance; }
+.bet p { color: var(--sec); font-size: 13px; margin-top: 3px; } .bet p b { color: var(--ink); font-weight: 600; }
+.pct { text-align: right; } .pct b { font: 700 30px/1 var(--font); letter-spacing: -.8px; white-space: nowrap; } .pct b i { font-style: normal; font-size: 17px; }
+.pct b.good { color: var(--green); } .pct b.bad { color: var(--red); } .pct b.mid { color: var(--orange); }
+.pct small { display: block; color: var(--sec); font-size: 12px; margin-top: 3px; }
+.track { position: relative; padding-top: 20px; margin: 12px 2px 0; }
+.goal-tag { position: absolute; top: 0; transform: translateX(-50%); font: 600 12px/16px var(--font); color: var(--sec); white-space: nowrap; }
+.goal-tag.start { transform: translateX(-6px); } .goal-tag.end { transform: translateX(calc(-100% + 6px)); }
+.rail { position: relative; height: 4px; border-radius: 2px; background: var(--soft); }
+.fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; background: var(--blue); }
+.fill.good { background: var(--green); } .fill.bad { background: var(--red); } .fill.mid { background: var(--orange); }
+.goal { position: absolute; top: -4px; width: 2px; height: 12px; margin-left: -1px; border-radius: 1px; background: #fff; }
+.ghost { position: absolute; top: -3px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; border: 2px solid #fff; background: var(--base); }
+.tags { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; margin-top: 8px; font: 500 12px/1.3 var(--font); color: var(--sec); }
+.tags span:last-child { margin-left: auto; text-align: right; }
+.cash { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; color: var(--sec); font-size: 13px; margin: 12px 2px 0; } .cash b { color: var(--ink); font-weight: 600; }
+.stl { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; color: var(--sec); font-size: 13px; margin: 8px 2px 0; }
+.st { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); font-weight: 600; }
+.sdot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); flex: none; }
+.sdot.good { background: var(--green); } .sdot.bad { background: var(--red); } .sdot.mid { background: var(--orange); }
+.more { margin: 10px 0 0; border-top: .5px solid var(--soft); }
+.more > summary { color: var(--sec); padding: 0 2px; }
+.sheet { padding-bottom: 12px; }
+.sheet > .cap { margin: 18px 4px 8px; } .sheet > .cap:first-child { margin-top: 6px; }
+.sheet > .card-actions { margin-top: 8px; }
+
+/* La gráfica de "Ver detalle" */
+.spark-box { display: grid; grid-template-columns: auto minmax(0, 1fr) 98px; gap: 8px; align-items: stretch; }
+.spark-box .scale { display: flex; flex-direction: column; justify-content: space-between; font: 500 12px/1.2 var(--font); color: var(--ink2); text-align: right; }
+.spark { width: 100%; height: 76px; display: block; }
+.spark-box .ends { position: relative; height: 76px; } .spark-box .ends span { position: absolute; left: 0; font: 600 12px/16px var(--font); white-space: nowrap; }
+.read { font: 500 15px/1.4 var(--font); }
 
 /* Señales */
-.sig .teams { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font: 600 15px/1.2 var(--body); color: var(--muted); } .sig .teams img { width: 26px; height: 26px; object-fit: contain; }
-.sig h3 { font: 600 26px/1.1 var(--display); margin: 0; } .sig .body { gap: 14px; padding-bottom: 18px; } .sig p b { font-weight: 600; }
-.meter { display: inline-flex; align-items: center; gap: 8px; } .meter span { display: inline-flex; gap: 3px; } .meter span i { width: 8px; height: 18px; border-radius: 2px; background: currentColor; } .meter span i.off { opacity: .25; }
-.kalshi { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; background: var(--sunk); border-radius: 12px; padding: 12px 14px; }
-.kalshi small { display: block; font: var(--t-label); color: var(--muted); margin-bottom: 2px; } .kalshi b { font: 600 16px/1.35 var(--body); }
-.kalshi .side { background: var(--ink); color: var(--surface); border-radius: 6px; padding: 2px 8px; margin-right: 6px; } .kalshi .price { font: 600 24px/1 var(--display); }
-.versus { display: grid; grid-template-columns: 104px minmax(0, 1fr) 56px; gap: 6px 10px; align-items: center; font: var(--t-sub); color: var(--muted); }
-.versus .b { height: 10px; border-radius: 5px; background: var(--sunk); overflow: hidden; } .versus .b i { display: block; height: 100%; border-radius: 5px; background: var(--accent); } .versus .b i.cost { background: var(--muted); }
-.versus b { color: var(--ink); text-align: right; font-weight: 600; }
-.verdict { color: var(--muted); font: var(--t-sub); } .verdict b { color: var(--ink); }
-.mini { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto; gap: 4px 14px; align-items: center; padding: 10px 20px; border-top: 1px solid var(--line); font: var(--t-sub); }
-.mini:first-child { border-top: 0; } .mini b { font-weight: 600; } .mini .r { text-align: right; color: var(--muted); } .mini .gm { color: var(--muted); }
+.sig-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; font: 600 13px/1.3 var(--font); color: var(--sec); }
+.meter { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); } .meter > span { display: inline-flex; gap: 3px; }
+.meter > span i { width: 5px; height: 14px; border-radius: 2px; background: var(--orange); } .meter > span i.off { background: rgb(255 255 255 / .22); }
+.teams { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; font: 600 15px/1.25 var(--font); color: var(--sec); }
+.teams img { width: 28px; height: 28px; object-fit: contain; }
+.sig h3 { font: 700 28px/1.1 var(--font); letter-spacing: -.5px; margin-top: 8px; }
+.belief { color: var(--sec); margin-top: 4px; } .belief b { color: var(--ink); font-weight: 600; }
+.sig > .group, .sig > .warn { margin-top: 12px; }
+.sig > .verdict { color: var(--sec); font-size: 13px; margin: 12px 2px 0; }
+.deal-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 16px; }
+.deal-top small { display: block; color: var(--ink2); font-size: 13px; margin-bottom: 2px; } .deal-top b { font-weight: 600; }
+.side { letter-spacing: .04em; }
+.price { font: 700 28px/1 var(--font); letter-spacing: -.5px; white-space: nowrap; }
+.versus { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 12px; align-items: center; padding: 12px 16px; font-size: 13px; color: var(--ink2); }
+.versus .b { height: 4px; border-radius: 2px; background: var(--soft); overflow: hidden; } .versus .b i { display: block; height: 100%; border-radius: 2px; background: var(--blue); }
+.versus .b i.cost { background: var(--ink2); } .versus b { color: var(--ink); font-weight: 600; text-align: right; }
+.group > .verdict { padding: 11px 16px; color: var(--ink2); font-size: 13px; } .verdict b { color: var(--ink); font-weight: 600; }
+.group > .card-actions { padding: 0 10px; }
 
-/* Partidos e historial: filas que en teléfono se apilan */
-.g, .h { display: grid; gap: 4px 16px; align-items: center; padding: 12px 20px; border-top: 1px solid var(--line); font: var(--t-sub); }
-.g:first-child, .h:first-child { border-top: 0; }
-.g { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr) minmax(0, 1.3fr) minmax(0, 2fr) minmax(0, .9fr) auto; }
-.g.hd, .h.hd, .g.hd .fav, .h.hd .r { font: var(--t-label); color: var(--muted); }
-.g .m { font: 600 16px/1.2 var(--display); } .g .m b { font-weight: 700; } .g .fav { font: 600 16px/1.2 var(--display); text-align: right; }
-.g .k, .h .k { display: none; font: var(--t-label); color: var(--muted); margin-right: 8px; }
-.h { grid-template-columns: 62px minmax(0, 1.1fr) minmax(0, 1.5fr) minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, .8fr) auto; }
-.h .meta { display: contents; }
-.h .d { order: 1; } .h .w { order: 2; } .h .p { order: 3; font-weight: 600; } .h .q { order: 4; } .h .o { order: 5; }
-.h .r { order: 6; font: 600 16px/1.2 var(--display); text-align: right; } .h .x { order: 7; }
+/* Partidos y el historial de predicciones, como marcadores de una app de deportes */
+.match { padding: 12px 16px; }
+.match .team img { width: 34px; height: 34px; } .match .team b { font-size: 28px; letter-spacing: -.6px; }
+.match .team small, .match .when { color: var(--ink2); }
+.said { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; color: var(--ink2); font-size: 13px; margin-top: 8px; }
+.said b { color: var(--ink); font-weight: 500; } .said .k { color: var(--ink2); }
+.said u { text-decoration: none; margin-left: auto; color: var(--orange); font-weight: 600; font-size: 12px; }
+.m-act { display: flex; justify-content: flex-end; margin: 0 -6px -6px 0; }
 
-/* Historial de predicciones: cada partido terminado con lo que decía el modelo, si atinó y si era señal fuerte */
-.pr { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.7fr) minmax(0, 1.7fr); gap: 6px 16px; align-items: center; padding: 12px 20px; border-top: 1px solid var(--line); font: var(--t-sub); }
-.pr:first-child { border-top: 0; } .pr .m { font: 600 16px/1.2 var(--display); } .pr .m b { font-weight: 700; }
-.pr .pk { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; } .pr .pk .k { font: var(--t-label); color: var(--muted); } .pr .pk b { font-weight: 600; } .pr .chip { font-size: 12px; padding: 3px 8px; }
-@media (max-width: 760px) { .pr { grid-template-columns: minmax(0, 1fr); padding-left: 16px; padding-right: 16px; } }
-
-/* Resultados del modelo por tipo de señal */
-.res > div { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); font: var(--t-sub); }
-.res > div:first-child { border-top: 0; font: var(--t-label); color: var(--muted); } .res span + span { text-align: right; }
-.res b { display: block; font: 600 17px/1.2 var(--display); } .res small { font: var(--t-label); color: var(--muted); }
-
-/* Mi caja */
-.hero { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 6px 28px; }
-.hero .k { font: var(--t-label); color: var(--muted); } .hero .v { font: 600 44px/1 var(--display); } .hero .d { font: var(--t-sub); color: var(--muted); }
-.figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-.figures div { background: var(--sunk); border-radius: 12px; padding: 12px 14px; } .figures small { display: block; font: var(--t-label); color: var(--muted); } .figures b { font: 600 22px/1.25 var(--display); } .figures span { display: block; font: var(--t-sub); color: var(--muted); }
-.limits { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border-top: 1px solid var(--line); padding-top: 14px; } .limits .k { font: var(--t-label); color: var(--muted); }
-.curve { width: 100%; height: 150px; display: block; }
-footer { color: var(--muted); font: var(--t-sub); display: flex; flex-direction: column; gap: 4px; max-width: 76ch; margin-top: 28px; } footer b { color: var(--ink); } footer .more-body { gap: 8px; }
+/* Caja */
+.hero .k { font: 600 13px/1.25 var(--font); color: var(--ink2); letter-spacing: .02em; text-transform: uppercase; margin: 4px 0 6px; }
+.big { font: 800 56px/1 var(--font); letter-spacing: -2px; }
+.hero .lede { margin-top: 8px; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.stats > div { background: var(--card); border-radius: 16px; padding: 14px 16px; min-width: 0; }
+.stats small { display: block; color: var(--ink2); font-size: 13px; } .stats b { display: block; font: 700 24px/1.2 var(--font); letter-spacing: -.5px; margin-top: 2px; }
+.stats > div > span { display: block; color: var(--ink2); font-size: 13px; margin-top: 2px; }
+.limits { display: flex; flex-direction: column; gap: 8px; } .limits > .cap { margin-top: 10px; }
+.recap { display: flex; flex-direction: column; gap: 8px; } .recap .cap-row { margin-top: 8px; }
+.curve-box { display: flex; flex-direction: column; gap: 8px; }
+.curve { width: 100%; height: 120px; display: block; }
+footer { color: var(--ink2); font-size: 13px; display: flex; flex-direction: column; gap: 6px; max-width: 76ch; margin-top: 36px; } footer b { color: var(--ink); font-weight: 600; }
+footer details > summary { color: var(--ink2); }
+footer .more-body { display: flex; flex-direction: column; gap: 8px; padding: 4px 4px 12px; }
 
 /* Con la cuenta de Kalshi conectada nada se anota a mano */
 body.connected [data-act="buy"], body.connected [data-act="sell"], body.connected [data-act="settle"],
@@ -195,65 +254,64 @@ body.connected .card-actions:not(:has(button:not([data-act]))) { display: none; 
 
 /* La copia pública para los amigos: se ve todo y no se toca nada */
 body.public [data-act], body.public .card-actions, body.public .limits, body.public .own, body.public .h .x { display: none; }
+body.public .m-act { display: none; }
 
-@media (max-width: 760px) {
-  .g { grid-template-columns: minmax(0, 1fr) auto; } .g.hd, .h.hd { display: none; } .g .k, .h .k { display: inline; }
-  .g .line, .g .proj, .g .fav { grid-column: 1 / -1; text-align: left; } .g .fav { font: 600 14px/1.3 var(--body); }
-  .h { grid-template-columns: minmax(0, 1fr) auto; } .h .p { order: 1; font-size: 15px; } .h .r { order: 2; }
-  .h .meta { order: 3; grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 0 10px; color: var(--muted); } .h .x { order: 4; grid-column: 1 / -1; }
-}
+@media (min-width: 600px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 560px) {
-  .wrap { padding: 0 12px 56px; } .bar #account { display: none; } .bar .pill { padding: 6px 12px; } .bar .pulse { flex-basis: 100%; order: 3; } .tabs button { font-size: 13px; padding: 12px 2px; } .tabs i { margin-left: 3px; padding: 1px 6px; font-size: 12px; }
-  .strip, .body, .pad { padding-left: 16px; padding-right: 16px; } .g, .h, .mini { padding-left: 16px; padding-right: 16px; }
-  .score b { font-size: 26px; } .score img { width: 34px; height: 34px; } .score { gap: 10px; } .bet h3 { font-size: 20px; } .money b { font-size: 19px; }
-  .hero .v { font-size: 38px; } .two { grid-template-columns: 1fr; } .mini { grid-template-columns: minmax(0, 1fr) auto; } .mini .gm { grid-column: 1 / -1; }
-  .versus { grid-template-columns: 92px minmax(0, 1fr) 52px; } button { min-height: 44px; }
+  .topbar #account { display: none; } .two { grid-template-columns: minmax(0, 1fr); }
   .spark-box { grid-template-columns: minmax(0, 1fr) 98px; } .spark-box .scale { display: none; }
 }
-@media (prefers-reduced-motion: no-preference) { .track .fill { transition: width .5s ease; } }
+@media (max-width: 430px) {
+  .team { gap: 8px; } .team img { width: 34px; height: 34px; } .team b { font-size: 32px; } .when { max-width: 96px; }
+  .match .team img { width: 30px; height: 30px; } .match .team b { font-size: 26px; }
+  .title { font-size: 32px; } .big { font-size: 48px; } .sig h3 { font-size: 26px; }
+}
+@media (max-width: 360px) { .team img { width: 28px; height: 28px; } .team b { font-size: 28px; } .when { max-width: 84px; } }
+@media (prefers-reduced-motion: no-preference) {
+  details > summary::after { transition: transform .2s ease; }
+  button { transition: background-color .15s ease, opacity .15s ease; }
+  .pulse.on i, .live i { animation: beat 1.6s ease-in-out infinite; }
+}
+@keyframes beat { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="bar">
-    <h1>Rodrindex</h1>
-    <span class="pulse" id="pulse"><i></i><span id="pulse-text">Cargando</span></span>
-    <span class="grow"></span>
-    <span id="account"></span>
-    <span class="pill">Bank<b id="pill-bank">…</b></span><span class="pill">Hoy<b id="pill-day">…</b></span>
+  <header class="topbar">
+    <div class="r1"><h1>Rodrindex</h1><p class="figs">Bank<b id="pill-bank">…</b> · Hoy<b id="pill-day">…</b></p></div>
+    <div class="r2"><span class="pulse" id="pulse"><i></i><span id="pulse-text">Cargando</span></span><span id="account"></span></div>
   </header>
-  <nav class="tabs" role="tablist" id="tabs">
-    <button role="tab" aria-selected="true" data-tab="bets">Mis apuestas<i id="n-bets"></i></button>
-    <button role="tab" aria-selected="false" data-tab="signals">Señales<i id="n-signals"></i></button>
-    <button role="tab" aria-selected="false" data-tab="games">Partidos<i id="n-games"></i></button>
-    <button role="tab" aria-selected="false" data-tab="bank">Mi caja</button>
-  </nav>
   <div id="alerts"></div>
   <section id="tab-bets" class="stack" role="tabpanel">
-    <div class="head"><span class="sub" id="open-sub"></span><span class="grow"></span><button class="primary" data-act="buy">Anotar una compra</button></div>
+    <div class="title-row"><h2 class="title"><span class="own">Mis apuestas</span><span class="pub">Apuestas</span></h2><span class="grow"></span><button class="link" data-act="buy">Anotar una compra</button></div>
+    <p class="lede" id="open-sub"></p>
     <div id="open" class="stack"><div class="empty">Cargando apuestas.</div></div>
     <div id="today" class="stack"></div>
   </section>
   <section id="tab-signals" class="stack" role="tabpanel" hidden>
-    <div class="sub" id="record"></div>
+    <div class="title-row"><h2 class="title">Señales</h2></div>
+    <p class="lede" id="record"></p>
     <div id="signals" class="stack"><div class="empty">Cargando señales.</div></div>
   </section>
   <section id="tab-games" class="stack" role="tabpanel" hidden>
-    <div class="sub" id="games-sub"></div>
+    <div class="title-row"><h2 class="title">Partidos</h2></div>
+    <p class="lede" id="games-sub"></p>
     <div id="games" class="stack"><div class="empty">Cargando partidos.</div></div>
     <div id="picks" class="stack"></div>
   </section>
   <section id="tab-bank" class="stack" role="tabpanel" hidden>
+    <div class="title-row"><h2 class="title"><span class="own">Mi caja</span><span class="pub">Caja</span></h2></div>
     <div id="account2"></div>
     <div id="bank" class="stack"><div class="empty">Cargando la caja.</div></div>
-    <div class="head"><h2>Historial</h2><span class="sub" id="history-sub"></span></div>
+    <div class="cap-row"><h3 class="cap">Historial</h3><span class="capr" id="history-sub"></span></div>
     <div id="history" class="stack"></div>
   </section>
   <footer>
     <span id="foot">Este panel solo lleva la cuenta. No opera y no es una recomendación de entrar ni de cuánto.</span>
     <details><summary>Cómo leer el panel</summary><div class="more-body">
-      <p><b>La franja de color.</b> Dice cómo va la apuesta según la probabilidad de ganar: "Va bien" de 60% para arriba, "Va mal" por debajo de 40% y "Está parejo" en medio.</p>
-      <p><b>La barra.</b> La marca negra es la meta. El relleno es por dónde va el partido y el círculo punteado es dónde terminaría a este paso.</p>
+      <p><b>El punto de color.</b> Dice cómo va la apuesta según la probabilidad de ganar: "Va bien" de 60% para arriba, "Va mal" por debajo de 40% y "Está parejo" en medio.</p>
+      <p><b>La barra.</b> La marca blanca es la meta. El relleno es por dónde va el partido y el círculo es dónde terminaría a este paso.</p>
       <p><b>La probabilidad.</b> Antes del partido viene del modelo previo (union_v1). Ya en juego viene del modelo en vivo (vivo_v1), que usa la línea previa, el marcador y el reloj. Se revisó con tres temporadas que no había visto. En el último medio minuto de un final cerrado es poco precisa.</p>
       <p><b>Kalshi.</b> El precio del contrato ahora mismo. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
       <p><b>Kalshi y una casa como Bet365.</b> Es la misma apuesta dicha de dos formas. En Kalshi compras SÍ o NO de un contrato y pagas su precio. En una casa eliges el equipo con su hándicap, como +5.5 o −5.5, o "más" y "menos", y la cuota la pone la casa. Comprar NO de «PHI gana por más de 5.5» es lo mismo que Brooklyn +5.5. El panel no lee los precios de Bet365: solo te dice cómo se llama ahí la apuesta.</p>
@@ -267,6 +325,12 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
     </div></details>
   </footer>
 </div>
+<nav class="tabs" role="tablist" id="tabs">
+  <button role="tab" aria-selected="true" data-tab="bets">Mis apuestas<i id="n-bets"></i></button>
+  <button role="tab" aria-selected="false" data-tab="signals">Señales<i id="n-signals"></i></button>
+  <button role="tab" aria-selected="false" data-tab="games">Partidos<i id="n-games"></i></button>
+  <button role="tab" aria-selected="false" data-tab="bank">Mi caja</button>
+</nav>
 
 <dialog id="dlg-buy"><h3>Anotar una compra</h3><div class="sub">Lo que ya compraste en Kalshi: el contrato, el lado, el precio y cuántos.</div>
   <form id="form-buy" method="dialog" novalidate>
@@ -381,6 +445,11 @@ function chipFor(g) {
 const minutesLeft = g => g.period > 4 ? g.clock / 60 : (4 - g.period) * 12 + g.clock / 60;
 const cityOf = (g, abbr) => g && g.home.abbr === abbr ? g.home.city || abbr : g && g.away.abbr === abbr ? g.away.city || abbr : abbr;
 const logo = (t, size) => t && t.logo ? `<img src="${esc(t.logo)}" alt="" width="${size}" height="${size}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : "";
+// El color de cada equipo tiñe su lado de la tarjeta. Si falta, queda un gris.
+const tint = t => t && /^([0-9a-f]{3}){1,2}$/i.test(t.color || "") ? "#" + t.color : "#3a3a3c";
+const tints = g => `--a:${tint(g && g.away)};--h:${tint(g && g.home)}`;
+// Acierto, fallo o empate: una marca redonda.
+const mk = (r, label) => `<i class="mk ${r === "ganó" ? "ok" : r === "perdió" ? "no" : "eq"}" role="img" aria-label="${esc(label)}">${r === "ganó" ? "✓" : r === "perdió" ? "✕" : "="}</i>`;
 // Un margen en palabras, para no cruzar su signo con el del hándicap: "gana por 2", "pierde por 7".
 const byWords = v => v === 0 ? "empata" : (v > 0 ? "gana por " : "pierde por ") + (+Math.abs(v).toFixed(1));
 function matchup(g) {
@@ -388,10 +457,20 @@ function matchup(g) {
   return `${esc(g.away.abbr)} <b>${g.away.score}</b> · ${esc(g.home.abbr)} <b>${g.home.score}</b>`;
 }
 const refName = ref => ref.home ? esc(ref.away) + " en " + esc(ref.home) : esc(ref.name || "Otro mercado");
+// El marcador: los dos logos, los puntos grandes y en medio el reloj.
+function board(away, home, playing, when, size) {
+  const team = (t, side) => `<div class="team${side}">${logo(t, size)}<div>${playing ? `<b>${t.score}</b>` : ""}<small>${esc(t.abbr)}</small></div></div>`;
+  return `<div class="top">${team(away, "")}<div class="when">${when}</div>${team(home, " h")}</div>`;
+}
+function whenBox(g) {
+  if (!g) return "";
+  const t = esc(clock(g));
+  return g.state === "in" ? `<span class="live"><i></i>En vivo</span>${t}` : g.state === "pre" ? t.replace(", ", "<br>") : t;
+}
 function scoreRow(ref, g) {
   if (!ref.home) return `<div class="score name">${esc(ref.name || "Otro mercado")}</div>`;
   const away = g ? g.away : {abbr: ref.away}, home = g ? g.home : {abbr: ref.home}, playing = g && g.state !== "pre";
-  return `<div class="score">${logo(away, 40)}<span>${esc(away.abbr)}</span>${playing ? `<b>${away.score}</b><em>·</em><b>${home.score}</b>` : "<em>en</em>"}<span>${esc(home.abbr)}</span>${logo(home, 40)}</div>`;
+  return board(away, home, playing, whenBox(g), 44);
 }
 
 // Si el partido ya terminó, qué pasó con la apuesta, aunque Kalshi todavía no la liquide.
@@ -444,9 +523,9 @@ function progress(bar, tone) {
   const span = Math.max(14, Math.abs(bar.goal) + 8, Math.abs(bar.have || 0) + 5, Math.abs(bar.proj || 0) + 5);
   const lo = bar.total ? 0 : -span, hi = bar.total ? Math.max(bar.goal * 1.15, (bar.proj || 0) * 1.04, (bar.have || 0) * 1.02) : span;
   const at = v => Math.min(100, Math.max(0, 100 * (v - lo) / (hi - lo))), g = at(bar.goal), edge = g < 14 ? " start" : g > 86 ? " end" : "";
-  return `<div class="track" role="img" aria-label="${esc(bar.goalText + ". " + bar.haveText + ". " + bar.projText)}"><span class="top${edge}" style="left:${g}%">${esc(bar.goalText)}</span>
-    <div class="rail">${bar.have == null ? "" : `<i class="fill ${tone}" style="width:${at(bar.have)}%"></i>`}</div><div class="goal" style="left:${g}%"></div>
-    ${bar.proj == null ? "" : `<div class="ghost" style="left:${at(bar.proj)}%"></div>`}<div class="tags"><span>${esc(bar.haveText)}</span><span>${esc(bar.projText)}</span></div></div>`;
+  return `<div class="track" role="img" aria-label="${esc(bar.goalText + ". " + bar.haveText + ". " + bar.projText)}"><span class="goal-tag${edge}" style="left:${g}%">${esc(bar.goalText)}</span>
+    <div class="rail">${bar.have == null ? "" : `<i class="fill ${tone}" style="width:${at(bar.have)}%"></i>`}<i class="goal" style="left:${g}%"></i>${bar.proj == null ? "" : `<i class="ghost" style="left:${at(bar.proj)}%"></i>`}</div>
+    <div class="tags"><span>${esc(bar.haveText)}</span><span>${esc(bar.projText)}</span></div></div>`;
 }
 // La gráfica dicha en una frase: cómo está cada línea contra lo que se pagó y hacia dónde se ha movido.
 function reading(p, pts, model, market) {
@@ -474,15 +553,15 @@ function spark(p) {
   const W = 600, H = 76, t0 = pts[0][0], t1 = pts[pts.length - 1][0], x = t => 6 + (W - 12) * (t - t0) / Math.max(1, t1 - t0), y = v => 8 + (H - 16) * (1 - (v - lo) / (hi - lo));
   const path = i => pts.filter(r => r[i] != null).map((r, k) => (k ? "L" : "M") + x(r[0]).toFixed(1) + " " + y(r[i]).toFixed(1)).join(" ");
   // Una etiqueta al final de cada línea. Si dos quedan a la misma altura se separan lo justo para leerse.
-  const tags = [["Modelo " + prob(model), model, "var(--accent)"], ["Kalshi " + prob(market), market, "var(--muted)"], [you("Tu costo ", "Su costo ") + cents(p.needed), p.needed, "var(--ink)"]]
+  const tags = [["Modelo " + prob(model), model, "var(--blue)"], ["Kalshi " + prob(market), market, "var(--ink2)"], [you("Tu costo ", "Su costo ") + cents(p.needed), p.needed, "var(--ink)"]]
     .filter(t => t[1] != null).map(t => ({text: t[0], color: t[2], top: y(t[1]) - 8})).sort((a, b) => a.top - b.top);
   for (let i = 1; i < tags.length; i++) tags[i].top = Math.max(tags[i].top, tags[i - 1].top + 15);
   if (tags.length && tags[tags.length - 1].top > H - 16) { tags[tags.length - 1].top = H - 16; for (let i = tags.length - 2; i >= 0; i--) tags[i].top = Math.min(tags[i].top, tags[i + 1].top - 15); }
   return `<div class="spark-box"><div class="scale"><span>${pct(hi)}</span><span>${pct(lo)}</span></div>
     <svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Probabilidad de que gane la apuesta en el tiempo. ${esc(tags.map(t => t.text).join(", "))}">
-    <line x1="0" x2="${W}" y1="${y(p.needed).toFixed(1)}" y2="${y(p.needed).toFixed(1)}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 5" vector-effect="non-scaling-stroke"/>
-    <path d="${path(2)}" fill="none" stroke="var(--muted)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-    <path d="${path(1)}" fill="none" stroke="var(--accent)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
+    <line x1="0" x2="${W}" y1="${y(p.needed).toFixed(1)}" y2="${y(p.needed).toFixed(1)}" stroke="var(--ink)" stroke-width="1.2" stroke-dasharray="3 5" vector-effect="non-scaling-stroke"/>
+    <path d="${path(2)}" fill="none" stroke="var(--ink2)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    <path d="${path(1)}" fill="none" stroke="var(--blue)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
     <div class="ends">${tags.map(t => `<span style="top:${Math.max(0, t.top).toFixed(0)}px;color:${t.color}">${esc(t.text)}</span>`).join("")}</div></div>
     <div class="sub">Probabilidad de que gane la apuesta desde que el panel la sigue. Arriba es mejor. La línea punteada es lo que ${you("pagaste", "pagó")} y no se mueve.</div>
     <p class="read">${esc(reading(p, pts, model, market))}</p>`;
@@ -491,9 +570,9 @@ function spark(p) {
 function whyBlock(s, title) {
   const w = s && s.why;
   if (!w || !(w.for.length + w.against.length)) return "";
-  const row = (r, pro) => `<li><span class="tag ${pro ? "pro" : "con"}">${pro ? "A favor" : "En contra"}</span><span>${esc(r.text)}${r.note ? `<span class="stale">${esc(r.note)}</span>` : ""}</span></li>`;
-  return `<div class="why"><h4>${esc(title)}</h4><ul>${w.for.map(r => row(r, true)).join("")}${w.against.map(r => row(r, false)).join("")}</ul>
-    <p class="sub">Todo junto, el modelo espera ${w.points.toFixed(1)} puntos de ventaja contra la línea de apertura. Pide ${w.cut.toFixed(1)} para llamarla señal fuerte. De las bajas solo sabe quién faltó en el partido anterior: no conoce el reporte de hoy.</p></div>`;
+  const row = (r, pro) => `<div class="why"><i class="${pro ? "yes" : "no"}" aria-hidden="true">${pro ? "+" : "−"}</i><div><span class="sr">${pro ? "A favor: " : "En contra: "}</span>${esc(r.text)}${r.note ? `<em>${esc(r.note)}</em>` : ""}</div></div>`;
+  return `<h4 class="cap">Por qué</h4><div class="group"><div class="ghead">${esc(title)}</div>${w.for.map(r => row(r, true)).join("")}${w.against.map(r => row(r, false)).join("")}
+    <p class="gnote">Todo junto, el modelo espera ${w.points.toFixed(1)} puntos de ventaja contra la línea de apertura. Pide ${w.cut.toFixed(1)} para llamarla señal fuerte. De las bajas solo sabe quién faltó en el partido anterior: no conoce el reporte de hoy.</p></div>`;
 }
 // La señal del modelo para el partido y el mercado de una apuesta, y si van del mismo lado.
 function betWhy(p) {
@@ -508,37 +587,40 @@ function injuryBlock(g) {
   const inj = g && g.injuries;
   if (!inj) return "";
   const team = side => {
-    const t = inj[side], head = `<div class="tm">${logo(g[side], 20)}<span>${esc(g[side].city || g[side].abbr)}</span>${t.missing != null ? `<span class="sub">le falta ${pct(t.missing)} de su producción habitual</span>` : ""}</div>`;
-    if (!t.listed) return head + '<p class="sub">El último reporte todavía no trae a este equipo para este partido.</p>';
-    if (!t.submitted) return head + '<p class="sub">Todavía no envía su parte de lesiones.</p>';
-    if (!t.players.length) return head + '<p class="sub">Sin jugadores en el reporte.</p>';
+    const t = inj[side], head = `<div class="who">${logo(g[side], 22)}<span>${esc(g[side].city || g[side].abbr)}</span>${t.missing != null ? `<span class="mis">le falta ${pct(t.missing)}</span>` : ""}</div>`;
+    if (!t.listed) return head + '<div class="row msg"><span>El último reporte todavía no trae a este equipo para este partido.</span></div>';
+    if (!t.submitted) return head + '<div class="row msg"><span>Todavía no envía su parte de lesiones.</span></div>';
+    if (!t.players.length) return head + '<div class="row msg"><span>Sin jugadores en el reporte.</span></div>';
     const main = t.players.filter(p => !p.league), league = t.players.filter(p => p.league);
-    return head + (main.length ? `<ul>${main.map(p => `<li><b>${esc(p.name)}</b><span class="chip ${STATUS[p.status][1]}">${STATUS[p.status][0]}</span><span class="sub">${esc(p.reason)}</span></li>`).join("")}</ul>` : "") +
-      (league.length ? `<p class="sub">En la G League: ${league.map(p => esc(p.name)).join(", ")}.</p>` : "");
+    return head + main.map(p => `<div class="row"><b>${esc(p.name)}<small>${esc(p.reason)}</small></b><b class="${STATUS[p.status][1] ? "t-" + STATUS[p.status][1] : ""}">${STATUS[p.status][0]}</b></div>`).join("") +
+      (league.length ? `<div class="row msg"><span>En la G League: ${league.map(p => esc(p.name)).join(", ")}.</span></div>` : "");
   };
-  return `<div class="inj"><h4>Lesionados</h4><p class="sub">El reporte oficial de la NBA salió ${stamp(inj.published)}, y las lesiones vienen en inglés, como en el reporte.</p>${team("away")}${team("home")}</div>`;
+  return `<h4 class="cap">Lesionados</h4><div class="group">${team("away")}${team("home")}</div><p class="gfoot">El reporte oficial de la NBA salió ${stamp(inj.published)}, y las lesiones vienen en inglés, como en el reporte.</p>`;
 }
 function ticket(p) {
   const g = gameOf(p.game.id), st = status(p, g), s = story(p, g), yes = p.side === "yes", main = p.p != null ? p.p : p.mid;
   const source = {modelo: "según el modelo, antes del partido", "línea": "según la línea de la casa, antes del partido", marcador: "según el marcador y el reloj", final: "el partido ya terminó"};
-  const chance = main == null ? "" : `<div class="chance"><span class="big ${st.tone}">${big(main)}<i>%</i></span><span class="txt"><b>de probabilidad de ganar</b>, ${p.p != null ? source[p.p_source] || "según el modelo" : "según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la tiene en " + prob(p.mid) + "." : ""}${PUBLIC && g && g.state === "in" ? " La probabilidad es la de la última foto." : ""}</span></div>`;
-  const fact = (k, v) => `<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
-  const more = `<details data-keep="pos-${p.id}"${keep("pos-" + p.id)}><summary>Ver detalle</summary><div class="more-body">${betWhy(p)}${injuryBlock(g)}<div class="facts">` +
-    fact(you("En Kalshi compraste", "En Kalshi compró"), `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("En una casa como Bet365 sería", (p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + esc(p.label)) + fact("Cuánto", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
-    fact(you("Te costó cada contrato", "Le costó cada contrato"), cents(p.needed) + " con comisión") + fact(you("Si vendes ahora", "Si vende ahora"), p.sale == null ? "Nadie compra ahora" : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`) +
-    (p.expected == null ? "" : fact("Lo que vale según el modelo", `<span class="${cls(p.expected)}">${money(p.expected, true)}</span> esperado`)) +
-    (p.p_overtime > 0.02 ? fact("Chance de tiempo extra", pct(p.p_overtime)) : "") + (p.note ? fact("Nota", esc(p.note)) : "") + `</div>${spark(p)}
-    <div class="card-actions"><button data-act="sell" data-id="${p.id}">Anotar venta</button><button class="quiet" data-act="settle" data-id="${p.id}">Liquidar a mano</button><button class="quiet" data-act="remove" data-id="${p.id}">Borrar</button></div></div></details>`;
-  return `<article class="card"><div class="strip ${st.tone}"><span class="state">${st.text}</span><span>${g ? esc(clock(g)) : ""}</span></div><div class="body">${scoreRow(p.game, g)}
-    <div class="bet"><h3>${esc(s.title)}</h3>${s.text ? `<p>${s.text}</p>` : ""}</div>${progress(s.bar, st.tone)}
-    <div class="money"><div><small>${you("Apostaste", "Apostó")}</small><b>${money(p.cost)}</b></div><div><small>${you("Si gana, cobras", "Si gana, cobra")}</small><b>${money(p.contracts)}</b></div><div><small>Ganancia</small><b class="pos">${money(p.if_win, true)}</b></div></div>
-    ${chance}${more}</div></article>`;
+  const chance = main == null ? "" : `<div class="pct"><b class="${st.tone}">${big(main)}<i>%</i></b><small>de ganar</small></div>`;
+  const said = main == null ? "" : `${p.p != null ? cap(source[p.p_source] || "según el modelo") : "Según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la tiene en " + prob(p.mid) + "." : ""}${PUBLIC && g && g.state === "in" ? " La probabilidad es la de la última foto." : ""}`;
+  const fact = (k, v) => `<div class="row"><span>${k}</span><b>${v}</b></div>`;
+  const chart = spark(p), worth = (p.expected == null ? "" : fact("Lo que vale según el modelo", `<span class="${cls(p.expected)}">${money(p.expected, true)}</span> esperado`)) +
+    (p.p_overtime > 0.02 ? fact("Chance de tiempo extra", pct(p.p_overtime)) : "");
+  const how = chart || worth ? `<h4 class="cap">Cómo va</h4><div class="group">${chart ? `<div class="cell">${chart}</div>` : ""}${worth}</div>` : "";
+  const more = `<details class="more" data-keep="pos-${p.id}"${keep("pos-" + p.id)}><summary>Ver detalle</summary><div class="sheet">${how}${betWhy(p)}${injuryBlock(g)}
+    <h4 class="cap">${you("Tu compra", "Su compra")}</h4><div class="group">` +
+    fact("Contrato", `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("En una casa como Bet365 sería", (p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + esc(p.label)) + fact("Cantidad", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
+    fact("Costo por contrato", cents(p.needed) + " con comisión") + fact(you("Si vendes ahora", "Si vende ahora"), p.sale == null ? "Nadie compra ahora" : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`) +
+    (p.note ? fact("Nota", esc(p.note)) : "") + `</div>
+    <div class="card-actions"><button class="link" data-act="sell" data-id="${p.id}">Anotar venta</button><button class="link" data-act="settle" data-id="${p.id}">Liquidar a mano</button><button class="link danger" data-act="remove" data-id="${p.id}">Borrar</button></div></div></details>`;
+  return `<article class="game" style="${tints(g)}">${scoreRow(p.game, g)}
+    <div class="bet"><div><h3>${esc(s.title)}</h3>${s.text ? `<p>${s.text}</p>` : ""}</div>${chance}</div>${progress(s.bar, st.tone)}
+    <div class="cash"><span>${you("Apostaste", "Apostó")} <b>${money(p.cost)}</b></span><span>${you("Si gana, cobras", "Si gana, cobra")} <b>${money(p.contracts)}</b></span><span>Ganancia <b class="pos">${money(p.if_win, true)}</b></span></div>
+    <p class="stl"><span class="st"><i class="sdot ${st.tone}"></i>${st.text}</span>${said ? `<span>${said}</span>` : ""}</p>${more}</article>`;
 }
 function historyRow(p) {
   const out = p.exit.how === "sold" ? "Vendida a " + cents(p.exit.price) : (p.exit.won ? "Ganó" : "Perdió"), edge = p.close ? p.close.price - p.price : null;
-  return `<div class="h"><b class="p">${esc(p.label)}</b><b class="r ${cls(p.profit)}">${money(p.profit, true)}</b><span class="meta"><span class="d">${day(p.exit.when)}</span><span class="w">${refName(p.game)}</span>
-    <span class="q">${qty(p.contracts)} a ${cents(p.price)}</span><span class="o">${out}${edge == null ? "" : " · cierre " + (edge >= 0 ? "+" : "−") + cents(Math.abs(edge))}</span></span>
-    <span class="x"><button class="quiet" data-act="reopen" data-id="${p.id}">Reabrir</button></span></div>`;
+  return `<div class="row h"><b>${esc(p.label)}<small>${day(p.exit.when)} · ${refName(p.game)} · ${qty(p.contracts)} a ${cents(p.price)}</small><small>${out}${edge == null ? "" : " · cierre " + (edge >= 0 ? "+" : "−") + cents(Math.abs(edge))}</small></b>
+    <span class="hr"><b class="${cls(p.profit)}">${money(p.profit, true)}</b><span class="x"><button class="link" data-act="reopen" data-id="${p.id}">Reabrir</button></span></span></div>`;
 }
 // Resumen de la última jornada terminada: cómo le fue al modelo y a las apuestas, listo para compartir.
 function recap() {
@@ -551,8 +633,8 @@ function recap() {
   const text = `Rodrindex, ${when}: ` + (bets.length ? `${won} de ${bets.length} apuestas, ${money(net, true)}. ` : "") +
     `El modelo atinó ${hit(calls)}` + (strong.length ? ` y ${hit(strong)} en señales fuertes.` : ".");
   const fig = (k, v, c) => `<div><small>${k}</small><b class="${c || ""}">${v}</b></div>`;
-  return `<div class="card pad stack"><div class="head"><h2>Resumen del ${esc(when)}</h2><span class="grow"></span><button data-share="${esc(text)}">Compartir</button></div>
-    <div class="figures">${bets.length ? fig(you("Tus apuestas", "Sus apuestas"), won + " de " + bets.length) + fig("Resultado", money(net, true), cls(net)) : ""}${fig("El modelo atinó", hit(calls))}${strong.length ? fig("Señales fuertes", hit(strong)) : ""}</div></div>`;
+  return `<div class="recap"><div class="cap-row"><h3 class="cap">Resumen del ${esc(when)}</h3><button class="link" data-share="${esc(text)}">Compartir</button></div>
+    <div class="stats">${bets.length ? fig(you("Tus apuestas", "Sus apuestas"), won + " de " + bets.length) + fig("Resultado", money(net, true), cls(net)) : ""}${fig("El modelo atinó", hit(calls))}${strong.length ? fig("Señales fuertes", hit(strong)) : ""}</div></div>`;
 }
 async function share(button) {
   const text = button.dataset.share, url = PUBLIC ? location.href.split("?")[0] : "";
@@ -571,8 +653,8 @@ function renderBets() {
   put("open", open.length ? open.map(ticket).join("") : `<div class="empty"><span>${PUBLIC ? "No hay apuestas abiertas ahora." : connected() ? "No tienes apuestas abiertas. Lo que compres en Kalshi aparece aquí solo." :
     "No tienes apuestas abiertas. Cuando compres algo en Kalshi, anótalo aquí y el panel lo sigue en vivo."}</span><button data-go="signals">Ver las señales</button></div>`);
   const won = done.filter(p => p.profit > 0).length, total = done.reduce((sum, p) => sum + p.profit, 0);
-  put("today", recap() + (done.length ? `<div class="head"><h2>Terminadas hoy</h2><span class="sub">${plural(done.length, "apuesta", "apuestas")} · ${plural(won, "ganada", "ganadas")} · <span class="${cls(total)}">${money(total, true)}</span></span></div>
-    <div class="card">${done.map(historyRow).join("")}</div>` : ""));
+  put("today", recap() + (done.length ? `<div class="cap-row"><h3 class="cap">Terminadas hoy</h3><span class="capr">${plural(done.length, "apuesta", "apuestas")} · ${plural(won, "ganada", "ganadas")} · <span class="${cls(total)}">${money(total, true)}</span></span></div>
+    <div class="group">${done.map(historyRow).join("")}</div>` : ""));
 }
 
 // Lo que cree el modelo, dicho en palabras.
@@ -592,15 +674,15 @@ function bookBox(s, o) {
   const [away, home] = s.game.split(" @ "), mine = s.side === "home" ? home : away;
   const now = s.now == null ? "" : s.market === "total" ? String(s.now) : mine + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now);
   const note = s.now != null && Math.abs(s.now) !== o.strike ? "En las casas la línea de ahora va en " + now + "." : "La cuota la pone la casa.";
-  return `<div class="kalshi"><div><small>Lo mismo en una casa como Bet365</small><b>${esc(bookBet(s, o))}</b><span class="sub" style="display:block">${esc(note)}</span></div></div>`;
+  return `<div class="row"><span>Lo mismo en una casa como Bet365</span><b>${esc(bookBet(s, o))}<small>${esc(note)}</small></b></div>`;
 }
 function dealBox(s, o) {
   const held = S.positions.some(p => !p.exit && p.ticker === o.ticker), edge = o.p_model != null && o.needed != null ? Math.round(100 * (o.p_model - o.needed)) : null;
   const verdict = edge == null ? "" : edge === 0 ? "El modelo la ve igual a lo que cuesta." : `El modelo la ve <b>${plural(Math.abs(edge), "punto", "puntos")} por ${edge > 0 ? "encima" : "debajo"}</b> de lo que cuesta.`;
-  return `<div class="kalshi"><div><small>Cómo se compra en Kalshi${held ? you(" · ya la tienes", " · " + esc(owner()) + " ya la tiene") : ""}</small><b><span class="side">${o.yes ? "SÍ" : "NO"}</span>en «${esc(o.title_es || o.title)}»</b></div><div class="price">${o.price == null ? '<span class="sub">sin oferta</span>' : cents(o.price)}</div></div>` + bookBox(s, o) +
+  return `<div class="group deal"><div class="deal-top"><div><small>Cómo se compra en Kalshi${held ? you(" · ya la tienes", " · " + esc(owner()) + " ya la tiene") : ""}</small><b><span class="side">${o.yes ? "SÍ" : "NO"}</span> en «${esc(o.title_es || o.title)}»</b></div><div class="price">${o.price == null ? '<span class="sub">sin oferta</span>' : cents(o.price)}</div></div>` + bookBox(s, o) +
     (o.p_model == null || o.needed == null ? "" : `<div class="versus"><span>Modelo${s.p_source === "marcador" ? " en vivo" : ""}</span><div class="b"><i style="width:${100 * o.p_model}%"></i></div><b>${prob(o.p_model)}</b>
       <span>Tu costo sería</span><div class="b"><i class="cost" style="width:${100 * o.needed}%"></i></div><b>${cents(o.needed)}</b></div>`) +
-    (verdict ? `<p class="verdict">${verdict}</p>` : "") + `<div class="card-actions"><button data-act="buy" data-game="${s.game_id}" data-ticker="${esc(o.ticker)}" data-side="${o.yes ? "yes" : "no"}">${held ? "Anotar otra compra" : "Anotar compra"}</button></div>`;
+    (verdict ? `<p class="verdict">${verdict}</p>` : "") + `<div class="card-actions"><button class="link" data-act="buy" data-game="${s.game_id}" data-ticker="${esc(o.ticker)}" data-side="${o.yes ? "yes" : "no"}">${held ? "Anotar otra compra" : "Anotar compra"}</button></div></div>`;
 }
 // Resultados del modelo: todos sus pronósticos y cada tipo de señal, en vivo y en la temporada.
 function resultsBox() {
@@ -608,19 +690,19 @@ function resultsBox() {
   if (!r.live && !r.season) return "";
   const cell = c => !c || !c.bets ? `<small>${NIL}</small>` : `<b>${Math.round(100 * c.wins / c.bets)}%</b><small>${c.wins} de ${c.bets}</small>`;
   const tiers = [["todos", "Todos los pronósticos"], ["fuerte", "Señal fuerte"], ["muy_fuerte", "Señal muy fuerte"], ["fuertes", "Fuerte + muy fuerte"]];
-  const block = (title, d) => !d ? "" : `<div class="res"><div><span>${title}</span><span>Hándicap</span><span>Total</span><span>Los dos</span></div>` +
+  const block = (title, d) => !d ? "" : `<div class="cap">${title}</div><div class="group res"><div><span></span><span>Hándicap</span><span>Total</span><span>Los dos</span></div>` +
     tiers.map(([k, name]) => `<div><span>${name}</span><span>${cell((d[k] || {}).spread)}</span><span>${cell((d[k] || {}).total)}</span><span>${cell((d[k] || {}).both)}</span></div>`).join("") + "</div>";
-  return `<div class="card pad stack"><div class="head"><h2>Resultados del modelo</h2></div>${block("En vivo, sellado antes del partido", r.live)}${block("Toda la temporada, aplicado hacia atrás", r.season)}
+  return `<div class="stack"><div class="h-sec">Resultados del modelo</div>${block("En vivo, sellado antes del partido", r.live)}${block("Toda la temporada, aplicado hacia atrás", r.season)}
     <p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p></div>`;
 }
 // Lo que ha cambiado en el modelo, en palabras sencillas y de lo más nuevo a lo más viejo.
 function changesBox() {
   const c = S.changes || [];
-  return !c.length ? "" : `<details data-keep="changes"${keep("changes")}><summary>Qué ha cambiado en el modelo</summary><div class="card">` +
-    c.map(x => `<div class="mini" style="grid-template-columns:minmax(0,1fr)"><span class="gm">${day(x.date + "T12:00:00", {day: "numeric", month: "short", year: "numeric"})}</span><span>${esc(x.text)}</span></div>`).join("") + "</div></details>";
+  return !c.length ? "" : `<details data-keep="changes"${keep("changes")}><summary>Qué ha cambiado en el modelo</summary><div class="group news">` +
+    c.map(x => `<div class="mini" style="grid-template-columns:minmax(0,1fr)"><span class="gm">${day(x.date + "T12:00:00", {day: "numeric", month: "short", year: "numeric"})}</small>${esc(x.text)}</div>`).join("") + "</div></details>";
 }
 function renderSignals() {
-  const rec = S.record.map(r => `<span class="nw">${esc(r.market.toLowerCase())} ${r.wins} de ${r.bets}</span>`).join(", ");
+  const rec = S.record.map(r => `<span class="nw">${esc(r.market.toLowerCase())} <b>${r.wins} de ${r.bets}</b></span>`).join(", ");
   put("record", rec && !(S.results && S.results.season) ? "Así van las señales fuertes esta temporada: " + rec + ". En la prueba fueron 56 de cada 100." : "");
   const strong = S.signals.filter(s => s.strength), weak = S.signals.filter(s => !s.strength), order = {in: 0, pre: 1};
   const ahead = strong.filter(s => s.state !== "post").sort((a, b) => order[a.state] - order[b.state] || new Date(a.tipoff) - new Date(b.tipoff)), done = strong.filter(s => s.state === "post");
@@ -629,25 +711,26 @@ function renderSignals() {
   const item = s => {
     const g = gameOf(s.game_id), deal = s.kalshi, [away, home] = s.game.split(" @ "), top = s.strength === "0.1";
     const when = !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : "En juego · " + clock(g);
-    let html = `<article class="card sig"><div class="strip info"><span class="state">${esc(when)}</span><span class="meter">${top ? "Señal muy fuerte" : "Señal fuerte"} <span><i></i><i></i><i${top ? "" : ' class="off"'}></i></span></span></div><div class="body">
-      <div class="teams">${logo(g && g.away, 26)}${esc(cityOf(g, away))} en ${esc(cityOf(g, home))}${logo(g && g.home, 26)}</div>
-      <h3>${esc(signalName(s))}</h3><p>El modelo cree que <b>${esc(belief(s, g))}</b>.</p>`;
+    let html = `<article class="game sig" style="${tints(g)}"><div class="sig-top"><span>${esc(when)}</span><span class="meter">${top ? "Señal muy fuerte" : "Señal fuerte"} <span aria-hidden="true"><i></i><i></i><i${top ? "" : ' class="off"'}></i></span></span></div>
+      <div class="teams">${logo(g && g.away, 28)}<span>${esc(cityOf(g, away))} en ${esc(cityOf(g, home))}</span>${logo(g && g.home, 28)}</div>
+      <h3>${esc(signalName(s))}</h3><p class="belief">El modelo cree que <b>${esc(belief(s, g))}</b>.</p>`;
     if (s.news && s.news.includes("+")) html += `<div class="warn">Bajas nuevas que la señal no conoce: ${esc(s.news)}</div>`;
     if (deal && deal.found) html += dealBox(s, deal);
     else if (deal) html += `<p class="verdict">Kalshi no tiene esa línea exacta${deal.options && deal.options.length ? ". Estas son las dos más cercanas, sin elegir una" : ""}.</p>` + (deal.options || []).map(o => dealBox(s, o)).join("");
-    return html + `<details data-keep="sig-${s.game_id}-${s.market}"${keep("sig-" + s.game_id + "-" + s.market)}><summary>Ver detalle</summary><div class="more-body">${whyBlock(s, "Por qué el modelo va con " + signalName(s))}${injuryBlock(g)}<div class="facts">
-      <div><div class="k">Ventaja que ve el modelo</div><div class="v">${s.points.toFixed(1)} puntos</div></div>
-      <div><div class="k">Línea de apertura</div><div class="v">${s.market === "total" ? s.line : esc(signalName(s))}</div></div>
-      <div><div class="k">Línea de ahora</div><div class="v">${s.now == null ? NIL : s.market === "total" ? s.now : esc((s.side === "home" ? home : away) + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now))}</div></div>
-      <div><div class="k">Cuota de la casa al abrir</div><div class="v">${s.house_price || NIL}</div></div></div></div></details></div></article>`;
+    return html + `<details class="more" data-keep="sig-${s.game_id}-${s.market}"${keep("sig-" + s.game_id + "-" + s.market)}><summary>Ver detalle</summary><div class="sheet">${whyBlock(s, "Por qué el modelo va con " + signalName(s))}${injuryBlock(g)}
+      <h4 class="cap">Líneas</h4><div class="group">
+      <div class="row"><span>Ventaja que ve el modelo</span><b>${s.points.toFixed(1)} puntos</b></div>
+      <div class="row"><span>Línea de apertura</span><b>${s.market === "total" ? s.line : esc(signalName(s))}</b></div>
+      <div class="row"><span>Línea de ahora</span><b>${s.now == null ? NIL : s.market === "total" ? s.now : esc((s.side === "home" ? home : away) + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now))}</b></div>
+      <div class="row"><span>Cuota de la casa al abrir</span><b>${s.house_price || NIL}</b></div></div></div></details></article>`;
   };
-  const mini = s => `<div class="mini"><span class="gm">${esc(s.game.replace(" @ ", " en "))}</span><b>${esc(signalName(s))}</b><span class="r">${s.result ? `<span class="chip ${s.result === "ganó" ? "good" : s.result === "perdió" ? "bad" : ""}">${esc(s.result)}</span>` : "por " + s.points.toFixed(1)}</span></div>`;
+  const mini = s => `<div class="row"><b>${esc(signalName(s))}<small>${esc(s.game.replace(" @ ", " en "))}</small></b><b>${s.result ? `<span class="res">${mk(s.result, s.result)}${esc(s.result)}</span>` : "por " + s.points.toFixed(1)}</b></div>`;
   let html = ahead.length ? ahead.map(item).join("") : '<div class="empty">No hay señales fuertes en partidos por jugarse o en juego.</div>';
   if (done.length) {
     const won = done.filter(s => s.result === "ganó").length, lost = done.filter(s => s.result === "perdió").length;
-    html += `<details data-keep="sig-done"${keep("sig-done")}><summary>${plural(done.length, "señal fuerte ya terminó", "señales fuertes ya terminaron")}: ${plural(won, "ganó", "ganaron")}, ${plural(lost, "perdió", "perdieron")}</summary><div class="card">${done.map(mini).join("")}</div></details>`;
+    html += `<details data-keep="sig-done"${keep("sig-done")}><summary>${plural(done.length, "señal fuerte ya terminó", "señales fuertes ya terminaron")}: ${plural(won, "ganó", "ganaron")}, ${plural(lost, "perdió", "perdieron")}</summary><div class="group">${done.map(mini).join("")}</div></details>`;
   }
-  if (weak.length) html += `<details data-keep="sig-weak"${keep("sig-weak")}><summary>${plural(weak.length, "señal más débil", "señales más débiles")}</summary><div class="card">${weak.map(mini).join("")}</div></details>`;
+  if (weak.length) html += `<details data-keep="sig-weak"${keep("sig-weak")}><summary>${plural(weak.length, "señal más débil", "señales más débiles")}</summary><div class="group">${weak.map(mini).join("")}</div></details>`;
   put("signals", resultsBox() + html + changesBox() + '<p class="note">Es la traducción de la señal a Kalshi. No es una recomendación de entrar ni de cuánto.</p>');
 }
 
@@ -658,18 +741,18 @@ function renderGames() {
   const rest = S.games.filter(g => !live.includes(g) && !soon.includes(g)), ended = rest.filter(g => g.state === "post").length, later = rest.length - ended;
   put("games-sub", [live.length ? live.length + " en juego" : "", soon.length ? soon.length + " por empezar hoy" : ""].filter(Boolean).join(" · ") || "Nada en juego ahora");
   const by = {modelo: "modelo previo", "línea": "línea de la casa", marcador: "modelo en vivo"};
-  const head = '<div class="g hd"><span>Partido</span><span>Estado</span><span>Línea previa</span><span>Proyección del final</span><span class="fav">Favorito ahora</span><span></span></div>';
   const row = g => {
     const o = g.outlook, over = g.state === "post";
     const line = !g.line ? "Sin línea todavía" : (g.line.margin === 0 ? "Parejo" : esc(g.home.abbr) + " " + (g.line.margin > 0 ? "−" : "+") + Math.abs(g.line.margin)) + " · total " + g.line.total;
     const proj = o && !over ? `${esc(g.away.abbr)} ${o.away.toFixed(0)} · ${esc(g.home.abbr)} ${o.home.toFixed(0)} · total ${o.expected_total.toFixed(1)} <span class="nw">(${by[g.source]})</span>` : "";
     const fav = g.p_home == null || over ? "" : g.p_home >= 0.5 ? esc(g.home.abbr) + " " + prob(g.p_home) : esc(g.away.abbr) + " " + prob(1 - g.p_home);
-    return `<div class="g"><span class="m">${matchup(g)}</span><span>${chipFor(g)}</span><span class="line"><span class="k">Línea previa</span>${line}</span>
-      <span class="proj">${proj ? '<span class="k">Proyección</span>' + proj : ""}</span><span class="fav">${fav ? '<span class="k">Favorito ahora</span>' + fav : ""}</span>
-      <span>${over ? "" : `<button class="quiet" data-act="buy" data-game="${g.id}">Anotar compra</button>`}</span></div>`;
+    return `<div class="match">${board(g.away, g.home, g.state !== "pre", chipFor(g), 34)}
+      <div class="said"><span class="k">Línea previa</span><b>${line}</b></div>
+      ${proj ? `<div class="said"><span class="k">Proyección</span><b>${proj}</b></div>` : ""}${fav ? `<div class="said"><span class="k">Favorito ahora</span><b>${fav}</b></div>` : ""}
+      ${over ? "" : `<div class="m-act"><button class="link" data-act="buy" data-game="${g.id}">Anotar compra</button></div>`}</div>`;
   };
-  let html = live.length + soon.length ? `<div class="card">${head}${[...live, ...soon].map(row).join("")}</div>` : '<div class="empty">No hay partidos en juego ni por empezar hoy.</div>';
-  if (rest.length) html += `<details data-keep="games-rest"${keep("games-rest")}><summary>${[ended ? plural(ended, "terminado", "terminados") : "", later ? later + " de otro día" : ""].filter(Boolean).join(" y ")}</summary><div class="card">${head}${rest.map(row).join("")}</div></details>`;
+  let html = live.length + soon.length ? `<div class="group">${[...live, ...soon].map(row).join("")}</div>` : '<div class="empty">No hay partidos en juego ni por empezar hoy.</div>';
+  if (rest.length) html += `<details data-keep="games-rest"${keep("games-rest")}><summary>${[ended ? plural(ended, "terminado", "terminados") : "", later ? later + " de otro día" : ""].filter(Boolean).join(" y ")}</summary><div class="group">${rest.map(row).join("")}</div></details>`;
   put("games", html);
 }
 
@@ -682,14 +765,15 @@ function renderPicks() {
   const all = live(rows.flatMap(r => r.calls)), strong = all.filter(c => c.strength), days = [...new Set(rows.map(r => r.day))];
   if (!picksSeeded) { OPEN.add("picks-" + days[0]); picksSeeded = true; }  // el día más reciente arranca desplegado
   const name = c => c.market === "total" ? cap(c.text) + " puntos" : cap(c.text);
-  const mark = c => `<span class="chip ${c.result === "ganó" ? "good" : c.result === "perdió" ? "bad" : ""}">${c.result === "ganó" ? "Atinó" : c.result === "perdió" ? "Falló" : "Empate"}</span>`;
-  const cell = c => !c ? "<span></span>" : `<span class="pk"><span class="k">${c.market === "spread" ? "Hándicap" : "Total"}</span><b>${esc(name(c))}</b>${mark(c)}${c.strength ? `<span class="chip info">${c.strength === "0.1" ? "Señal muy fuerte" : "Señal fuerte"}</span>` : ""}</span>`;
+  const mark = c => mk(c.result, c.result === "ganó" ? "Atinó" : c.result === "perdió" ? "Falló" : "Empate");
+  const cell = c => !c ? "" : `<div class="said">${mark(c)}<span>${c.market === "spread" ? "Hándicap" : "Total"} <b>${esc(name(c))}</b></span>${c.strength ? `<u>${c.strength === "0.1" ? "Señal muy fuerte" : "Señal fuerte"}</u>` : ""}</div>`;
+  const side = (abbr, pts, other) => `<div><b${pts < other ? ' class="lose"' : ""}>${pts}</b><small>${esc(abbr)}</small></div>`;
   const block = d => {
     const games = rows.filter(r => r.day === d), calls = live(games.flatMap(g => g.calls));
-    return `<details data-keep="picks-${d}"${keep("picks-" + d)}><summary>${cap(day(d + "T12:00:00", {weekday: "long", day: "numeric", month: "short"}))} · atinó ${count(calls)}</summary><div class="card">` +
-      games.map(g => `<div class="pr"><span class="m">${esc(g.away)} <b>${g.away_score}</b> · ${esc(g.home)} <b>${g.home_score}</b></span>${cell(g.calls.find(c => c.market === "spread"))}${cell(g.calls.find(c => c.market === "total"))}</div>`).join("") + "</div></details>";
+    return `<details class="cap-sum" data-keep="picks-${d}"${keep("picks-" + d)}><summary>${cap(day(d + "T12:00:00", {weekday: "long", day: "numeric", month: "short"}))} · atinó ${count(calls)}</summary><div class="group">` +
+      games.map(g => `<div class="match"><div class="top"><div class="team">${side(g.away, g.away_score, g.home_score)}</div><div class="when">Final</div><div class="team h">${side(g.home, g.home_score, g.away_score)}</div></div>${cell(g.calls.find(c => c.market === "spread"))}${cell(g.calls.find(c => c.market === "total"))}</div>`).join("") + "</div></details>";
   };
-  put("picks", `<div class="head"><h2>Historial de predicciones</h2><span class="sub">Hándicap ${count(all.filter(c => c.market === "spread"))} · total ${count(all.filter(c => c.market === "total"))} · señales fuertes ${strong.length ? count(strong) : "sin terminar"}</span></div>` +
+  put("picks", `<div class="sec-head"><h3 class="h-sec">Historial de predicciones</h3><p class="lede">Hándicap <b>${count(all.filter(c => c.market === "spread"))}</b> · total <b>${count(all.filter(c => c.market === "total"))}</b> · señales fuertes <b>${strong.length ? count(strong) : "sin terminar"}</b></p></div>` +
     days.map(block).join("") + '<p class="note">Son todos los pronósticos del modelo contra la línea de apertura, no solo las señales fuertes. Los que no son señal fuerte aciertan poco más de la mitad y no alcanzan para apostar.</p>');
 }
 
@@ -702,21 +786,22 @@ function renderBank() {
     return;
   }
   const fig = (k, v, d) => `<div><small>${k}</small><b>${v}</b>${d ? `<span>${d}</span>` : ""}</div>`;
+  const fact = (k, v) => `<div class="row"><span>${k}</span><b>${v}</b></div>`;
   const record = b.closed ? plural(b.won, "ganada", "ganadas") + " y " + plural(b.lost, "perdida", "perdidas") + (b.sold ? ", " + plural(b.sold, "vendida", "vendidas") : "") : "Sin apuestas cerradas";
-  const limit = (label, used, top) => `<span class="chip ${top != null && used != null && used > top + 1e-9 ? "bad" : ""}">${label} <b>${used == null ? NIL : used.toFixed(1) + "%"}</b>${top != null ? " · tope " + (+top.toFixed(1)) + "%" : ""}</span>`;
+  const limit = (label, used, top) => `<div class="row"><span>${label}</span><b class="${top != null && used != null && used > top + 1e-9 ? "neg" : ""}">${used == null ? NIL : used.toFixed(1) + "%"}${top != null ? " · tope " + (+top.toFixed(1)) + "%" : ""}</b></div>`;
   const anyTop = Object.values(b.rules).some(v => v != null);
-  put("bank", `<div class="card pad stack"><div class="hero"><div><div class="k">${you("Tu bank", "Bank de " + esc(owner()))}</div><div class="v">${money(b.equity)}</div></div><div class="d">${you("Pusiste", "Puso")} ${money(b.contributed)} y ${you("llevas", "lleva")} ${tone(b.realized)} en total.</div></div>
-    <div class="figures">${fig("Disponible", money(b.cash), "Para apostar")}${fig("En juego", money(b.at_risk), b.open ? plural(b.open, "apuesta", "apuestas") + ". Pagan " + money(b.if_all_win - b.cash) + " si ganan" : "Sin apuestas abiertas")}
+  put("bank", `<div class="hero"><div class="k">${you("Tu bank", "Bank de " + esc(owner()))}</div><div class="big">${money(b.equity)}</div><p class="lede">${you("Pusiste", "Puso")} ${money(b.contributed)} y ${you("llevas", "lleva")} ${tone(b.realized)} en total.</p></div>
+    <div class="stats">${fig("Disponible", money(b.cash), "Para apostar")}${fig("En juego", money(b.at_risk), b.open ? plural(b.open, "apuesta", "apuestas") + ". Pagan " + money(b.if_all_win - b.cash) + " si ganan" : "Sin apuestas abiertas")}
       ${fig("Hoy", tone(b.day), "")}${fig("Récord", b.closed ? b.won + " a " + b.lost : NIL, record)}</div>
-    <div class="limits"><span class="k">${anyTop ? "Tus topes, en % del bank" : "No has puesto topes"}</span>${anyTop ? limit("Apuesta más grande", b.usage.position_pct, b.rules.max_position_pct) + limit("Total en juego", b.usage.open_pct, b.rules.max_open_pct) + limit("Pérdida de hoy", b.usage.day_loss_pct, b.rules.max_day_loss_pct) : ""}
-      <span class="grow"></span><button data-act="rules">${anyTop ? "Cambiar topes" : "Poner topes"}</button><button data-act="move">Depósito o retiro</button></div>
-    <details data-keep="bank"${keep("bank")}><summary>Más números</summary><div class="more-body"><div class="facts">` +
-    (b.open ? `<div><div class="k">Si todas ganan, el bank queda en</div><div class="v">${money(b.if_all_win)}</div></div><div><div class="k">Si todas pierden, queda en</div><div class="v">${money(b.if_all_lose)}</div></div>
-      <div><div class="k">Esperado según el modelo</div><div class="v">${money(b.expected_model)}</div></div><div><div class="k">Esperado según Kalshi</div><div class="v">${money(b.expected_market)}</div></div>` : "") +
-    `<div><div class="k">Apuesta más grande</div><div class="v">${b.usage.position_pct == null ? NIL : b.usage.position_pct.toFixed(1) + "% del bank"}</div></div>
-      <div><div class="k">Total en juego</div><div class="v">${b.usage.open_pct == null ? NIL : b.usage.open_pct.toFixed(1) + "% del bank"}</div></div>
-      <div><div class="k">Ganancia sobre lo apostado</div><div class="v">${b.roi == null ? NIL : pct(b.roi, 1)}</div></div>` +
-    (b.clv != null ? `<div><div class="k">${you("Precio de cierre contra el tuyo", "Precio de cierre contra el suyo")}</div><div class="v">${(b.clv >= 0 ? "+" : "−") + cents(Math.abs(b.clv))}</div></div>` : "") + "</div></div></details></div>");
+    <div class="limits"><h3 class="cap">${anyTop ? "Tus topes, en % del bank" : "No has puesto topes"}</h3>${anyTop ? `<div class="group">${limit("Apuesta más grande", b.usage.position_pct, b.rules.max_position_pct) + limit("Total en juego", b.usage.open_pct, b.rules.max_open_pct) + limit("Pérdida de hoy", b.usage.day_loss_pct, b.rules.max_day_loss_pct)}</div>` : ""}
+      <div class="btns"><button data-act="rules">${anyTop ? "Cambiar topes" : "Poner topes"}</button><button data-act="move">Depósito o retiro</button></div></div>
+    <details data-keep="bank"${keep("bank")}><summary>Más números</summary><div class="group">` +
+    (b.open ? fact("Si todas ganan, el bank queda en", money(b.if_all_win)) + fact("Si todas pierden, queda en", money(b.if_all_lose)) +
+      fact("Esperado según el modelo", money(b.expected_model)) + fact("Esperado según Kalshi", money(b.expected_market)) : "") +
+    fact("Apuesta más grande", b.usage.position_pct == null ? NIL : b.usage.position_pct.toFixed(1) + "% del bank") +
+    fact("Total en juego", b.usage.open_pct == null ? NIL : b.usage.open_pct.toFixed(1) + "% del bank") +
+    fact("Ganancia sobre lo apostado", b.roi == null ? NIL : pct(b.roi, 1)) +
+    (b.clv != null ? fact(you("Precio de cierre contra el tuyo", "Precio de cierre contra el suyo"), (b.clv >= 0 ? "+" : "−") + cents(Math.abs(b.clv))) : "") + "</div></details>");
 }
 function renderHistory() {
   const closed = S.positions.filter(p => p.exit).sort((a, b) => new Date(b.exit.when) - new Date(a.exit.when));
@@ -726,12 +811,12 @@ function renderHistory() {
     const W = 800, H = 150, v = S.curve.map(c => c.equity), lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1, x = i => 6 + (W - 12) * i / (v.length - 1), y = e => 12 + (H - 30) * (1 - (e - lo) / span);
     let d = "M" + x(0) + " " + y(v[0]);
     for (let i = 1; i < v.length; i++) d += " H" + x(i).toFixed(1) + " V" + y(v[i]).toFixed(1);
-    body += `<div class="card pad stack" style="gap:8px"><div class="sub">${you("Tu bank", "El bank")} después de cada apuesta cerrada. Ha ido de ${money(lo)} a ${money(hi)}.</div>
-      <svg class="curve" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Curva del bank"><path d="${d} V${H - 4} H${x(0)} Z" fill="var(--accent-soft)"/>
-      <path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg></div>`;
+    body += `<div class="curve-box"><svg class="curve" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Curva del bank"><defs><linearGradient id="curve-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30d158" stop-opacity=".35"/><stop offset="1" stop-color="#30d158" stop-opacity="0"/></linearGradient></defs>
+      <path d="${d} V${H - 4} H${x(0)} Z" fill="url(#curve-fill)"/><path d="${d}" fill="none" stroke="var(--green)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
+      <p class="sub">${you("Tu bank", "El bank")} después de cada apuesta cerrada. Ha ido de ${money(lo)} a ${money(hi)}.</p></div>`;
   }
-  if (closed.length) body += '<div class="card"><div class="h hd"><span class="d">Cerrada</span><span class="w">Partido</span><span class="p">Apuesta</span><span class="q">Contratos</span><span class="o">Salida</span><span class="r">Resultado</span><span class="x"></span></div>' + closed.map(historyRow).join("") + "</div>";
-  if (S.moves.length) body += `<details data-keep="moves"${keep("moves")}><summary>${plural(S.moves.length, "movimiento de dinero", "movimientos de dinero")}</summary><div class="card">${S.moves.map(m => `<div class="mini"><span class="gm">${day(m.when, {day: "numeric", month: "short", year: "numeric"})} · ${({deposit: "Depósito", withdrawal: "Retiro", adjustment: "Ajuste"})[m.kind]}</span><span>${esc(m.note)}</span><b class="r">${money(m.kind === "withdrawal" ? -m.amount : m.amount, true)}</b></div>`).join("")}</div></details>`;
+  if (closed.length) body += '<div class="group">' + closed.map(historyRow).join("") + "</div>";
+  if (S.moves.length) body += `<details data-keep="moves"${keep("moves")}><summary>${plural(S.moves.length, "movimiento de dinero", "movimientos de dinero")}</summary><div class="group">${S.moves.map(m => `<div class="row"><b>${({deposit: "Depósito", withdrawal: "Retiro", adjustment: "Ajuste"})[m.kind]}<small>${day(m.when, {day: "numeric", month: "short", year: "numeric"})}${m.note ? " · " + esc(m.note) : ""}</small></b><b>${money(m.kind === "withdrawal" ? -m.amount : m.amount, true)}</b></div>`).join("")}</div></details>`;
   put("history", body || '<div class="empty">' + you("Aquí quedan tus apuestas cerradas", "Aquí quedan las apuestas cerradas") + ", con su resultado y la curva del bank.</div>");
 }
 
