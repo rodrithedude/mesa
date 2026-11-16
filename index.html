@@ -686,6 +686,29 @@ function dealBox(s, o) {
     (verdict ? `<p class="verdict">${verdict}</p>` : "") + `<div class="card-actions"><button class="link" data-act="buy" data-game="${s.game_id}" data-ticker="${esc(o.ticker)}" data-side="${o.yes ? "yes" : "no"}">${held ? "Anotar otra compra" : "Anotar compra"}</button></div></div>`;
 }
 // Resultados del modelo: todos sus pronósticos y cada tipo de señal, en vivo y en la temporada.
+// Cómo ha ido la tasa de aciertos: el acumulado día por día de lo sellado en vivo, todos y solo las señales fuertes.
+function trendBox() {
+  const rows = S.history || [], days = [...new Set(rows.map(r => r.day))].sort();
+  if (days.length < 2) return "";
+  const run = keep => { let w = 0, n = 0; return days.map(d => { for (const c of rows.filter(r => r.day === d).flatMap(r => r.calls)) if (c.result !== "empate" && keep(c)) { n++; if (c.result === "ganó") w++; } return n ? w / n : null; }); };
+  const all = run(() => true), strong = run(c => !!c.strength), seen = [...all, ...strong, 0.5].filter(v => v != null);
+  const lo = Math.max(0, Math.min(...seen) - 0.06), hi = Math.min(1, Math.max(...seen) + 0.06), W = 300, H = 96;
+  const x = i => 4 + (W - 8) * i / (days.length - 1), y = v => 8 + (H - 16) * (1 - (v - lo) / (hi - lo));
+  const path = s => { let on = false; return s.map((v, i) => { if (v == null) return ""; const step = (on ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); on = true; return step; }).join(" "); };
+  const ends = s => { const got = s.filter(v => v != null); return [got[0], got[got.length - 1]]; };
+  const say = (name, s) => { const [a, b] = ends(s); if (a == null) return ""; const d = Math.round(100 * (b - a)); return name + " " + (d === 0 ? "sigue en " + pct(b) : (d > 0 ? "subió" : "bajó") + " de " + pct(a) + " a " + pct(b)) + "."; };
+  const tags = [["Fuertes " + pct(ends(strong)[1]), ends(strong)[1], "var(--green)"], ["Todos " + pct(ends(all)[1]), ends(all)[1], "var(--ink2)"]]
+    .filter(t => t[1] != null).map(t => ({text: t[0], color: t[2], top: y(t[1]) - 8})).sort((p, q) => p.top - q.top);
+  if (tags.length > 1 && tags[1].top - tags[0].top < 15) tags[1].top = tags[0].top + 15;
+  const label = d => day(d + "T12:00:00");
+  return `<div class="cap">Cómo ha ido la tasa de aciertos</div><div class="group" style="padding:14px 16px"><div style="display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:10px">
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:${H}px;display:block" role="img" aria-label="Tasa de aciertos acumulada por día">
+    <line x1="0" x2="${W}" y1="${y(0.5).toFixed(1)}" y2="${y(0.5).toFixed(1)}" stroke="var(--ink2)" stroke-width="1" stroke-dasharray="3 5" vector-effect="non-scaling-stroke"/>
+    <path d="${path(all)}" fill="none" stroke="var(--ink2)" stroke-width="2" vector-effect="non-scaling-stroke"/><path d="${path(strong)}" fill="none" stroke="var(--green)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
+    <div style="position:relative;font:600 12px/16px var(--font)">${tags.map(t => `<span style="position:absolute;left:0;top:${Math.max(0, Math.min(H - 16, t.top)).toFixed(0)}px;color:${t.color};white-space:nowrap">${esc(t.text)}</span>`).join("")}</div></div>
+    <div style="display:flex;justify-content:space-between;color:var(--ink2);font-size:12px;margin:4px 102px 0 0"><span>${label(days[0])}</span><span>${label(days[days.length - 1])}</span></div>
+    <p class="sub" style="margin-top:8px">Acumulado día por día de lo sellado en vivo. La línea punteada es 50%. ${esc(say("Todos los pronósticos:", all))} ${esc(say("Señales fuertes:", strong))}</p></div>`;
+}
 function resultsBox() {
   const r = S.results || {};
   if (!r.live && !r.season) return "";
@@ -694,7 +717,7 @@ function resultsBox() {
   const block = (title, d) => !d ? "" : `<div class="cap">${title}</div><div class="group tiers"><div><span></span><span>Hándicap</span><span>Total</span><span>Los dos</span></div>` +
     tiers.map(([k, name]) => `<div><span>${name}</span><span>${cell((d[k] || {}).spread)}</span><span>${cell((d[k] || {}).total)}</span><span>${cell((d[k] || {}).both)}</span></div>`).join("") + "</div>";
   return `<div class="stack"><div class="h-sec">Resultados del modelo</div>${block("En vivo, sellado antes del partido", r.live)}${block("Toda la temporada, aplicado hacia atrás", r.season)}
-    <p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p></div>`;
+    ${trendBox()}<p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p></div>`;
 }
 // Lo que ha cambiado en el modelo, en palabras sencillas y de lo más nuevo a lo más viejo.
 function changesBox() {
