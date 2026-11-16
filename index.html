@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mesa">
+<meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0f18" media="(prefers-color-scheme: dark)">
 <title>Mesa de anotación</title>
 <style>
 /* Cuatro pestañas en vez de una página larga. Cada apuesta es una boleta: una franja dice cómo va, la apuesta
@@ -245,6 +253,7 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
       <p><b>Kalshi.</b> El precio del contrato ahora mismo. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
       <p class="own"><b>Llave completa.</b> La llave con que el panel lee tu cuenta de Kalshi también podría operar. El panel solo lee.</p>
       <p><b>Señales.</b> Lo que el modelo previo ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. El precio de ahora ya trae el movimiento de la línea.</p>
+      <p><b>Como app en el teléfono.</b> En el menú del navegador elige "Agregar a pantalla de inicio". En iPhone es el botón de compartir de Safari. Se abre a pantalla completa y con su ícono.</p>
       <p><b>La gráfica de "Ver detalle".</b> Sus tres líneas miden la probabilidad de que la apuesta gane, y arriba es mejor. La punteada es lo que costó cada contrato y no se mueve. Si la de Kalshi está arriba de la punteada, la apuesta va ganando sobre el papel. Si la del modelo está arriba de la de Kalshi, el modelo es más optimista que el mercado. Ningún cruce dice quién tiene la razón.</p>
       <p><b>Historial de predicciones.</b> En la pestaña Partidos. De cada partido terminado dice qué lado eligió el modelo en el hándicap y en el total, si atinó y si era señal fuerte. Cubre los últimos 14 días.</p>
       <p><b>El porqué.</b> Son las cosas que el modelo previo sabe del partido, dichas en palabras y de la que más pesa a la que menos. No dice lo que va a pasar: dice de dónde sale su ventaja contra la línea de apertura.</p>
@@ -379,9 +388,19 @@ function scoreRow(ref, g) {
   return `<div class="score">${logo(away, 40)}<span>${esc(away.abbr)}</span>${playing ? `<b>${away.score}</b><em>·</em><b>${home.score}</b>` : "<em>en</em>"}<span>${esc(home.abbr)}</span>${logo(home, 40)}</div>`;
 }
 
+// Si el partido ya terminó, qué pasó con la apuesta, aunque Kalshi todavía no la liquide.
+function outcome(p, g) {
+  if (!g || g.status !== "STATUS_FINAL") return null;
+  const yes = p.side === "yes", n = Math.floor(p.strike || 0);
+  if (p.kind === "total") { const t = g.home.score + g.away.score; return yes ? t > p.strike : t < p.strike; }
+  if (p.kind !== "spread" && p.kind !== "winner") return null;
+  const m = (p.subject === g.home.abbr ? 1 : -1) * (g.home.score - g.away.score);
+  return m >= (p.kind === "winner" ? 1 : yes ? n + 1 : -n);
+}
 // Cómo va una apuesta, en una palabra y un color.
 function status(p, g) {
-  if (p.final != null) return p.final ? {tone: "good", text: "Ganó. Falta que Kalshi la pague"} : {tone: "bad", text: "Perdió. Falta que Kalshi la cierre"};
+  const final = p.final != null ? p.final : outcome(p, g);
+  if (final != null) return final ? {tone: "good", text: "Ganó. Falta que Kalshi la pague"} : {tone: "bad", text: "Perdió. Falta que Kalshi la cierre"};
   if (p.kind === "total" && g && g.state !== "pre" && g.home.score + g.away.score > p.strike) return p.side === "yes" ? {tone: "good", text: "Ya ganó"} : {tone: "bad", text: "Ya no puede ganar"};
   if (!g || g.state === "pre") return {tone: "info", text: "Por empezar"};
   if (p.p == null) return {tone: "info", text: "En juego"};
@@ -496,7 +515,7 @@ function injuryBlock(g) {
 function ticket(p) {
   const g = gameOf(p.game.id), st = status(p, g), s = story(p, g), yes = p.side === "yes", main = p.p != null ? p.p : p.mid;
   const source = {modelo: "según el modelo, antes del partido", "línea": "según la línea de la casa, antes del partido", marcador: "según el marcador y el reloj", final: "el partido ya terminó"};
-  const chance = main == null ? "" : `<div class="chance"><span class="big ${st.tone}">${big(main)}<i>%</i></span><span class="txt"><b>de probabilidad de ganar</b>, ${p.p != null ? source[p.p_source] || "según el modelo" : "según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la tiene en " + prob(p.mid) + "." : ""}</span></div>`;
+  const chance = main == null ? "" : `<div class="chance"><span class="big ${st.tone}">${big(main)}<i>%</i></span><span class="txt"><b>de probabilidad de ganar</b>, ${p.p != null ? source[p.p_source] || "según el modelo" : "según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la tiene en " + prob(p.mid) + "." : ""}${PUBLIC && g && g.state === "in" ? " La probabilidad es la de la última foto." : ""}</span></div>`;
   const fact = (k, v) => `<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
   const more = `<details data-keep="pos-${p.id}"${keep("pos-" + p.id)}><summary>Ver detalle</summary><div class="more-body">${betWhy(p)}${injuryBlock(g)}<div class="facts">` +
     fact(you("En Kalshi compraste", "En Kalshi compró"), `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("Cuánto", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
@@ -515,6 +534,27 @@ function historyRow(p) {
     <span class="q">${qty(p.contracts)} a ${cents(p.price)}</span><span class="o">${out}${edge == null ? "" : " · cierre " + (edge >= 0 ? "+" : "−") + cents(Math.abs(edge))}</span></span>
     <span class="x"><button class="quiet" data-act="reopen" data-id="${p.id}">Reabrir</button></span></div>`;
 }
+// Resumen de la última jornada terminada: cómo le fue al modelo y a las apuestas, listo para compartir.
+function recap() {
+  const d = (S.history || []).length ? S.history[0].day : null;
+  if (!d) return "";
+  const calls = S.history.filter(r => r.day === d).flatMap(r => r.calls).filter(c => c.result !== "empate"), strong = calls.filter(c => c.strength);
+  const hit = l => l.filter(c => c.result === "ganó").length + " de " + l.length;
+  const bets = S.positions.filter(p => p.exit && p.game.tipoff && etDay(p.game.tipoff) === d), won = bets.filter(p => p.profit > 0).length, net = bets.reduce((s, p) => s + p.profit, 0);
+  const when = day(d + "T12:00:00", {weekday: "long", day: "numeric", month: "short"});
+  const text = `${PUBLIC ? "Mesa de " + owner() : "Mi mesa"}, ${when}: ` + (bets.length ? `${won} de ${bets.length} apuestas, ${money(net, true)}. ` : "") +
+    `El modelo atinó ${hit(calls)}` + (strong.length ? ` y ${hit(strong)} en señales fuertes.` : ".");
+  const fig = (k, v, c) => `<div><small>${k}</small><b class="${c || ""}">${v}</b></div>`;
+  return `<div class="card pad stack"><div class="head"><h2>Resumen del ${esc(when)}</h2><span class="grow"></span><button data-share="${esc(text)}">Compartir</button></div>
+    <div class="figures">${bets.length ? fig(you("Tus apuestas", "Sus apuestas"), won + " de " + bets.length) + fig("Resultado", money(net, true), cls(net)) : ""}${fig("El modelo atinó", hit(calls))}${strong.length ? fig("Señales fuertes", hit(strong)) : ""}</div></div>`;
+}
+async function share(button) {
+  const text = button.dataset.share, url = PUBLIC ? location.href.split("?")[0] : "";
+  try {
+    if (navigator.share) await navigator.share(url ? {text, url} : {text});
+    else { await navigator.clipboard.writeText(text + (url ? " " + url : "")); button.textContent = "Copiado"; }
+  } catch (e) { /* cerró la hoja de compartir: no pasa nada */ }
+}
 function renderBets() {
   const open = S.positions.filter(p => !p.exit), today = new Date().toDateString();
   const done = S.positions.filter(p => p.exit && new Date(p.exit.when).toDateString() === today).sort((a, b) => new Date(b.exit.when) - new Date(a.exit.when));
@@ -525,8 +565,8 @@ function renderBets() {
   put("open", open.length ? open.map(ticket).join("") : `<div class="empty"><span>${PUBLIC ? "No hay apuestas abiertas ahora." : connected() ? "No tienes apuestas abiertas. Lo que compres en Kalshi aparece aquí solo." :
     "No tienes apuestas abiertas. Cuando compres algo en Kalshi, anótalo aquí y el panel lo sigue en vivo."}</span><button data-go="signals">Ver las señales</button></div>`);
   const won = done.filter(p => p.profit > 0).length, total = done.reduce((sum, p) => sum + p.profit, 0);
-  put("today", done.length ? `<div class="head"><h2>Terminadas hoy</h2><span class="sub">${plural(done.length, "apuesta", "apuestas")} · ${plural(won, "ganada", "ganadas")} · <span class="${cls(total)}">${money(total, true)}</span></span></div>
-    <div class="card">${done.map(historyRow).join("")}</div>` : "");
+  put("today", recap() + (done.length ? `<div class="head"><h2>Terminadas hoy</h2><span class="sub">${plural(done.length, "apuesta", "apuestas")} · ${plural(won, "ganada", "ganadas")} · <span class="${cls(total)}">${money(total, true)}</span></span></div>
+    <div class="card">${done.map(historyRow).join("")}</div>` : ""));
 }
 
 // Lo que cree el modelo, dicho en palabras.
@@ -691,12 +731,42 @@ function render() {
     (errors.length ? `<div class="warn">Una fuente no responde y se muestra lo último que se vio: ${errors.map(esc).join(", ")}.</div>` : "") +
     late.map(text => `<div class="warn">${text}</div>`).join(""));
 }
+// En la copia pública el marcador se lee directo de ESPN mientras hay partido, entre una foto y la siguiente.
+const LIVE = {at: 0, games: {}};
+const etDay = t => new Date(t).toLocaleDateString("en-CA", {timeZone: "America/New_York"});
+function applyLive() {
+  if (!PUBLIC || !S || LIVE.at <= Date.parse(S.now)) return;
+  for (const g of S.games) {
+    const l = LIVE.games[g.id];
+    if (!l) continue;
+    Object.assign(g, {state: l.state, status: l.status, detail: l.detail, period: l.period, clock: l.clock});
+    g.home.score = l.home; g.away.score = l.away;
+  }
+  S.live = S.games.some(g => g.state === "in");
+}
+async function liveScores() {
+  if (!PUBLIC || !S) return;
+  const near = g => { const wait = Date.parse(g.tipoff) - Date.now(); return g.state !== "post" && wait < 600000 && wait > -12 * 3600000; };
+  const days = [...new Set(S.games.filter(near).map(g => etDay(g.tipoff)))];
+  if (!days.length) return;
+  try {
+    for (const d of days) {
+      const r = await fetch("https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=" + d.replaceAll("-", ""), {cache: "no-store"});
+      if (!r.ok) throw new Error(r.status);
+      for (const e of (await r.json()).events || []) {
+        const c = e.competitions[0], score = k => Math.round(+(c.competitors.find(x => x.homeAway === k) || {}).score || 0), st = e.status;
+        LIVE.games[e.id] = {state: st.type.state, status: st.type.name, detail: st.type.shortDetail || "", period: +st.period || 0, clock: +st.clock || 0, home: score("home"), away: score("away")};
+      }
+    }
+    LIVE.at = Date.now(); applyLive(); render();
+  } catch (e) { /* si ESPN no responde se sigue con la foto */ }
+}
 function tick() {
   if (!lastOk) return;
   if (PUBLIC) {
     const mins = ageMin(), old = stale();
     $("pulse").className = "pulse " + (old ? "off" : S.live ? "on" : "");
-    $("pulse-text").textContent = old ? "Sin publicar desde " + stamp(S.now) : (S.live ? "En vivo" : "Sin partidos en juego") + " · datos de hace " + (mins < 1 ? "menos de 1 min" : mins + " min");
+    $("pulse-text").textContent = old ? "Sin publicar desde " + stamp(S.now) : (S.live ? (Date.now() - LIVE.at < 40000 ? "Marcador en vivo" : "En vivo") : "Sin partidos en juego") + (S.live && Date.now() - LIVE.at < 40000 ? " · lo demás de hace " : " · datos de hace ") + (mins < 1 ? "menos de 1 min" : mins + " min");
     return;
   }
   const age = Math.round((Date.now() - lastOk) / 1000);
@@ -708,7 +778,7 @@ async function load() {
     const r = await fetch(PUBLIC ? "estado.json?t=" + Date.now() : "/api/estado", {cache: "no-store"});
     if (!r.ok) throw new Error(r.status);
     const data = await r.json();
-    if (data.ready) { S = data; lastOk = Date.now(); render(); } else setTimeout(load, 1000);
+    if (data.ready) { S = data; lastOk = Date.now(); applyLive(); render(); if (PUBLIC && !LIVE.at) liveScores(); } else setTimeout(load, 1000);
   } catch (e) { /* el aviso lo pone tick() cuando pasa el tiempo */ }
 }
 async function post(path, body) {
@@ -825,6 +895,8 @@ function ask(title, text, actions) {
 document.addEventListener("click", e => {
   const close = e.target.closest("[data-close]");
   if (close) { close.closest("dialog").close(); return; }
+  const sh = e.target.closest("[data-share]");
+  if (sh) { share(sh); return; }
   const go = e.target.closest("[data-go]");
   if (go) { showTab(go.dataset.go); window.scrollTo(0, 0); return; }
   const b = e.target.closest("[data-act]");
@@ -843,6 +915,7 @@ document.addEventListener("click", e => {
   else if (d.act === "reopen") ask("Reabrir la apuesta", p.label + ". Vuelve a quedar abierta y el panel la liquida de nuevo con el marcador.", [{label: "Reabrir", path: "/api/reabrir", body: {id: p.id}, primary: true}]);
 });
 load(); setInterval(load, PUBLIC ? 60000 : 5000); setInterval(tick, 1000);
+if (PUBLIC) setInterval(liveScores, 15000);
 </script>
 </body>
 </html>
