@@ -211,8 +211,9 @@ details.cap-sum > summary { font: 600 13px/1.25 var(--font); color: var(--ink2);
 .teams img { width: 28px; height: 28px; object-fit: contain; }
 .sig h3 { font: 700 28px/1.1 var(--font); letter-spacing: -.5px; margin-top: 8px; }
 .belief { color: var(--sec); margin-top: 4px; } .belief b { color: var(--ink); font-weight: 600; }
-.sig > .group, .sig > .warn { margin-top: 12px; }
-.sig > .verdict { color: var(--sec); font-size: 13px; margin: 12px 2px 0; }
+.sig-l, .sig-r { display: contents; }  /* en teléfono la tarjeta es una sola columna: los dos lados solo se separan en PC */
+.sig-r > .group, .sig-r > .warn { margin-top: 12px; }
+.sig-r > .verdict { color: var(--sec); font-size: 13px; margin: 12px 2px 0; }
 .deal-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 16px; }
 .deal-top small { display: block; color: var(--ink2); font-size: 13px; margin-bottom: 2px; } .deal-top b { font-weight: 600; }
 .side { letter-spacing: .04em; }
@@ -232,7 +233,7 @@ details.cap-sum > summary { font: 600 13px/1.25 var(--font); color: var(--ink2);
 .said u { text-decoration: none; margin-left: auto; color: var(--orange); font-weight: 600; font-size: 12px; }
 .m-act { display: flex; justify-content: flex-end; margin: 0 -6px -6px 0; }
 
-/* Caja */
+/* Cuenta */
 .hero .k { font: 600 13px/1.25 var(--font); color: var(--ink2); letter-spacing: .02em; text-transform: uppercase; margin: 4px 0 6px; }
 .big { font: 800 56px/1 var(--font); letter-spacing: -2px; }
 .hero .lede { margin-top: 8px; }
@@ -258,6 +259,7 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
 body.public .m-act { display: none; }
 
 @media (min-width: 600px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 600px) { #perf .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 560px) {
   .topbar #account { display: none; } .two { grid-template-columns: minmax(0, 1fr); }
   .spark-box { grid-template-columns: minmax(0, 1fr) 98px; } .spark-box .scale { display: none; }
@@ -280,6 +282,28 @@ body.public .m-act { display: none; }
 .intro { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 14px; padding: 12px 16px; border-radius: 14px; background: var(--card); color: var(--sec); font-size: 14px; }
 .intro b { color: var(--ink); font-weight: 600; } .intro button { height: 44px; min-height: 44px; padding: 0 18px; }
 .sumline { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 8px; padding: 2px 4px 2px 16px; border-radius: 14px; background: var(--card); }
+/* Solo en la copia pública: "Desde tu última visita" y el juego de pronóstico sin dinero */
+#since { margin-top: 14px; } #since:empty { display: none; }
+.since { display: flex; align-items: center; justify-content: space-between; gap: 4px 12px; padding: 6px 6px 6px 16px; border-radius: 14px; background: var(--card); color: var(--sec); font-size: 14px; }
+.since > div { flex: 1; min-width: 0; padding: 4px 0; } .since b { color: var(--ink); font-weight: 600; } .since small { display: block; color: var(--ink2); font-size: 13px; }
+.since button { flex: none; }
+.pick { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; } .pick small { color: var(--ink2); font-size: 13px; }
+.held .pick { margin: 0; padding: 0 16px 12px; }
+.pick .opts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.pick button { padding: 8px 10px; background: var(--card2); overflow-wrap: anywhere; } .pick button[aria-pressed="true"] { background: var(--blue); }
+.seal { white-space: nowrap; }
+.head, .saids { display: contents; }  /* agrupan el encabezado de cada pestaña y los datos de un partido: en teléfono no cambian nada */
+.dock { display: contents; } .dock-top, .dock-hoy, .dock-foot, .pane { display: none; }  /* el menú y el panel de detalle son de PC */
+#signals-aside:empty, #signals-note:empty, #bank-more:empty, #curve:empty, #perf:empty { display: none; }
+/* Cómo le ha ido: tres cifras y las tablas por corte. Con pocas apuestas todo va atenuado y con su número de casos */
+.perf-grid { display: flex; flex-direction: column; gap: 12px; } .perf-grid > div { display: flex; flex-direction: column; gap: 8px; min-width: 0; } .perf-grid .cap { margin-top: 6px; }
+@media (max-width: 599px) { #perf .stats > div:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+.tiers.perf > div { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, .8fr) minmax(0, 1.1fr); gap: 6px; padding: 10px 14px; }
+.tiers.perf b { font-size: 15px; } .tiers.perf > div:not(:first-child) > span:nth-child(3) { color: var(--ink2); }
+.concl { padding: 11px 16px; font-size: 15px; line-height: 1.4; } .concl b { font-weight: 600; }
+.inj { margin: 14px 0 0; border-top: .5px solid var(--soft); } .inj > summary { color: var(--sec); padding: 0 2px; } .inj > .group { margin-top: 4px; }
+.mv { font-size: 13px; margin-top: 2px; }
+.game:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 .sumline p { flex: 1 1 220px; padding: 8px 0; color: var(--ink2); font-size: 13px; } .sumline b { color: var(--ink); font-weight: 600; }
 .share-row { display: flex; justify-content: flex-end; margin: 4px 0 0; }
 .share-row.day { justify-content: flex-start; margin: 0 4px; }
@@ -292,44 +316,189 @@ body.public .m-act { display: none; }
 .shsheet .acts { display: flex; gap: 10px; margin-top: 12px; }
 .shsheet .acts > * { flex: 1; min-height: 50px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 14px; background: var(--card2); color: var(--ink); font: 600 16px/1 var(--font); text-decoration: none; cursor: pointer; }
 .shsheet .acts > [data-sh="send"], .shsheet .acts > [data-sh="copy"] { background: var(--blue); }
+
+/* PC, desde 1100 px: menú a la izquierda, el contenido centrado y el detalle en un panel a la derecha, como Bolsa o Casa en el Mac.
+   Usa las mismas variables y tarjetas de arriba. En teléfono nada de esto aplica. */
+@media (min-width: 1100px) {
+  body { padding-left: 240px; }
+  body.has-pane { padding-right: 420px; }
+  .wrap { max-width: 1312px; padding: 26px 36px 48px; }  /* 1240 px de contenido y 36 de margen a cada lado */
+  body.has-pane .wrap { padding-left: 24px; padding-right: 24px; }
+  .topbar { display: none; }
+
+  /* El menú de la izquierda: la marca, el pulso, las cuatro secciones, "Hoy" y al pie la nota y cómo leer el panel */
+  .dock { display: flex; position: fixed; top: 0; bottom: 0; left: 0; z-index: 10; width: 240px; flex-direction: column; gap: 6px; padding: 20px 12px 16px; background: var(--base); border-right: .5px solid var(--line); overflow-y: auto; }
+  .dock-top { display: flex; flex-direction: column; }
+  .dock-top h1 { font: 700 22px/1.2 var(--font); letter-spacing: -.3px; padding: 0 8px; }
+  .dock-top .pulse { align-items: flex-start; padding: 4px 8px 10px; } .dock-top .pulse i { margin-top: 5px; }
+  #account3 { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 0 8px 8px; } #account3:empty { display: none; }
+  .tabs { position: static; display: flex; flex-direction: column; gap: 2px; padding: 0; background: none; border-top: 0; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .tabs button { flex-direction: row; justify-content: flex-start; gap: 10px; min-height: 36px; padding: 6px 10px; border-radius: 8px; color: var(--ink); font: 500 15px/1.2 var(--font); text-align: left; }
+  .tabs button::before { width: 22px; height: 22px; background: var(--blue); }
+  .tabs button:hover { background: rgb(255 255 255 / .06); }
+  .tabs button[aria-selected="true"], .tabs button[aria-selected="true"]:hover { background: var(--card2); }
+  .tabs i { position: static; min-width: 0; height: auto; margin-left: auto; padding: 0; background: none; color: var(--ink2); font: 500 13px/1 var(--font); }
+  .dock-hoy { display: block; }
+  .side-cap { font: 600 12px/1.2 var(--font); color: var(--ink2); letter-spacing: .02em; text-transform: uppercase; padding: 14px 8px 4px; }
+  .side-figs .row { min-height: 34px; padding: 7px 10px; font-size: 14px; } .side-figs .row b { font-weight: 600; }
+  .dock-foot { display: block; margin-top: auto; padding: 10px 8px 0; }
+  .dock footer { margin-top: 0; max-width: none; font-size: 12px; line-height: 1.4; }
+  .dock footer details > summary { min-height: 32px; padding: 0; font-size: 13px; }
+  .dock footer .more-body { padding: 4px 0 8px; }
+
+  /* El encabezado de cada sección: el título, su resumen y las acciones a la derecha */
+  .head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 6px 18px; margin: 0 0 2px; }
+  .head .title-row { display: contents; }
+  .head .title { order: 1; } .head .lede { order: 2; margin: 0; padding-bottom: 5px; } .head .grow { order: 3; }
+  .head .share-row.day { order: 4; margin: 0; } .head [data-act="buy"] { order: 5; }
+  .head .link { min-height: 36px; }
+
+  /* 1. Apuestas: tres por fila desde 1400 px y dos entre 1100 y 1400. El resumen del día es una casilla más */
+  #tab-bets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-content: start; }
+  #open, #today { display: contents; }
+  #tab-bets > .head, #open > .empty, #today > .cap-row, #today > .group { grid-column: 1 / -1; }
+  #today > .cap-row { margin: 0 4px; }
+  #tab-bets .game { display: flex; flex-direction: column; padding-bottom: 0; }
+  #tab-bets .cash { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 14px 2px 0; }
+  #tab-bets .cash span { display: flex; flex-direction: column; gap: 1px; } #tab-bets .cash b { font: 600 17px/1.25 var(--font); letter-spacing: -.2px; }
+  #tab-bets .cash span:last-child { text-align: right; }
+  #tab-bets .stl { margin-bottom: 12px; }
+  .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 46px; margin-top: auto; border-top: .5px solid var(--soft); }
+  .card-foot .open { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0; border-radius: 0; background: transparent; color: var(--sec); font: 500 15px/1.3 var(--font); }
+  .card-foot .open:hover { background: transparent; color: var(--ink); }
+  .card-foot .open::after { content: ""; width: 7px; height: 7px; border: solid var(--ink2); border-width: 0 2px 2px 0; transform: rotate(-45deg); }
+  .card-foot .link { min-height: 36px; padding: 6px 2px; }
+  .game.sel { box-shadow: 0 0 0 2px var(--blue); }
+  #tab-bets .recap { background: var(--card); border-radius: 22px; padding: 16px; gap: 12px; }
+  #tab-bets .recap .cap-row { margin: 0 2px; } #tab-bets .recap .cap-row .link { min-height: 32px; padding: 4px 2px; }
+  #tab-bets .recap .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; flex: 1; }
+  #tab-bets .recap .stats > div { background: var(--card2); display: flex; flex-direction: column; justify-content: space-between; }
+  #tab-bets .recap .stats b { font-size: 30px; }
+
+  /* 2. Señales: las del día a la izquierda y los resultados del modelo a la derecha. Los cuatro datos de líneas van al frente de la tarjeta */
+  #tab-signals { display: grid; grid-template-columns: minmax(0, 1fr) clamp(300px, 30vw, 380px); grid-template-rows: auto auto 1fr; gap: 16px 24px; align-items: start; }
+  #tab-signals > .head { grid-column: 1 / -1; grid-row: 1; }
+  #signals { grid-column: 1; grid-row: 2; container-type: inline-size; } #signals-note { grid-column: 1; grid-row: 3; }
+  #signals-aside { grid-column: 2; grid-row: 2 / span 2; padding-top: 2px; }
+  .sumline .link { display: none; }  /* los resultados ya están a la vista al lado */
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin-top: auto; padding-top: 14px; }
+  .facts > div { background: rgb(0 0 0 / .3); padding: 9px 12px; }
+  .facts > div:nth-child(1) { border-radius: 14px 0 0 0; } .facts > div:nth-child(2) { border-radius: 0 14px 0 0; } .facts > div:nth-child(3) { border-radius: 0 0 0 14px; } .facts > div:nth-child(4) { border-radius: 0 0 14px 0; }
+  .facts small { display: block; color: var(--sec); font-size: 12px; } .facts b { display: block; font: 600 15px/1.3 var(--font); margin-top: 1px; }
+  .sig .card-foot { margin-top: 14px; }
+  @container (min-width: 640px) {  /* con sitio, la tarjeta se parte en dos: la señal y los datos a la izquierda, el contrato en Kalshi a la derecha */
+    .sig { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 0 20px; padding: 18px 18px 0; }
+    .sig-l { display: flex; flex-direction: column; min-width: 0; } .sig-r { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .sig-r > .group, .sig-r > .warn { margin-top: 0; } .sig-r > .verdict { margin: 0 2px; }
+    .sig .group.deal { background: rgb(0 0 0 / .3); } .sig .group.deal > * + * { border-top-color: var(--soft); }
+    .sig .card-foot { grid-column: 1 / -1; }
+    .sig h3 { font-size: 30px; }
+  }
+
+  /* 3. Partidos: los de hoy a la izquierda y el historial de predicciones a la derecha */
+  #tab-games { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px 28px; align-items: start; }
+  #tab-games > .head { grid-column: 1 / -1; grid-row: 1; }
+  #games { grid-column: 1; grid-row: 2; container-type: inline-size; } #picks { grid-column: 2; grid-row: 2; } #picks:empty { display: none; }
+  #picks .sec-head { margin-top: 0; padding: 0 4px 4px; } #picks .match .team b { font-size: 24px; }
+  @container (min-width: 600px) {  /* con sitio, cada partido es una fila: el marcador a la izquierda y sus datos a la derecha */
+    .match { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 18px; align-items: center; }
+    .saids { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .match .said { margin-top: 0; flex-wrap: nowrap; align-items: baseline; } .match .said .k { flex: none; width: 112px; } .match .said b { min-width: 0; }
+  }
+  .match .said .link { margin-left: auto; min-height: 0; padding: 0 0 0 10px; font-size: 13px; white-space: nowrap; }
+
+  /* 4. Cuenta: el saldo arriba con sus datos, la gráfica a todo lo ancho y abajo el historial junto a "Más números" */
+  #tab-bank { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); grid-template-rows: auto auto auto auto auto 1fr; gap: 16px 24px; align-items: start; }
+  #tab-bank > .head { grid-column: 1 / -1; grid-row: 1; }
+  #bank { grid-column: 1 / -1; grid-row: 2; display: grid; grid-template-columns: minmax(0, 330px) minmax(0, 1fr); gap: 16px; align-items: stretch; }
+  #bank > .hero { background: var(--card); border-radius: 22px; padding: 18px 20px; }
+  #bank > .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  #bank > .stats > div { border-radius: 22px; padding: 18px; display: flex; flex-direction: column; }
+  #bank > .stats b { font-size: 28px; margin-top: 6px; } #bank > .stats > div > span { margin-top: auto; padding-top: 8px; }
+  #bank > .sub, #bank > .empty { grid-column: 1 / -1; }
+  #curve { grid-column: 1 / -1; grid-row: 3; }
+  #perf { grid-column: 1 / -1; grid-row: 4; } #perf .perf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; align-items: start; }
+  .hist-cap { grid-column: 1; grid-row: 5; margin: 0 4px; } #history { grid-column: 1; grid-row: 6; } #bank-more { grid-column: 2; grid-row: 5 / span 2; }
+  .chart-card { background: var(--card); border-radius: 22px; padding: 16px 20px 14px; }
+  .chart-card .cap-row { margin: 0 0 10px; }
+  .curve-wrap { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; }
+  .curve-wrap .scale { display: flex; flex-direction: column; justify-content: space-between; padding: 4px 0 30px; font: 500 12px/1.2 var(--font); color: var(--ink2); text-align: right; }
+  .curve.wide { height: 200px; }
+  .ticks { position: relative; height: 18px; margin-top: 6px; } .ticks span { position: absolute; transform: translateX(-50%); font: 500 12px/18px var(--font); color: var(--ink2); white-space: nowrap; }
+  #history .row { min-height: 0; padding: 10px 16px; }
+
+  /* 5. El detalle en un panel a la derecha: la lista se queda quieta y el detalle se ve al lado */
+  .pane { display: flex; flex-direction: column; position: fixed; top: 0; right: 0; bottom: 0; z-index: 8; width: 420px; background: var(--base); border-left: .5px solid var(--line); }
+  .pane-head { display: flex; align-items: flex-start; gap: 12px; padding: 18px 16px 12px 20px; border-bottom: .5px solid var(--line); }
+  .pane-head > div { flex: 1; min-width: 0; } .pane-head h2 { font: 700 20px/1.25 var(--font); letter-spacing: -.3px; text-wrap: balance; } .pane-head .sub { margin-top: 2px; }
+  .pane-x { flex: none; width: 36px; min-height: 36px; padding: 0; border-radius: 50%; font-size: 15px; line-height: 1; color: var(--ink2); }
+  .pane-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 24px; }
+  .pane .sheet > .cap:first-child { margin-top: 12px; }
+  .pane .card-actions { position: sticky; bottom: 0; padding: 8px 0 4px; background: var(--base); }
+  body.has-pane #tab-bets { grid-template-columns: minmax(0, 1fr); }
+  body.has-pane #tab-signals { grid-template-columns: minmax(0, 1fr); }
+  body.has-pane #signals-note { grid-row: 3; } body.has-pane #signals-aside { grid-column: 1; grid-row: 4; }
+}
+@media (min-width: 1400px) {
+  #perf .perf-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #tab-bets { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body.has-pane #tab-bets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 </style>
 </head>
 <body>
-<div class="wrap">
+<aside class="dock" id="dock">
+  <div class="dock-top"><h1>Rodrindex</h1><span class="pulse" id="pulse2"><i></i><span id="pulse-text2">Cargando</span></span><span id="account3"></span></div>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" aria-selected="true" data-tab="bets">Mis apuestas<i id="n-bets"></i></button>
+    <button role="tab" aria-selected="false" data-tab="signals">Señales<i id="n-signals"></i></button>
+    <button role="tab" aria-selected="false" data-tab="games">Partidos<i id="n-games"></i></button>
+    <button role="tab" aria-selected="false" data-tab="bank">Mi cuenta</button>
+  </nav>
+  <div class="dock-hoy"><div class="side-cap">Hoy</div><div class="group side-figs"><div class="row"><span id="side-k">Bank</span><b id="side-bank">…</b></div><div class="row"><span>Hoy</span><b id="side-day">…</b></div><div class="row"><span>En juego</span><b id="side-risk">…</b></div></div></div>
+  <div class="dock-foot" id="dock-foot"></div>
+</aside>
+<div class="wrap" id="wrap">
   <header class="topbar">
     <div class="r1"><h1>Rodrindex</h1><p class="figs"><span id="pill-k">Bank</span><b id="pill-bank">…</b> · Hoy<b id="pill-day">…</b></p></div>
     <div class="r2"><span class="pulse" id="pulse"><i></i><span id="pulse-text">Cargando</span></span><span id="account"></span></div>
   </header>
   <div class="intro" id="intro" role="note" hidden><p><b id="intro-name"></b> apuesta en Kalshi, un mercado donde se compra SÍ o NO de un resultado, siguiendo un modelo estadístico.</p>
     <p>Aquí solo ves cómo le va. No es una recomendación.</p><button class="primary" id="intro-ok" type="button">Entendido</button></div>
+  <div id="since"></div>
   <div id="alerts"></div>
   <section id="tab-bets" class="stack" role="tabpanel">
-    <div class="title-row"><h2 class="title"><span class="own">Mis apuestas</span><span class="pub">Apuestas</span></h2><span class="grow"></span><button class="link" data-act="buy">Anotar una compra</button></div>
+    <div class="head"><div class="title-row"><h2 class="title"><span class="own">Mis apuestas</span><span class="pub">Apuestas</span></h2><span class="grow"></span><button class="link" data-act="buy">Anotar una compra</button></div>
     <p class="lede" id="open-sub"></p>
-    <div class="share-row day"><button class="link" data-img="day">Compartir el día</button></div>
+    <div class="share-row day"><button class="link" data-img="day">Compartir el día</button></div></div>
     <div id="open" class="stack"><div class="empty">Cargando apuestas.</div></div>
     <div id="today" class="stack"></div>
   </section>
   <section id="tab-signals" class="stack" role="tabpanel" hidden>
-    <div class="title-row"><h2 class="title">Señales</h2></div>
+    <div class="head"><div class="title-row"><h2 class="title">Señales</h2></div>
     <p class="lede" id="record"></p>
-    <div class="share-row day"><button class="link" data-img="day">Compartir el día</button></div>
+    <div class="share-row day"><button class="link" data-img="day">Compartir el día</button></div></div>
     <div id="signals" class="stack"><div class="empty">Cargando señales.</div></div>
+    <div id="signals-aside" class="stack"></div>
+    <div id="signals-note" class="stack"></div>
   </section>
   <section id="tab-games" class="stack" role="tabpanel" hidden>
-    <div class="title-row"><h2 class="title">Partidos</h2></div>
-    <p class="lede" id="games-sub"></p>
+    <div class="head"><div class="title-row"><h2 class="title">Partidos</h2></div>
+    <p class="lede" id="games-sub"></p></div>
     <div id="games" class="stack"><div class="empty">Cargando partidos.</div></div>
     <div id="picks" class="stack"></div>
   </section>
   <section id="tab-bank" class="stack" role="tabpanel" hidden>
-    <div class="title-row"><h2 class="title"><span class="own">Mi caja</span><span class="pub">Caja</span></h2></div>
+    <div class="head"><div class="title-row"><h2 class="title"><span class="own">Mi cuenta</span><span class="pub">Cuenta</span></h2></div></div>
     <div id="account2"></div>
-    <div id="bank" class="stack"><div class="empty">Cargando la caja.</div></div>
-    <div class="cap-row"><h3 class="cap">Historial</h3><span class="capr" id="history-sub"></span></div>
+    <div id="bank" class="stack"><div class="empty">Cargando la cuenta.</div></div>
+    <div id="perf" class="stack"></div>
+    <div id="bank-more" class="stack"></div>
+    <div class="cap-row hist-cap"><h3 class="cap">Historial</h3><span class="capr" id="history-sub"></span></div>
+    <div id="curve" class="stack"></div>
     <div id="history" class="stack"></div>
   </section>
-  <footer>
+  <footer id="foot-box">
     <span id="foot">Este panel solo lleva la cuenta. No opera y no es una recomendación de entrar ni de cuánto.</span>
     <details><summary>Cómo leer el panel</summary><div class="more-body">
       <p><b>El punto de color.</b> Dice cómo va la apuesta según la probabilidad de ganar: "Va bien" de 60% para arriba, "Va mal" por debajo de 40% y "Está parejo" en medio.</p>
@@ -342,17 +511,17 @@ body.public .m-act { display: none; }
       <p><b>Como app en el teléfono.</b> En el menú del navegador elige "Agregar a pantalla de inicio". En iPhone es el botón de compartir de Safari. Se abre a pantalla completa y con su ícono.</p>
       <p><b>La gráfica de "Ver detalle".</b> Sus tres líneas miden la probabilidad de que la apuesta gane, y arriba es mejor. La punteada es lo que costó cada contrato y no se mueve. Si la de Kalshi está arriba de la punteada, la apuesta va ganando sobre el papel. Si la del modelo está arriba de la de Kalshi, el modelo es más optimista que el mercado. Ningún cruce dice quién tiene la razón.</p>
       <p><b>Historial de predicciones.</b> En la pestaña Partidos. De cada partido terminado dice qué lado eligió el modelo en el hándicap y en el total, si atinó y si era señal fuerte. Cubre los últimos 14 días.</p>
+      <p><b>Margen de error y meta.</b> El ± de una tasa es su margen de error con 95% de confianza: con pocos casos es ancho. La meta de equilibrio es el acierto que deja en cero comprar el lado del modelo en Kalshi, con su comisión. Son medidas del modelo y no una indicación de apostar.</p>
+      <p><b>Cuenta.</b> Junta el saldo y cómo han ido las apuestas cerradas: en general, por tipo, por equipo, favorito o no, local o visitante y "más" contra "menos". Una apuesta vendida antes de tiempo cuenta en la ganancia y no en el porcentaje. Con pocas apuestas solo describe lo que pasó y no dice qué funciona.</p>
       <p><b>El porqué.</b> Son las cosas que el modelo prepartido sabe del partido, dichas en palabras y de la que más pesa a la que menos. No dice lo que va a pasar: dice de dónde sale su ventaja contra la línea de apertura.</p>
       <p><b>Lesionados.</b> El último reporte oficial de la NBA que guardó la PC, que lo baja cada hora. "Le falta" es la parte de la producción habitual del equipo que el modelo da por ausente con ese reporte.</p>
     </div></details>
   </footer>
 </div>
-<nav class="tabs" role="tablist" id="tabs">
-  <button role="tab" aria-selected="true" data-tab="bets">Mis apuestas<i id="n-bets"></i></button>
-  <button role="tab" aria-selected="false" data-tab="signals">Señales<i id="n-signals"></i></button>
-  <button role="tab" aria-selected="false" data-tab="games">Partidos<i id="n-games"></i></button>
-  <button role="tab" aria-selected="false" data-tab="bank">Mi caja</button>
-</nav>
+<aside class="pane" id="pane" hidden aria-label="Detalle">
+  <div class="pane-head"><div><h2 id="pane-title"></h2><p class="sub" id="pane-sub"></p></div><button class="pane-x" id="pane-x" type="button" data-pane-close aria-label="Cerrar el detalle">✕</button></div>
+  <div class="pane-body" id="pane-body"></div>
+</aside>
 
 <dialog id="dlg-buy"><h3>Anotar una compra</h3><div class="sub">Lo que ya compraste en Kalshi: el contrato, el lado, el precio y cuántos.</div>
   <form id="form-buy" method="dialog" novalidate>
@@ -406,9 +575,12 @@ body.public .m-act { display: none; }
 let S = null, lastOk = 0, contracts = [], selling = null, FEE = 0.07, TAB = "bets";
 const LOAD = {fails: 0, busy: false, timer: 0, resuming: false, paint: false, starting: false};  // cómo va la carga: fallos seguidos, si hay una en curso, si se vuelve de segundo plano, si el pintado falló y si el motivo es que el panel arranca
 const FAILED = [];  // las pantallas que no se pudieron pintar en el último repintado
+const WIDE = matchMedia("(min-width: 1100px)");  // PC: menú a la izquierda y detalle en un panel a la derecha. Es la misma medida que usa el CSS
+const DETAIL = {bets: null, signals: null};  // el detalle abierto en el panel de PC, uno por pestaña
+const SHEETS = new Map();  // el detalle de cada apuesta y de cada señal en este repintado, para el panel
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
-const BUILD = 1794861024;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
+const BUILD = 1794864422;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
 let PAGEV = null;  // versión de la primera foto vista: solo se usa con BUILD en 0
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
@@ -453,9 +625,50 @@ function showTab(name) {
   TAB = name;
   try { localStorage.setItem("mesa-tab", name); } catch (e) { /* no pasa nada */ }
   for (const b of document.querySelectorAll("#tabs button")) { const on = b.dataset.tab === name; b.setAttribute("aria-selected", on); $("tab-" + b.dataset.tab).hidden = !on; }
+  paintPane();
 }
+// El panel de detalle de PC muestra lo que está abierto en la pestaña de ahora y se pone al día con cada repintado.
+// Cada pestaña recuerda el suyo. Si la apuesta o la señal ya no está, se cierra, salvo que alguna pantalla no se haya podido pintar.
+function paintPane() {
+  const pane = $("pane"), box = $("pane-body"), key = WIDE.matches ? DETAIL[TAB] : null;
+  let sh = key && SHEETS.get(key);
+  if (key && !sh && !FAILED.length && S) DETAIL[TAB] = null;
+  const show = !!(WIDE.matches && DETAIL[TAB] && (sh || pane.dataset.key === DETAIL[TAB]));
+  pane.hidden = !show; document.body.classList.toggle("has-pane", show);
+  if (!show) { delete pane.dataset.key; return; }
+  if (!sh) return;  // sin el detalle de este repintado se deja lo último que se mostró
+  const html = '<div class="sheet">' + sh.body + "</div>", top = pane.dataset.key === key ? box.scrollTop : 0;
+  $("pane-title").textContent = sh.title; $("pane-sub").textContent = sh.sub;
+  if (box._html !== html) { box.innerHTML = html; box._html = html; }
+  box.scrollTop = top; pane.dataset.key = key;
+}
+function openDetail(key) {
+  DETAIL[TAB] = DETAIL[TAB] === key ? null : key;  // tocar otra vez el mismo lo cierra
+  if (S) paint(); else paintPane();
+  if (DETAIL[TAB]) $("pane-x").focus(); else backTo(key);
+}
+function closeDetail() {
+  const key = DETAIL[TAB];
+  if (!key) return;
+  DETAIL[TAB] = null;
+  if (S) paint(); else paintPane();
+  backTo(key);
+}
+const backTo = key => { const b = document.querySelector('[data-detail="' + CSS.escape(key) + '"]'); if (b) b.focus(); };  // el repintado cambia la tarjeta: el foco vuelve a su botón
+// Al pasar de PC a teléfono (o al revés) el detalle cambia de lugar y el pie de la página también.
+function layout() {
+  (WIDE.matches ? $("dock-foot") : $("wrap")).appendChild($("foot-box"));
+  if (!WIDE.matches) for (const tab of Object.keys(DETAIL)) if (DETAIL[tab]) { OPEN.add(DETAIL[tab]); DETAIL[tab] = null; }  // lo que estaba en el panel queda desplegado en su tarjeta
+  if (S) paint(); else paintPane();
+}
+WIDE.addEventListener("change", layout);
 $("tabs").addEventListener("click", e => { const b = e.target.closest("button[data-tab]"); if (b) { showTab(b.dataset.tab); window.scrollTo(0, 0); } });
+document.addEventListener("click", e => {
+  const d = e.target.closest("[data-detail]");
+  if (d) openDetail(d.dataset.detail); else if (e.target.closest("[data-pane-close]")) closeDetail();
+});
 showTab(TAB);
+layout();
 
 function clock(g) {
   if (g.state === "pre") {
@@ -473,7 +686,9 @@ function chipFor(g) {
   if (!g) return '<span class="chip">Sin datos del partido</span>';
   return `<span class="chip ${g.state === "in" ? "mid" : ""}">${esc(clock(g))}</span>`;
 }
-const minutesLeft = g => g.period > 4 ? g.clock / 60 : (4 - g.period) * 12 + g.clock / 60;
+// El momento de un partido en palabras. El reloj de la foto no es la hora del día: en la copia pública lo que está en juego dice de qué hora es. Lo usan la página y las imágenes.
+const momentOf = g => !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : g.state === "in" ? "En juego" + (PUBLIC && !g.over ? " a las " + snapAt() : "") + " · " + clock(g) : clock(g);
+const minutesLeft = g =>g.period > 4 ? g.clock / 60 : (4 - g.period) * 12 + g.clock / 60;
 const cityOf = (g, abbr) => g && g.home.abbr === abbr ? g.home.city || abbr : g && g.away.abbr === abbr ? g.away.city || abbr : abbr;
 const logo = (t, size) => t && t.logo ? `<img src="${esc(t.logo)}" alt="" width="${size}" height="${size}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : "";
 // El color de cada equipo tiñe su lado de la tarjeta. Si falta, queda un gris.
@@ -609,8 +824,10 @@ function whyBlock(s, title) {
   const w = s && s.why;
   if (!w || !(w.for.length + w.against.length)) return "";
   const row = (r, pro) => `<div class="why"><i class="${pro ? "yes" : "no"}" aria-hidden="true">${pro ? "+" : "−"}</i><div><span class="sr">${pro ? "A favor: " : "En contra: "}</span>${esc(r.text)}${r.note ? `<em>${esc(r.note)}</em>` : ""}</div></div>`;
-  return `<h4 class="cap">Por qué</h4><div class="group"><div class="ghead">${esc(title)}</div>${w.for.map(r => row(r, true)).join("")}${w.against.map(r => row(r, false)).join("")}
-    <p class="gnote">Todo junto, el modelo espera ${w.points.toFixed(1)} puntos de ventaja contra la línea de apertura. Pide ${w.cut.toFixed(1)} para llamarla señal fuerte. De las bajas solo sabe quién faltó en el partido anterior: no conoce el reporte de hoy.</p></div>`;
+  // Primero la conclusión de una línea y después las razones, de la que más pesa a la que menos.
+  return `<h4 class="cap">Por qué</h4><div class="group"><div class="ghead">${esc(title)}</div>
+    <p class="concl">Todo junto, el modelo espera <b>${w.points.toFixed(1)} puntos</b> de ventaja contra la línea de apertura. Pide ${w.cut.toFixed(1)} para llamarla señal fuerte.</p>${w.for.map(r => row(r, true)).join("")}${w.against.map(r => row(r, false)).join("")}
+    <p class="gnote">De las bajas solo sabe quién faltó en el partido anterior: no conoce el reporte de hoy.</p></div>`;
 }
 // La señal del modelo para el partido y el mercado de una apuesta, y si van del mismo lado.
 function betWhy(p) {
@@ -621,11 +838,12 @@ function betWhy(p) {
   return whyBlock(s, same ? "Por qué el modelo va con esta apuesta" : "El modelo se inclina por el otro lado: " + signalName(s));
 }
 const STATUS = {Out: ["Fuera", "bad"], Doubtful: ["Casi seguro fuera", "bad"], Questionable: ["En duda", "mid"], Probable: ["Casi seguro juega", ""], Available: ["Disponible", "good"]};
-function injuryBlock(g) {
+// Los lesionados van plegados, con en el título cuánto le falta a cada equipo.
+function injuryBlock(g, from) {
   const inj = g && g.injuries;
   if (!inj) return "";
   const team = side => {
-    const t = inj[side], head = `<div class="who">${logo(g[side], 22)}<span>${esc(g[side].city || g[side].abbr)}</span>${t.missing != null ? `<span class="mis">le falta ${pct(t.missing)}</span>` : ""}</div>`;
+    const t = inj[side], head = `<div class="who">${logo(g[side], 22)}<span>${esc(g[side].city || g[side].abbr)}</span>${t.listed && t.submitted && t.missing != null ? `<span class="mis">le falta ${pct(t.missing)}</span>` : ""}</div>`;  // sin reporte enviado el 0 es de relleno, no una medida
     if (!t.listed) return head + '<div class="row msg"><span>El último reporte todavía no trae a este equipo para este partido.</span></div>';
     if (!t.submitted) return head + '<div class="row msg"><span>Todavía no envía su parte de lesiones.</span></div>';
     if (!t.players.length) return head + '<div class="row msg"><span>Sin jugadores en el reporte.</span></div>';
@@ -633,9 +851,20 @@ function injuryBlock(g) {
     return head + main.map(p => `<div class="row"><b>${esc(p.name)}<small>${esc(p.reason)}</small></b><b class="${STATUS[p.status][1] ? "t-" + STATUS[p.status][1] : ""}">${STATUS[p.status][0]}</b></div>`).join("") +
       (league.length ? `<div class="row msg"><span>En la G League: ${league.map(p => esc(p.name)).join(", ")}.</span></div>` : "");
   };
-  return `<h4 class="cap">Lesionados</h4><div class="group">${team("away")}${team("home")}</div><p class="gfoot">El reporte oficial de la NBA salió ${stamp(inj.published)}, y las lesiones vienen en inglés, como en el reporte.</p>`;
+  const has = k => inj[k].listed && inj[k].submitted, name = k => g[k].city || g[k].abbr;
+  const miss = ["away", "home"].filter(k => has(k) && inj[k].missing != null).map(k => pct(inj[k].missing) + " a " + name(k)), none = ["away", "home"].filter(k => !has(k)).map(name);
+  const said = (miss.length ? " · le falta " + miss.join(" y ") : "") + (none.length ? (miss.length ? ", " : " · ") + "sin reporte de " + none.join(" y ") : "");
+  return `<details class="inj" data-keep="${esc(from)}"${keep(from)}><summary>Lesionados${esc(said)}</summary><div class="group">${team("away")}${team("home")}</div><p class="gfoot">El reporte oficial de la NBA salió ${stamp(inj.published)}, y las lesiones vienen en inglés, como en el reporte.</p></details>`;
 }
 function shareRow(key) { return '<div class="share-row"><button class="link" data-img="' + esc(key) + '">Compartir</button></div>'; }
+// El pie de una tarjeta con detalle. En teléfono el detalle se despliega dentro de la tarjeta. En PC la tarjeta solo lleva el botón y el detalle se abre en el panel de la derecha.
+function cardFoot(tab, key, img, label, head, body) {
+  if (!WIDE.matches) return shareRow(img) + `<details class="more" data-keep="${key}"${keep(key)}><summary>Ver detalle</summary><div class="sheet">${body}</div></details>`;
+  SHEETS.set(key, {title: head.title, sub: head.sub, body: body.trim() ? body : '<div class="group"><p class="gnote">Por ahora no hay más detalle.</p></div>'});
+  return `<div class="card-foot"><button class="open" type="button" data-detail="${esc(key)}" aria-expanded="${DETAIL[tab] === key}">${label}</button><button class="link" data-img="${esc(img)}">Compartir</button></div>`;
+}
+const forget = prefix => { for (const k of [...SHEETS.keys()]) if (k.startsWith(prefix)) SHEETS.delete(k); };  // cada repintado vuelve a llenar los detalles de su pantalla
+const sel = (tab, key) => DETAIL[tab] === key ? " sel" : "";  // la tarjeta cuyo detalle está en el panel
 function ticket(p) {
   const g = gameOf(p.game.id), old = PUBLIC && !!g && g.state === "post" && p.p_source !== "final";  // ESPN ya lo dio por terminado y la foto todavía no
   const st = status(old ? {...p, p: null} : p, g), s = story(p, g), yes = p.side === "yes", main = old ? null : p.p != null ? p.p : p.mid;
@@ -648,16 +877,17 @@ function ticket(p) {
   const chart = old ? "" : spark(p), worth = old ? "" : (p.expected == null ? "" : fact("Lo que vale según el modelo", `<span class="${cls(p.expected)}">${money(p.expected, true)}</span> esperado`)) +
     (p.p_overtime > 0.02 ? fact("Chance de tiempo extra", pct(p.p_overtime)) : "");
   const how = chart || worth ? `<h4 class="cap">Cómo va</h4><div class="group">${chart ? `<div class="cell">${chart}</div>` : ""}${worth}</div>` : "";
-  const more = `<details class="more" data-keep="pos-${p.id}"${keep("pos-" + p.id)}><summary>Ver detalle</summary><div class="sheet">${how}${betWhy(p)}${injuryBlock(g)}
+  const body = `${how}${betWhy(p)}${injuryBlock(g, "inj-pos-" + p.id)}
     <h4 class="cap">${you("Tu compra", "Su compra")}</h4><div class="group">` +
     fact("Contrato", `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("En una casa como Bet365 sería", (p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + esc(p.label)) + fact("Cantidad", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
     fact("Costo por contrato", cents(p.needed) + " con comisión") + (old ? "" : fact(you("Si vendes ahora", "Si vendiera a las " + snapAt()), p.sale == null ? you("Nadie compra ahora", "Nadie compraba") : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`)) +
     (p.note ? fact("Nota", esc(p.note)) : "") + `</div>
-    <div class="card-actions"><button class="link" data-act="sell" data-id="${p.id}">Anotar venta</button><button class="link" data-act="settle" data-id="${p.id}">Liquidar a mano</button><button class="link danger" data-act="remove" data-id="${p.id}">Borrar</button></div></div></details>`;
-  return `<article class="game" style="${tints(g)}">${scoreRow(p.game, g)}
+    <div class="card-actions"><button class="link" data-act="sell" data-id="${p.id}">Anotar venta</button><button class="link" data-act="settle" data-id="${p.id}">Liquidar a mano</button><button class="link danger" data-act="remove" data-id="${p.id}">Borrar</button></div>`;
+  const key = "pos-" + p.id, head = {title: s.title, sub: (p.game.home ? p.game.away + " en " + p.game.home : p.game.name || "Otro mercado") + (g ? " · " + clock(g) : "")};
+  return `<article id="${esc(key)}" tabindex="-1" class="game${sel("bets", key)}" style="${tints(g)}">${scoreRow(p.game, g)}
     <div class="bet"><div><h3>${esc(s.title)}</h3>${s.text && !s.dup ? `<p>${s.text}</p>` : ""}</div>${chance}</div>${progress(s.bar, st.tone)}
     <div class="cash"><span>${you("Apostaste", esc(owner()) + " apostó")} <b>${money(p.cost)}</b></span><span>${you("Si gana, cobras", "Si gana, cobra")} <b>${money(p.contracts)}</b></span><span>Ganancia <b class="pos">${money(p.if_win, true)}</b></span></div>
-    <p class="stl"><span class="st"><i class="sdot ${st.tone}"></i>${st.text}</span>${said ? `<span>${said}</span>` : ""}</p>${shareRow("bet:" + p.id)}${more}</article>`;
+    <p class="stl"><span class="st"><i class="sdot ${st.tone}"></i>${st.text}</span>${said ? `<span>${said}</span>` : ""}</p>${cardFoot("bets", key, "bet:" + p.id, "Ver detalle", head, body)}</article>`;
 }
 function historyRow(p) {
   const out = p.exit.how === "sold" ? "Vendida a " + cents(p.exit.price) : (p.exit.won ? "Ganó" : "Perdió"), edge = p.close ? p.close.price - p.price : null;
@@ -688,6 +918,7 @@ async function share(button) {
   } catch (e) { /* cerró la hoja de compartir: no pasa nada */ }
 }
 function renderBets() {
+  forget("pos-");
   const open = S.positions.filter(p => !p.exit), today = new Date().toDateString();
   const done = S.positions.filter(p => p.exit && new Date(p.exit.when).toDateString() === today).sort((a, b) => new Date(b.exit.when) - new Date(a.exit.when));
   $("n-bets").textContent = open.length || "";
@@ -708,6 +939,12 @@ function belief(s, g) {
   return line < 0 ? `${who} gana por ${n + 1} o más` : line > 0 ? `${who} pierde por ${n} o menos, o gana` : `${who} gana`;
 }
 const signalName = s => s.market === "total" ? cap(s.text) + " puntos" : cap(s.text);
+// Cuánto se ha movido ya la línea desde que abrió, hacia el lado del modelo, contra los puntos de ventaja que veía.
+function moved(s) {
+  if (s.now == null || s.line == null || s.points == null) return "";
+  const m = s.market === "total" ? (s.side === "over" ? 1 : -1) * (s.now - s.line) : (s.side === "home" ? 1 : -1) * (s.line - s.now), a = Math.abs(m).toFixed(1);
+  return m > 0.05 ? `La línea ya se movió ${a} puntos hacia el modelo, de los ${s.points.toFixed(1)} que veía.` : m < -0.05 ? `La línea se movió ${a} puntos en contra del modelo desde que abrió.` : "La línea sigue donde abrió.";
+}
 // La misma apuesta dicha como en una casa tradicional (Bet365 y parecidas): el equipo con su hándicap, o más y menos.
 function bookBet(s, o) {
   if (s.market === "total") return "Total · " + (o.yes ? "Más de " : "Menos de ") + o.strike;
@@ -744,6 +981,9 @@ function dealBox(s, o, near) {
 }
 // Una celda de resultados: con menos de 10 casos el dato principal es "X de Y" y el porcentaje queda atenuado.
 const rate = c => !c || !c.bets ? `<small>${NIL}</small>` : c.bets < 10 ? `<b>${c.wins} de ${c.bets}</b><small>${Math.round(100 * c.wins / c.bets)}%</small>` : `<b>${Math.round(100 * c.wins / c.bets)}%</b><small>${c.wins} de ${c.bets}</small>`;
+// Margen de error de una tasa, en puntos de porcentaje: la mitad del intervalo de Wilson al 95%, que sirve también con pocos casos.
+const margin = (w, n) => { const z = 1.96, p = w / n; return 100 * z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / (1 + z * z / n); };
+const rateM = c => rate(c) + (c && c.bets ? `<small>± ${Math.round(margin(c.wins, c.bets))}</small>` : "");
 // Aciertos y casos de los pronósticos que no son señal fuerte: todos menos fuertes y muy fuertes.
 function others(d) {
   const a = d && d.todos && d.todos.both, f = d && d.fuertes && d.fuertes.both;
@@ -783,7 +1023,7 @@ function trendBox() {
 function versusBox() {
   const k = (S.results || {}).kalshi;
   if (!k || !k.comparable) return "";
-  const cell = rate;
+  const cell = rateM;
   const tiers = [["todos", "Todos los comparables"], ["fuerte", "Señal fuerte"], ["muy_fuerte", "Señal muy fuerte"], ["fuertes", "Fuerte + muy fuerte"]], a = k.agree || {};
   const why = [[k.no_line, "porque Kalshi no tenía esa línea ni una menor"], [k.no_pick, "porque su precio estaba en 50% justo"], [k.sealed - k.comparable - k.no_line - k.no_pick, "por otros motivos"]]
     .filter(x => x[0] > 0).map((x, i) => (i ? x[0] : plural(x[0], "quedó fuera", "quedaron fuera")) + " " + x[1]);
@@ -792,16 +1032,42 @@ function versusBox() {
     tiers.map(([key, name]) => `<div><span>${name}</span><span>${cell((k.tiers[key] || {}).model)}</span><span>${cell((k.tiers[key] || {}).kalshi)}</span></div>`).join("") + `</div>
     <p class="sub">El pronóstico de Kalshi es el lado que su precio daba por más probable cuando se selló la señal.${k.close ? ` En estas líneas ese precio casi siempre ronda el 50%: en ${k.close} de ${k.comparable} estaba a 2 centavos o menos.` : ""} Fueron del mismo lado en ${a.same} y se separaron en ${a.apart}, y ahí el modelo atinó ${a.apart_model} y Kalshi ${a.apart_kalshi}. ${k.comparable < 100 ? `Con solo ${k.comparable} casos comparables todavía no se puede decir que uno le gane al otro. ` : ""}De ${k.sealed} pronósticos con resultado se compararon ${k.comparable}${k.lower ? `: ${k.exact} en la línea exacta y ${k.lower} en la línea menor más cercana, porque Kalshi pone sus totales de 2 en 2. En esos ${k.lower} el lado del modelo se recalcula contra esa línea y en ${k.flips} cambia. Ahí casi siempre los dos van con «más» (${k.lower_over} de ${k.lower}), así que dicen poco sobre quién es mejor` : ""}${left ? (k.lower ? ". Además " : ": ") + left : ""}.</p>`;
 }
+// Las medidas del modelo contra el mercado, de lo sellado en vivo: la meta de equilibrio, cuánto se movió la línea hacia el modelo,
+// la cuenta de papel y la evidencia. Todo con su número de casos y con lo que todavía no se puede concluir.
+function measuresBox() {
+  const m = (S.results || {}).medidas;
+  if (!m) return "";
+  const tiers = [["todos", "Todos"], ["fuerte", "Señal fuerte"], ["muy_fuerte", "Señal muy fuerte"], ["fuertes", "Fuerte + muy fuerte"]];
+  const goals = tiers.filter(([k]) => m.goal[k] && m.goal[k].bets).map(([k, name]) => { const g = m.goal[k];
+    return `<div><span>${name}</span><span>${rateM({wins: g.wins, bets: g.bets})}</span><span><b>${pct(g.ask)}</b><small>al precio medio ${pct(g.mid)}</small></span></div>`; }).join("");
+  const all = m.goal.todos, shake = all && all.bets ? Math.round(margin(all.wins, all.bets)) : null;
+  // De los comparables, cuántos son de la línea menor, donde el lado del modelo se recalcula contra Kalshi: null si no se sabe.
+  const kv = (S.results || {}).kalshi, lowerN = kv && all && kv.comparable === all.bets && Number.isInteger(kv.lower) ? kv.lower : null;
+  const inside = shake != null && Math.abs(100 * all.wins / all.bets - 100 * all.ask) <= margin(all.wins, all.bets);
+  const where = lowerN === 0 ? "en la misma línea" : lowerN > 0 ? `en la línea exacta (${kv.exact}) o en la línea menor más cercana (${lowerN}), donde el lado del modelo se recalcula contra Kalshi` : "en la línea exacta o en la línea menor más cercana, donde el lado del modelo se recalcula contra Kalshi";
+  const goal = !goals ? "" : `<div class="cap">Meta de equilibrio</div><div class="group tiers vs"><div><span></span><span>Acertó, con precio de Kalshi</span><span>Meta pagando la oferta</span></div>${goals}</div>
+    <p class="sub">La meta es el acierto que deja en cero comprar el lado del modelo en Kalshi, con su comisión. Solo cuenta los pronósticos que tenían precio de Kalshi ${where}${all ? ` (${all.bets} de ${m.sealed})` : ""}.${lowerN === 0 ? "" : " Por eso su tasa no coincide con la sellada de arriba."} Es una medida del modelo, no un umbral para apostar.${shake == null ? "" : ` Con ${all.bets} casos el margen de error es de ± ${shake}${inside ? ", así que estar arriba o abajo de la meta todavía no dice si el modelo le gana a Kalshi." : ", y la tasa queda fuera de ese margen respecto a la meta."}`}</p>`;
+  const moves = tiers.filter(([k]) => m.move[k] && m.move[k].bets).map(([k, name]) => { const v = m.move[k], n = v.up + v.down;
+    return `<div><span>${name}</span><span>${rateM({wins: v.up, bets: n})}</span><span><b>${v.points == null ? NIL : (v.points >= 0 ? "+" : "−") + Math.abs(v.points).toFixed(1)}</b><small>de ${v.bets} con cierre</small></span></div>`; }).join("");
+  const still = m.move.todos ? m.move.todos.still : 0;
+  const move = !moves ? "" : `<div class="cap">La línea contra el modelo</div><div class="group tiers vs"><div><span></span><span>Se movió hacia el modelo</span><span>Puntos, de media</span></div>${moves}</div>
+    <p class="sub">Compara la línea de la casa al sellar con la del cierre. El porcentaje cuenta solo las veces que se movió${still ? ` (en ${still} no se movió)` : ""} y los puntos de media sí cuentan las que no. Que la línea se mueva hacia el modelo no siempre se convierte en dinero en Kalshi, porque el precio de Kalshi ya trae ese movimiento.</p>`;
+  const c = v => (v >= 0 ? "+" : "−") + Math.abs(100 * v).toFixed(1) + "¢", p = m.paper.todos, e = m.proof, covers = x => x.lo == null || (x.lo <= 0 && 0 <= x.hi);  // sin banda no hay nada que concluir
+  const paper = !p || !p.bets || p.mid.mean == null || p.ask.mean == null ? "" : `<p class="concl"><b>Cuenta de papel.</b> Un contrato del lado del modelo por cada uno de los ${p.bets} pronósticos con precio de Kalshi${lowerN === 0 ? "" : " (los mismos de la meta, con el lado recalculado en la línea menor)"} daría ${c(p.mid.mean)} por contrato al precio medio${p.mid.lo == null ? "" : ` (de ${c(p.mid.lo)} a ${c(p.mid.hi)})`} y ${c(p.ask.mean)} pagando la oferta${p.ask.lo == null ? "" : ` (de ${c(p.ask.lo)} a ${c(p.ask.hi)})`}, con comisión. ${covers(p.mid) && covers(p.ask) ? "Las dos bandas cubren el cero: todavía no se puede decir que el modelo le gane a Kalshi ni que le pierda." : "Alguna banda ya no cubre el cero" + (p.bets < 100 ? ", pero son pocos casos" : "") + " y no se corrige por haber mirado varias medidas."}${p.need_ask ? ` Harían falta unos ${p.need_ask.toLocaleString("en-US")} contratos para distinguir 3¢.` : ""} Es una medida del modelo y no dinero real.</p>`;
+  const proof = !e || !e.on || e.final == null || e.peak == null || e.line == null ? "" : `<p class="concl"><b>Evidencia contra Kalshi.</b> La riqueza de prueba arranca en 1 y va en ${e.final.toFixed(2)} después de ${plural(e.games, "partido", "partidos")} (${e.picks} pronósticos). Su máximo fue ${e.peak.toFixed(2)} y para rechazar al 5% que Kalshi tenga razón tendría que llegar a ${e.line}. ${e.peak >= e.line ? "Ya la cruzó" + (e.games < 100 ? ", pero con tan pocos partidos no es concluyente." : ".") : "No la ha alcanzado" + (e.games < 100 ? ": con tan pocos partidos todavía no se puede concluir nada ni a favor ni en contra del modelo." : ".")}</p>`;
+  const upto = !(goal || move || paper || proof) || !m.asof || isNaN(Date.parse(m.asof)) ? "" : `<p class="sub">Con los pronósticos sellados hasta ${endDot(stamp(m.asof))} Estas medidas se recalculan una vez al día.</p>`;
+  return goal + move + (paper || proof ? `<div class="cap">Contra el mercado, en una frase cada una</div><div class="group">${paper}${proof}</div>` : "") + upto;
+}
 function resultsBox() {
   const r = S.results || {};
   if (!r.live && !r.season) return "";
-  const cell = rate;
+  const cell = rateM;
   const tiers = [["todos", "Todos los pronósticos"], ["fuerte", "Señal fuerte"], ["muy_fuerte", "Señal muy fuerte"], ["fuertes", "Fuerte + muy fuerte"]];
   const block = (title, what, d) => !d ? "" : `<div class="cap">${title}</div><p class="sub cap-note">${what}</p><div class="group tiers"><div><span></span><span>Hándicap</span><span>Total</span><span>Hándicap y total</span></div>` +
     tiers.map(([k, name]) => `<div><span>${name}</span><span>${cell((d[k] || {}).spread)}</span><span>${cell((d[k] || {}).total)}</span><span>${cell((d[k] || {}).both)}</span></div>`).join("") + "</div>";
   const test = !r.live && !r.season ? "" : "La prueba de 56 de cada 100 salió de tres temporadas que el modelo no vio y quedó congelada el 11 nov 2026. Las tablas miden otra cosa: lo que va de esta temporada.";
   return `<div class="stack" id="results-box"><div class="h-sec">Resultados del modelo</div>${block("En vivo, sellado antes del partido", "Sellado: se guardó antes de que empezara el partido y ya no se puede cambiar.", r.live)}${block("Toda la temporada, aplicado hacia atrás", "Hacia atrás: el modelo aplicado a partidos que ya se jugaron, no sellado antes de cada uno.", r.season)}
-    <p class="sub">${test}</p>${trendBox()}<p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p>${versusBox()}</div>`;
+    <p class="sub">${test} El ± es el margen de error de cada tasa, en puntos de porcentaje y con 95% de confianza: con pocos casos es ancho.</p>${measuresBox()}${trendBox()}<p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p>${versusBox()}</div>`;
 }
 // Lo que ha cambiado en el modelo, en palabras sencillas y de lo más nuevo a lo más viejo.
 function changesBox() {
@@ -816,33 +1082,54 @@ function renderSignals() {
   const phase = s => { const g = gameOf(s.game_id); return g ? g.state : s.state; };  // manda el partido: en la copia pública ESPN puede ir por delante de la foto
   const ahead = strong.filter(s => phase(s) !== "post").sort((a, b) => order[phase(a)] - order[phase(b)] || new Date(a.tipoff) - new Date(b.tipoff)), done = strong.filter(s => phase(s) === "post");
   $("n-signals").textContent = ahead.length || "";
-  if (!S.signals.length) { put("signals", '<div class="empty">Todavía no hay señales para la jornada. Salen cuando la casa publica su primera línea y la PC está encendida.</div>' + resultsBox() + changesBox()); return; }
+  forget("sig-");
+  if (!S.signals.length) { put("signals", '<div class="empty">Todavía no hay señales para la jornada. Salen cuando la casa publica su primera línea y la PC está encendida.</div>'); put("signals-aside", resultsBox() + changesBox()); put("signals-note", ""); return; }
+  const whenOf = momentOf;
+  // La apuesta abierta que ya tiene una señal, con el contrato del modelo que le toca: la señal se muestra en una fila y no repite la tarjeta.
+  const heldBy = s => { const d = s.kalshi; for (const o of d ? (d.found ? [d] : d.options || []) : []) { const p = S.positions.find(x => !x.exit && x.ticker === o.ticker); if (p) return {p, o}; } return null; };
+  const compact = s => {
+    const g = gameOf(s.game_id), [a, h] = s.game.split(" @ "), {p, o} = heldBy(s);
+    const pick = pickBox(s, phase(s)), row = `<div class="row h"><b>${esc(signalName(s))}<small>${esc(cityOf(g, a) + " en " + cityOf(g, h))} · ${esc(whenOf(g))}</small>
+      <small>${s.strength === "0.1" ? "Señal muy fuerte" : "Señal fuerte"} · Modelo ${prob(o.p_model)} · ${you("tu costo ", "su costo ")}${cents(p.needed)}</small>${moved(s) ? `<small>${moved(s)}</small>` : ""}</b>
+      <span class="hr"><button class="link" data-see="pos-${esc(p.id)}">${you("Ver tu apuesta", "Ver su apuesta")}</button></span></div>`;
+    return pick ? `<div class="held">${row}${pick}</div>` : row;
+  };
   const item = s => {
-    const g = gameOf(s.game_id), deal = s.kalshi, [away, home] = s.game.split(" @ "), top = s.strength === "0.1";
-    const when = !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : "En juego" + (PUBLIC && !g.over ? " a las " + snapAt() : "") + " · " + clock(g);  // el reloj de la foto no es la hora del día: se dice de cuándo es
-    let html = `<article class="game sig" style="${tints(g)}"><div class="sig-top"><span>${esc(when)}</span><span class="meter">${top ? "Señal muy fuerte" : "Señal fuerte"} <span aria-hidden="true"><i></i><i></i><i${top ? "" : ' class="off"'}></i></span></span></div>
+    const g = gameOf(s.game_id), deal = s.kalshi, [away, home] = s.game.split(" @ "), top = s.strength === "0.1", key = "sig-" + s.game_id + "-" + s.market;
+    const when = whenOf(g);
+    const opening = s.market === "total" ? String(s.line) : signalName(s);
+    const nowLine = s.now == null ? NIL : s.market === "total" ? String(s.now) : (s.side === "home" ? home : away) + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now);
+    // En PC los cuatro datos de líneas van al frente de la tarjeta. En teléfono siguen dentro del detalle.
+    const facts = WIDE.matches ? '<div class="facts">' + [["Ventaja que ve el modelo", s.points.toFixed(1) + " puntos"], ["Cuota de la casa al abrir", s.house_price || NIL], ["Línea de apertura", opening], ["Línea de " + asNow(), nowLine]]
+      .map(([k, v]) => `<div><small>${k}</small><b>${esc(v)}</b></div>`).join("") + "</div>" : "";
+    let html = `<article class="game sig${sel("signals", key)}" style="${tints(g)}"><div class="sig-l"><div class="sig-top"><span>${esc(when)}</span><span class="meter">${top ? "Señal muy fuerte" : "Señal fuerte"} <span aria-hidden="true"><i></i><i></i><i${top ? "" : ' class="off"'}></i></span></span></div>
       <div class="teams">${logo(g && g.away, 28)}<span>${esc(cityOf(g, away))} en ${esc(cityOf(g, home))}</span>${logo(g && g.home, 28)}</div>
-      <h3>${esc(signalName(s))}</h3><p class="belief">El modelo cree que <b>${esc(belief(s, g))}</b>.</p>`;
+      <h3>${esc(signalName(s))}</h3><p class="belief">El modelo cree que <b>${esc(belief(s, g))}</b>.</p>${moved(s) ? `<p class="belief mv">${moved(s)}</p>` : ""}${facts}${pickBox(s, phase(s))}</div><div class="sig-r">`;
     if (s.news && s.news.includes("+")) html += `<div class="warn">Bajas nuevas que la señal no conoce: ${esc(s.news)}</div>`;
     if (deal && deal.found) html += dealBox(s, deal) + belowNote(s, [deal]);
     else if (deal) html += `<p class="verdict">Kalshi no tiene esa línea exacta${deal.options && deal.options.length ? ". Estas son las dos más cercanas, sin elegir una" : ""}.</p>` + (deal.options || []).map(o => dealBox(s, o, true)).join("") + belowNote(s, deal.options || []);
-    return html + shareRow("sig:" + s.game_id + ":" + s.market) + `<details class="more" data-keep="sig-${s.game_id}-${s.market}"${keep("sig-" + s.game_id + "-" + s.market)}><summary>Ver detalle</summary><div class="sheet">${whyBlock(s, "Por qué el modelo va con " + signalName(s))}${injuryBlock(g)}
-      <h4 class="cap">Líneas</h4><div class="group">
+    const lines = WIDE.matches ? "" : `<h4 class="cap">Líneas</h4><div class="group">
       <div class="row"><span>Ventaja que ve el modelo</span><b>${s.points.toFixed(1)} puntos</b></div>
-      <div class="row"><span>Línea de apertura</span><b>${s.market === "total" ? s.line : esc(signalName(s))}</b></div>
-      <div class="row"><span>Línea de ${asNow()}</span><b>${s.now == null ? NIL : s.market === "total" ? s.now : esc((s.side === "home" ? home : away) + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now))}</b></div>
-      <div class="row"><span>Cuota de la casa al abrir</span><b>${s.house_price || NIL}</b></div></div></div></details></article>`;
+      <div class="row"><span>Línea de apertura</span><b>${esc(opening)}</b></div>
+      <div class="row"><span>Línea de ${asNow()}</span><b>${esc(nowLine)}</b></div>
+      <div class="row"><span>Cuota de la casa al abrir</span><b>${s.house_price || NIL}</b></div></div>`;
+    const body = `${whyBlock(s, "Por qué el modelo va con " + signalName(s))}${injuryBlock(g, "inj-" + key)}
+      ${lines}`;
+    return html + "</div>" + cardFoot("signals", key, "sig:" + s.game_id + ":" + s.market, "Ver detalle: por qué, lesionados y líneas", {title: signalName(s), sub: cityOf(g, away) + " en " + cityOf(g, home) + (when ? " · " + when : "")}, body) + "</article>";
   };
   const mini = s => { const g = gameOf(s.game_id), [a, h] = s.game.split(" @ "); return `<div class="row"><b>${esc(signalName(s))}<small>${esc(cityOf(g, a) + " en " + cityOf(g, h))}</small></b><b>${s.result ? `<span class="res">${mk(s.result, s.result)}${esc(s.result)}</span>` : g && g.state === "post" ? "Terminó, resultado por confirmar" : "por " + s.points.toFixed(1) + " puntos de ventaja"}</b></div>`; };
   const lr = (S.results || {}).live, lall = lr && lr.todos && lr.todos.both, lstrong = lr && lr.fuertes && lr.fuertes.both;
   const brief = lall && lall.bets ? `<div class="sumline"><p>En vivo contra la apertura, el modelo atinó <b>${lall.wins} de ${lall.bets}</b>${lstrong && lstrong.bets ? ` y <b>${lstrong.wins} de ${lstrong.bets}</b> en señales fuertes` : ""}.${lall.bets < 100 ? " Son pocos casos para concluir." : ""}</p><button class="link" data-scroll="results-box">Ver resultados</button></div>` : "";
-  let html = ahead.length ? ahead.map(item).join("") : '<div class="empty">No hay señales fuertes en partidos por jugarse o en juego.</div>';
+  const mine = ahead.filter(heldBy), fresh = ahead.filter(s => !heldBy(s));  // las que ya tienen apuesta van en filas compactas, después de las demás
+  let html = ahead.length ? fresh.map(item).join("") : '<div class="empty">No hay señales fuertes en partidos por jugarse o en juego.</div>';
+  if (mine.length) html += `<div class="cap-row"><h3 class="cap">${you("Señales que ya tienes como apuesta", "Señales que " + esc(owner()) + " ya tiene como apuesta")}</h3><span class="capr">${mine.length}</span></div><div class="group">${mine.map(compact).join("")}</div>`;
   if (done.length) {
     const won = done.filter(s => s.result === "ganó").length, lost = done.filter(s => s.result === "perdió").length, wait = done.filter(s => !s.result).length;
     html += `<details data-keep="sig-done"${keep("sig-done")}><summary>${plural(done.length, "señal fuerte ya terminó", "señales fuertes ya terminaron")}: ${plural(won, "ganó", "ganaron")}, ${plural(lost, "perdió", "perdieron")}${wait ? ", " + wait + " por confirmar" : ""}</summary><div class="group">${done.map(mini).join("")}</div></details>`;
   }
   if (weak.length) html += `<details data-keep="sig-weak"${keep("sig-weak")}><summary>${plural(weak.length, "señal más débil", "señales más débiles")}</summary><div class="group">${weak.map(mini).join("")}</div></details>`;
-  put("signals", brief + html + resultsBox() + changesBox() + '<p class="note">Es la traducción de la señal a Kalshi. No es una recomendación de entrar ni de cuánto.</p>');
+  put("signals", brief + pickScore(ahead.some(s => phase(s) === "pre")) + html); put("signals-aside", resultsBox() + changesBox());
+  put("signals-note", '<p class="note">Es la traducción de la señal a Kalshi. No es una recomendación de entrar ni de cuánto.</p>');
 }
 
 function renderGames() {
@@ -858,18 +1145,25 @@ function renderGames() {
     const line = !g.line ? "Sin línea todavía" : (g.line.margin === 0 ? "Parejo" : esc(g.home.abbr) + " " + (g.line.margin > 0 ? "−" : "+") + Math.abs(g.line.margin)) + " · total " + g.line.total;
     const proj = o && !over ? `${esc(g.away.abbr)} ${o.away.toFixed(0)} · ${esc(g.home.abbr)} ${o.home.toFixed(0)} · total ${o.expected_total.toFixed(1)} <span class="nw">(${by[g.source]})</span>` : "";
     const fav = g.p_home == null || over ? "" : g.p_home >= 0.5 ? esc(g.home.abbr) + " " + prob(g.p_home) : esc(g.away.abbr) + " " + prob(1 - g.p_home);
+    // En PC el botón de anotar va al final de la última línea de datos. En teléfono va en su propia línea.
+    const buy = `<button class="link" data-act="buy" data-game="${g.id}">Anotar compra</button>`, wide = WIDE.matches && !over;
+    const said = [["Línea prepartido", line], proj ? ["Proyección", proj] : null, fav ? [PUBLIC ? "Favorito a las " + snapAt() : "Favorito ahora", fav] : null].filter(Boolean)
+      .map(([k, v], i, all) => `<div class="said"><span class="k">${k}</span><b>${v}</b>${wide && i === all.length - 1 ? buy : ""}</div>`).join("\n      ");
     return `<div class="match">${board(g.away, g.home, g.state !== "pre", chipFor(g), 34)}
-      <div class="said"><span class="k">Línea prepartido</span><b>${line}</b></div>
-      ${proj ? `<div class="said"><span class="k">Proyección</span><b>${proj}</b></div>` : ""}${fav ? `<div class="said"><span class="k">${PUBLIC ? "Favorito a las " + snapAt() : "Favorito ahora"}</span><b>${fav}</b></div>` : ""}
-      ${over ? "" : `<div class="m-act"><button class="link" data-act="buy" data-game="${g.id}">Anotar compra</button></div>`}</div>`;
+      <div class="saids">${said}
+      ${over || wide ? "" : `<div class="m-act">${buy}</div>`}</div></div>`;
   };
-  let html = live.length + soon.length ? `<div class="group">${[...live, ...soon].map(row).join("")}</div>` : '<div class="empty">No hay partidos en juego ni por empezar hoy.</div>';
+  const today3 = WIDE.matches && live.length + soon.length ? `<div class="cap-row"><h3 class="cap">Hoy</h3><span class="capr">${esc(cap(new Date().toLocaleDateString("es", {weekday: "long", day: "numeric", month: "short"})))}</span></div>` : "";
+  let html = live.length + soon.length ? today3 + `<div class="group">${[...live, ...soon].map(row).join("")}</div>` : '<div class="empty">No hay partidos en juego ni por empezar hoy.</div>';
   if (rest.length) html += `<details data-keep="games-rest"${keep("games-rest")}><summary>${[ended ? plural(ended, "terminado", "terminados") : "", later ? plural(later, "partido", "partidos") + " de " + otherDays + ", aparte porque no se juegan hoy" : ""].filter(Boolean).join(" y ")}</summary><div class="group">${rest.map(row).join("")}</div></details>`;
   put("games", html);
 }
 
 // Historial de predicciones: cada partido terminado con lo que decía el modelo, si atinó y si era señal fuerte.
 let picksSeeded = false;
+// Cuánto antes del salto quedó sellado un pronóstico, en horas y minutos. Sin el dato, nada.
+// La hora viene con un decimal (6 minutos): se redondea a 5 minutos y se dice "cerca de" para no afirmar un minuto exacto.
+const sealedWords = h => { if (!(h > 0)) return ""; const m = Math.max(5, 5 * Math.round(12 * h)), hh = Math.floor(m / 60), mm = m % 60; return "sellado " + (hh ? "cerca de " + hh + " h" + (mm ? " " + mm + " min" : "") : "cerca de " + mm + " min") + " antes"; };
 function renderPicks() {
   const rows = S.history || [];
   if (!rows.length) { put("picks", ""); return; }
@@ -878,23 +1172,56 @@ function renderPicks() {
   if (!picksSeeded) { OPEN.add("picks-" + days[0]); picksSeeded = true; }  // el día más reciente arranca desplegado
   const name = c => c.market === "total" ? cap(c.text) + " puntos" : cap(c.text);
   const mark = c => mk(c.result, c.result === "ganó" ? "Atinó" : c.result === "perdió" ? "Falló" : "Empate");
-  const cell = c => !c ? "" : `<div class="said">${mark(c)}<span>${c.market === "spread" ? "Hándicap" : "Total"} <b>${esc(name(c))}</b></span>${c.strength ? `<u>${c.strength === "0.1" ? "Señal muy fuerte" : "Señal fuerte"}</u>` : ""}</div>`;
+  const cell = (c, h) => !c ? "" : `<div class="said">${mark(c)}<span>${c.market === "spread" ? "Hándicap" : "Total"} <b>${esc(name(c))}</b></span>${sealedWords(h) ? `<span class="seal">${esc(sealedWords(h))}</span>` : ""}${c.strength ? `<u>${c.strength === "0.1" ? "Señal muy fuerte" : "Señal fuerte"}</u>` : ""}</div>`;
   const side = (abbr, pts, other) => `<div><b${pts < other ? ' class="lose"' : ""}>${pts}</b><small>${esc(abbr)}</small></div>`;
   const block = d => {
     const games = rows.filter(r => r.day === d), calls = live(games.flatMap(g => g.calls));
     return `<details class="cap-sum" data-keep="picks-${d}"${keep("picks-" + d)}><summary>${cap(day(d + "T12:00:00", {weekday: "long", day: "numeric", month: "short"}))} · atinó ${count(calls)}</summary><div class="group">` +
-      games.map(g => `<div class="match"><div class="top"><div class="team">${side(g.away, g.away_score, g.home_score)}</div><div class="when">Final</div><div class="team h">${side(g.home, g.home_score, g.away_score)}</div></div>${cell(g.calls.find(c => c.market === "spread"))}${cell(g.calls.find(c => c.market === "total"))}</div>`).join("") + "</div></details>";
+      games.map(g => `<div class="match"><div class="top"><div class="team">${side(g.away, g.away_score, g.home_score)}</div><div class="when">Final</div><div class="team h">${side(g.home, g.home_score, g.away_score)}</div></div>${cell(g.calls.find(c => c.market === "spread"), g.sealed_h)}${cell(g.calls.find(c => c.market === "total"), g.sealed_h)}</div>`).join("") + "</div></details>";
   };
   put("picks", `<div class="sec-head"><h3 class="h-sec">Historial de predicciones</h3><p class="lede">Hándicap <b>${count(all.filter(c => c.market === "spread"))}</b> · total <b>${count(all.filter(c => c.market === "total"))}</b> · señales fuertes <b>${strong.length ? count(strong) : "sin terminar"}</b></p></div>` +
-    days.map(block).join("") + '<p class="note">Son todos los pronósticos del modelo contra la línea de apertura, no solo las señales fuertes. ' + esc(othersLine()) + "</p>");
+    days.map(block).join("") + '<p class="note">Son todos los pronósticos del modelo contra la línea de apertura, no solo las señales fuertes. ' + esc(othersLine()) +
+    (rows.every(r => r.sealed_h > 0) ? " Cada uno dice, más o menos, cuánto antes del salto quedó sellado." : rows.some(r => r.sealed_h > 0) ? " Los que traen el dato dicen, más o menos, cuánto antes del salto quedaron sellados." : "") + (PUBLIC ? " Cada foto de esta página queda guardada con su hora." : "") + "</p>");
 }
 
+// Cómo le ha ido con las apuestas cerradas: en general, por tipo, por equipo, favorito o no, local o visitante, y "más" contra "menos".
+// Una vendida antes de tiempo cuenta en la ganancia y no en el porcentaje. Solo describe: con tan pocas apuestas no dice qué funciona.
+function perfRow(name, list) {
+  const sold = list.filter(p => p.exit.how === "sold").length, done = list.length - sold, wins = list.filter(p => p.exit.how !== "sold" && p.exit.won).length, net = list.reduce((t, p) => t + (p.profit || 0), 0);
+  return `<div><span>${esc(name)}<small>${plural(list.length, "apuesta", "apuestas")}${sold ? ", " + plural(sold, "vendida", "vendidas") : ""}</small></span><span><b>${wins} de ${done}</b></span><span>${done ? Math.round(100 * wins / done) + "%" : NIL}</span><span><b class="${cls(net)}">${money(net, true)}</b></span></div>`;
+}
+function perfTable(rows) {
+  const shown = rows.filter(r => r[1].length);
+  return shown.length ? `<div class="group tiers perf"><div><span></span><span>Ganó</span><span>%</span><span>Ganancia</span></div>${shown.map(r => perfRow(r[0], r[1])).join("")}</div>` : "";
+}
+function renderPerf() {
+  const closed = S.positions.filter(p => p.exit);
+  if (!closed.length) { put("perf", ""); return; }
+  const settled = closed.filter(p => p.exit.how !== "sold"), wins = settled.filter(p => p.exit.won).length, staked = closed.reduce((t, p) => t + (p.cost || 0), 0), net = closed.reduce((t, p) => t + (p.profit || 0), 0);
+  const exp = settled.reduce((t, p) => t + p.price, 0), dev = Math.sqrt(settled.reduce((t, p) => t + p.price * (1 - p.price), 0)), lo = Math.max(0, exp - 2 * dev), hi = Math.min(settled.length, exp + 2 * dev);  // dos desvíos: lo que la suerte sola da el 95% de las veces
+  const where = wins < lo - 1e-9 ? "por debajo de" : wins > hi + 1e-9 ? "por encima de" : "dentro de";
+  const fig = (k, v, d) => `<div><small>${k}</small><b>${v}</b><span>${d}</span></div>`;
+  const side = closed.filter(p => (p.kind === "spread" || p.kind === "winner") && p.subject && p.game && (p.game.home || p.game.away));  // las que van con un equipo
+  const favorite = p => p.kind === "spread" ? p.side === "yes" : p.price >= 0.5;  // en el hándicap el favorito es el que da los puntos y en ganador el que costó 50¢ o más
+  const isHome = p => p.game.home === p.subject, ofKind = k => closed.filter(p => p.kind === k), totals = ofKind("total");
+  const teams = [...new Set(side.map(p => p.subject))].map(t => [t, side.filter(p => p.subject === t)]).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]));
+  const part = (title, rows, note) => { const t = perfTable(rows); return t ? `<div><h4 class="cap">${title}</h4>${t}${note ? `<p class="sub">${note}</p>` : ""}</div>` : ""; };
+  const byTeam = teams.length ? `<div><details class="cap-sum" data-keep="perf-team"${keep("perf-team")}><summary>Por equipo · ${plural(teams.length, "equipo", "equipos")}</summary>${perfTable(teams)}<p class="sub">Las apuestas a un equipo, del hándicap y de ganador. Un total no es de ningún equipo.</p></details></div>` : "";
+  put("perf", `<div class="cap-row"><h3 class="cap">${you("Cómo te ha ido", "Cómo le ha ido")}</h3><span class="capr">${plural(closed.length, "apuesta cerrada", "apuestas cerradas")}</span></div>
+    <div class="stats">${fig("Ganadas", wins + " de " + settled.length, settled.length ? Math.round(100 * wins / settled.length) + "%" + (closed.length > settled.length ? ", sin contar " + plural(closed.length - settled.length, "vendida", "vendidas") : "") : NIL)}${fig("Apostado", money(staked), "en " + plural(closed.length, "apuesta", "apuestas"))}${fig("Ganancia", `<span class="${cls(net)}">${money(net, true)}</span>`, staked > 0 ? pct(net / staked, 1) + " de lo apostado" : NIL)}</div>
+    ${settled.length ? `<p class="sub">Por los precios que ${you("pagaste", "pagó")} se esperaba ganar <b>${exp.toFixed(1)}</b> de ${settled.length}, y la suerte sola lo deja entre ${lo.toFixed(1)} y ${hi.toFixed(1)} el 95% de las veces. ${you("Ganaste", "Ganó")} ${wins}, ${where} ese rango.${settled.length < 30 ? " Con menos de 30 apuestas cerradas no se concluye nada." : ""}</p>` : ""}
+    <div class="perf-grid">${part("Por tipo de apuesta", [["Hándicap", ofKind("spread")], ["Total", totals], ["Ganador", ofKind("winner")], ["Otras", ofKind("other")]])}${part("Favorito contra no favorito", [["Favorito", side.filter(favorite)], ["No favorito", side.filter(p => !favorite(p))]],
+      "Favorito es el equipo que da puntos en el hándicap o el que costó 50¢ o más en ganador.")}${part("Local contra visitante", [["Local", side.filter(isHome)], ["Visitante", side.filter(p => !isHome(p))]])}${part("Totales: más contra menos", [["Más", totals.filter(p => p.side === "yes")], ["Menos", totals.filter(p => p.side !== "yes")]])}${byTeam}</div>
+    <p class="sub">Con ${plural(closed.length, "apuesta cerrada", "apuestas cerradas")} estos cortes solo describen lo que pasó.${closed.length < 100 ? " Cada fila tiene muy pocas apuestas y no dice qué funciona ni qué no." : " Cada fila tiene menos apuestas que el total, así que su margen es más ancho."} Una apuesta vendida antes de tiempo cuenta en la ganancia y no en el porcentaje.</p>`);
+}
 function renderBank() {
   const b = S.bank, tone = v => `<span class="${cls(v)}">${money(v, true)}</span>`;
   $("pill-bank").textContent = money(b.equity);
   $("pill-day").textContent = money(b.day, true); $("pill-day").className = cls(b.day);
+  $("side-bank").textContent = money(b.equity); $("side-day").textContent = money(b.day, true); $("side-day").className = cls(b.day); $("side-risk").textContent = money(b.at_risk);  // el bloque "Hoy" del menú de PC
   if (!S.moves.length && !S.positions.length) {
     put("bank", `<div class="empty"><span>${PUBLIC ? "Todavía no hay apuestas." : connected() ? "Tu cuenta de Kalshi está conectada y todavía no trae operaciones." : "Todavía no hay nada anotado. Empieza con tu saldo de Kalshi."}</span><button data-act="move">Depósito o retiro</button></div>`);
+    put("bank-more", "");
     return;
   }
   const fig = (k, v, d) => `<div><small>${k}</small><b>${v}</b>${d ? `<span>${d}</span>` : ""}</div>`;
@@ -903,49 +1230,159 @@ function renderBank() {
   const limit = (label, used, top) => `<div class="row"><span>${label}</span><b class="${top != null && used != null && used > top + 1e-9 ? "neg" : ""}">${used == null ? NIL : used.toFixed(1) + "%"}${top != null ? " · tope " + (+top.toFixed(1)) + "%" : ""}</b></div>`;
   const anyTop = Object.values(b.rules).some(v => v != null);
   put("bank", `<div class="hero"><div class="k">${you("Tu bank", "Saldo de " + esc(owner()))}</div><div class="big">${money(b.equity)}</div><p class="lede">${you("Pusiste", "Puso")} ${money(b.contributed)} y ${you("llevas", "lleva")} ${tone(b.realized)} en total.</p></div>
-    <div class="stats">${fig("Disponible", money(b.cash), "Para apostar")}${fig("En juego", money(b.at_risk), b.open ? plural(b.open, "apuesta", "apuestas") + ". Pagan " + money(b.if_all_win - b.cash) + " si ganan" : "Sin apuestas abiertas")}
+    <div class="stats">${fig("Disponible", money(b.cash), you("Para apostar", "Sin usar"))}${fig("En juego", money(b.at_risk), b.open ? plural(b.open, "apuesta", "apuestas") + ". Pagan " + money(b.if_all_win - b.cash) + " si ganan" : "Sin apuestas abiertas")}
       ${fig("Hoy", tone(b.day), "")}${fig("Récord", b.closed ? b.won + " a " + b.lost : NIL, record)}</div>
-    ${b.closed ? `<p class="sub">Se cuenta con ${plural(b.closed, "apuesta cerrada", "apuestas cerradas")}.${b.closed < 100 ? " Son pocas para saber si el método gana." : ""}</p>` : ""}
-    <div class="limits"><h3 class="cap">${anyTop ? "Tus topes, en % del bank" : "No has puesto topes"}</h3>${anyTop ? `<div class="group">${limit("Apuesta más grande", b.usage.position_pct, b.rules.max_position_pct) + limit("Total en juego", b.usage.open_pct, b.rules.max_open_pct) + limit("Pérdida de hoy", b.usage.day_loss_pct, b.rules.max_day_loss_pct)}</div>` : ""}
-      <div class="btns"><button data-act="rules">${anyTop ? "Cambiar topes" : "Poner topes"}</button><button data-act="move">Depósito o retiro</button></div></div>
-    <details data-keep="bank"${keep("bank")}><summary>Más números</summary><div class="group">` +
-    (b.open ? fact(you("Si todas ganan, el bank queda en", "Si todas ganan, el saldo queda en"), money(b.if_all_win)) + fact("Si todas pierden, queda en", money(b.if_all_lose)) +
+    ${b.closed ? `<p class="sub">Se cuenta con ${plural(b.closed, "apuesta cerrada", "apuestas cerradas")}.${b.closed < 100 ? " Son pocas para saber si el método gana." : ""}</p>` : ""}`);
+  const limits = `<div class="limits"><h3 class="cap">${anyTop ? "Tus topes, en % del bank" : "No has puesto topes"}</h3>${anyTop ? `<div class="group">${limit("Apuesta más grande", b.usage.position_pct, b.rules.max_position_pct) + limit("Total en juego", b.usage.open_pct, b.rules.max_open_pct) + limit("Pérdida de hoy", b.usage.day_loss_pct, b.rules.max_day_loss_pct)}</div>` : ""}
+      <div class="btns"><button data-act="rules">${anyTop ? "Cambiar topes" : "Poner topes"}</button><button data-act="move">Depósito o retiro</button></div></div>`;
+  const rows = (b.open ? fact(you("Si todas ganan, el bank queda en", "Si todas ganan, el saldo queda en"), money(b.if_all_win)) + fact("Si todas pierden, queda en", money(b.if_all_lose)) +
       fact("Esperado según el modelo", money(b.expected_model)) + fact("Esperado según Kalshi", money(b.expected_market)) : "") +
     fact("Apuesta más grande", b.usage.position_pct == null ? NIL : b.usage.position_pct.toFixed(1) + "% " + you("del bank", "del saldo")) +
     fact("Total en juego", b.usage.open_pct == null ? NIL : b.usage.open_pct.toFixed(1) + "% " + you("del bank", "del saldo")) +
     fact("Ganancia sobre lo apostado", b.roi == null ? NIL : pct(b.roi, 1)) +
-    (b.clv != null ? fact(you("Precio de cierre contra el tuyo", "Precio de cierre contra el suyo"), (b.clv >= 0 ? "+" : "−") + cents(Math.abs(b.clv))) : "") + "</div></details>");
+    (b.clv != null ? fact(you("Precio de cierre contra el tuyo", "Precio de cierre contra el suyo"), (b.clv >= 0 ? "+" : "−") + cents(Math.abs(b.clv))) : "");
+  // En PC "Más números" va siempre a la vista junto al historial, y los topes debajo. En teléfono los topes van primero y "Más números" se despliega.
+  put("bank-more", WIDE.matches ? `<div class="cap-row"><h3 class="cap">Más números</h3></div><div class="group">${rows}</div>` + limits :
+    limits + `<details data-keep="bank"${keep("bank")}><summary>Más números</summary><div class="group">${rows}</div></details>`);
 }
 function renderHistory() {
   const closed = S.positions.filter(p => p.exit).sort((a, b) => new Date(b.exit.when) - new Date(a.exit.when));
   put("history-sub", closed.length ? plural(closed.length, "apuesta cerrada", "apuestas cerradas") : "");
-  let body = "";
-  if (S.curve.length > 1) {
+  let body = "", curve = "";
+  if (S.curve.length > 1 && WIDE.matches) curve = curveWide();
+  else if (S.curve.length > 1) {
     const W = 800, H = 150, v = S.curve.map(c => c.equity), lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1, x = i => 6 + (W - 12) * i / (v.length - 1), y = e => 12 + (H - 30) * (1 - (e - lo) / span);
     let d = "M" + x(0) + " " + y(v[0]);
     for (let i = 1; i < v.length; i++) d += " H" + x(i).toFixed(1) + " V" + y(v[i]).toFixed(1);
-    body += `<div class="curve-box"><svg class="curve" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${PUBLIC ? "Curva del saldo" : "Curva del bank"}"><defs><linearGradient id="curve-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30d158" stop-opacity=".35"/><stop offset="1" stop-color="#30d158" stop-opacity="0"/></linearGradient></defs>
+    curve = `<div class="curve-box"><svg class="curve" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${PUBLIC ? "Curva del saldo" : "Curva del bank"}"><defs><linearGradient id="curve-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30d158" stop-opacity=".35"/><stop offset="1" stop-color="#30d158" stop-opacity="0"/></linearGradient></defs>
       <path d="${d} V${H - 4} H${x(0)} Z" fill="url(#curve-fill)"/><path d="${d}" fill="none" stroke="var(--green)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
       <p class="sub">${you("Tu bank", "El saldo")} después de cada apuesta cerrada. Su punto más bajo fue ${money(lo)} y el más alto ${money(hi)}. Ahora está en ${money(S.bank.equity)}.</p></div>`;
   }
   if (closed.length) body += '<div class="group">' + closed.map(historyRow).join("") + "</div>";
   if (S.moves.length) body += `<details data-keep="moves"${keep("moves")}><summary>${plural(S.moves.length, "movimiento de dinero", "movimientos de dinero")}</summary><div class="group">${S.moves.map(m => `<div class="row"><b>${({deposit: "Depósito", withdrawal: "Retiro", adjustment: "Ajuste"})[m.kind]}<small>${day(m.when, {day: "numeric", month: "short", year: "numeric"})}${m.note ? " · " + esc(m.note) : ""}</small></b><b>${money(m.kind === "withdrawal" ? -m.amount : m.amount, true)}</b></div>`).join("")}</div></details>`;
-  put("history", body || '<div class="empty">' + you("Aquí quedan tus apuestas cerradas", "Aquí quedan las apuestas cerradas") + ", con su resultado y la curva " + you("del bank", "del saldo") + ".</div>");
+  put("curve", curve);
+  put("history", body || curve ? body : '<div class="empty">' + you("Aquí quedan tus apuestas cerradas", "Aquí quedan las apuestas cerradas") + ", con su resultado y la curva " + you("del bank", "del saldo") + ".</div>");
+}
+// La gráfica del saldo en PC: a todo lo ancho, con su escala, los días y la línea punteada de lo que se puso.
+function curveWide() {
+  const W = 1100, H = 200, v = S.curve.map(c => c.equity), put0 = S.bank.contributed > 0 ? S.bank.contributed : null;
+  const lo0 = Math.min(...v), hi0 = Math.max(...v), lo = Math.min(lo0, put0 ?? lo0), hi = Math.max(hi0, put0 ?? hi0), span = hi - lo || 1;
+  const x = i => 6 + (W - 12) * i / (v.length - 1), y = e => 12 + (H - 30) * (1 - (e - lo) / span);
+  let d = "M" + x(0).toFixed(1) + " " + y(v[0]).toFixed(1);
+  for (let i = 1; i < v.length; i++) d += " H" + x(i).toFixed(1) + " V" + y(v[i]).toFixed(1);
+  // cada día queda al centro de sus apuestas cerradas, y los que quedarían encimados no se rotulan
+  const days = new Map(); S.curve.forEach((c, i) => { const k = new Date(c.when).toDateString(); days.set(k, (days.get(k) || []).concat(i)); });
+  let last = -9, ticks = "";
+  for (const ix of days.values()) {
+    const at = 100 * (x(ix[0]) + x(ix[ix.length - 1])) / 2 / W;
+    if (at - last < 5) continue;
+    last = at; ticks += `<span style="left:${at.toFixed(2)}%">${esc(day(S.curve[ix[0]].when))}</span>`;
+  }
+  return `<div class="chart-card"><div class="cap-row"><h3 class="cap">${you("Tu bank", "El saldo")} después de cada apuesta cerrada</h3><span class="capr">Ha ido de ${money(lo0)} a ${money(hi0)}. Ahora está en ${money(S.bank.equity)}.${put0 == null ? "" : " La punteada es lo que " + you("pusiste", "puso") + ", " + money(put0) + "."}</span></div>
+    <div class="curve-wrap"><div class="scale"><span>${money(hi)}</span><span>${money(lo)}</span></div><div><svg class="curve wide" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${PUBLIC ? "Curva del saldo" : "Curva del bank"}"><defs><linearGradient id="curve-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30d158" stop-opacity=".35"/><stop offset="1" stop-color="#30d158" stop-opacity="0"/></linearGradient></defs>
+      ${put0 == null ? "" : `<line x1="0" x2="${W}" y1="${y(put0).toFixed(1)}" y2="${y(put0).toFixed(1)}" stroke="var(--ink2)" stroke-width="1" stroke-dasharray="3 5" vector-effect="non-scaling-stroke"/>`}
+      <path d="${d} V${H - 4} H${x(0).toFixed(1)} Z" fill="url(#curve-fill)"/><path d="${d}" fill="none" stroke="var(--green)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
+      <div class="ticks">${ticks}</div></div></div></div>`;
 }
 
 let introSeen = false;  // la franja de la primera visita: se recuerda en el navegador si ya se cerró
 try { introSeen = localStorage.getItem("mesa-intro") === "1"; } catch (e) { /* sin memoria del navegador, la franja sale siempre */ }
 $("intro-ok").addEventListener("click", () => { introSeen = true; $("intro").hidden = true; try { localStorage.setItem("mesa-intro", "1"); } catch (e) { /* no pasa nada */ } });
 document.addEventListener("click", e => { const b = e.target.closest("[data-scroll]"); const el = b && $(b.dataset.scroll); if (el) el.scrollIntoView({block: "start"}); });
+document.addEventListener("click", e => {  // de una señal que ya tiene apuesta a la tarjeta de su apuesta
+  const b = e.target.closest("[data-see]");
+  if (!b) return;
+  showTab("bets");
+  if (WIDE.matches && S && SHEETS.has(b.dataset.see)) { DETAIL.bets = b.dataset.see; paint(); }  // en PC su detalle se abre en el panel y la tarjeta queda marcada
+  const el = $(b.dataset.see);
+  if (el) { el.scrollIntoView({block: "center"}); el.focus({preventScroll: true}); } else window.scrollTo(0, 0);
+});
+// "Desde tu última visita" (solo copia pública): lo que se decidió y cómo cambió el saldo desde la última vez.
+// Lo único que se guarda, en este teléfono y sin enviarlo a nadie, es la hora de la última visita.
+const VISIT = {ready: false, since: null, last: 0, shut: false};
+const VISIT_GAP = 30 * 60000;  // más de media hora sin abrir la página es otra visita
+function visitSave() { try { localStorage.setItem("mesa-visita", JSON.stringify({since: VISIT.since, last: VISIT.last, shut: VISIT.shut})); } catch (e) { /* sin memoria del navegador no hay visita anterior que contar */ } }
+function visitTouch() {
+  if (document.hidden) return;  // una página en segundo plano no cuenta como visita
+  if (!VISIT.ready) {
+    VISIT.ready = true;
+    try { const old = JSON.parse(localStorage.getItem("mesa-visita")); if (old && Number.isFinite(old.last)) Object.assign(VISIT, {since: Number.isFinite(old.since) ? old.since : null, last: old.last, shut: old.shut === true}); } catch (e) { /* nada guardado todavía */ }
+  }
+  const now = Date.now();
+  if (VISIT.last && now - VISIT.last > VISIT_GAP) Object.assign(VISIT, {since: VISIT.last, shut: false});  // otra visita: "desde" es la última vez que se vio la página
+  VISIT.last = now; visitSave();
+}
+function renderSince() {
+  if (!PUBLIC) { put("since", ""); return; }
+  visitTouch();
+  const t = VISIT.since;
+  if (t == null || VISIT.shut || t >= Date.parse(S.now)) { put("since", ""); return; }
+  const done = S.positions.filter(p => p.exit && Date.parse(p.exit.when) > t), then = [...S.curve].reverse().find(c => Date.parse(c.when) <= t), before = then ? then.equity : null, now = S.bank.equity;
+  if (!done.length && (before == null || Math.abs(now - before) < 0.005)) { put("since", ""); return; }  // nada que contar
+  const parts = [[done.filter(p => p.exit.how !== "sold" && p.exit.won).length, "ganó", "ganaron"], [done.filter(p => p.exit.how !== "sold" && !p.exit.won).length, "perdió", "perdieron"], [done.filter(p => p.exit.how === "sold").length, "se vendió", "se vendieron"]]
+    .filter(x => x[0]).map(x => plural(x[0], x[1], x[2])), who = esc(owner());
+  const said = done.length ? (done.length === 1 ? "Se decidió 1 apuesta" : "Se decidieron " + done.length + " apuestas") + " de " + who + (parts.length > 1 ? ": " + parts.slice(0, -1).join(", ") + " y " + parts[parts.length - 1] : ": " + parts[0]) + ". " : "";
+  const bank = before == null ? `El saldo de ${who} es ${money(now)}.` : Math.abs(now - before) < 0.005 ? `El saldo de ${who} sigue en ${money(now)}.` : `El saldo de ${who} pasó de ${money(before)} a ${money(now)}.`;
+  put("since", `<div class="since" role="note"><div><b>Desde tu última visita</b><small>${esc(stamp(t))}</small>${said}${bank}</div><button class="link" type="button" data-since-close aria-label="Cerrar el resumen de tu última visita">Cerrar</button></div>`);
+}
+document.addEventListener("click", e => { if (e.target.closest("[data-since-close]")) { VISIT.shut = true; visitSave(); put("since", ""); } });
+
+// Juego de pronóstico (solo copia pública), sin dinero: en cada señal fuerte que no ha empezado el visitante marca con qué lado va.
+// Las marcas viven en su teléfono y se miden contra el historial, junto al modelo y las apuestas cerradas de su dueño.
+const PICKS = {};
+if (PUBLIC) try { const saved = JSON.parse(localStorage.getItem("mesa-picks")); if (saved && typeof saved === "object" && !Array.isArray(saved)) for (const [k, v] of Object.entries(saved)) if (typeof v === "string") PICKS[k] = v; } catch (e) { /* sin memoria del navegador las marcas duran lo que la página abierta */ }
+const pickKey = s => s.game_id + "-" + s.market;
+const pickSides = s => s.market === "total" ? ["over", "under"] : ["away", "home"];  // un orden fijo, para no empujar hacia el lado del modelo
+const pickName = (s, side) => cap(lineAt({...s, side}, s.line));
+const flip = r => r === "ganó" ? "perdió" : r === "perdió" ? "ganó" : r;
+function pickSave() {
+  const keys = Object.keys(PICKS); for (const k of keys.slice(0, Math.max(0, keys.length - 400))) delete PICKS[k];  // las más viejas salen primero
+  try { localStorage.setItem("mesa-picks", JSON.stringify(PICKS)); } catch (e) { /* no pasa nada */ }
+}
+// Los dos botones de una señal. Cuando el partido ya empezó la marca solo se lee.
+function pickBox(s, state) {
+  if (!PUBLIC || !pickSides(s).includes(s.side)) return "";
+  const mine = PICKS[pickKey(s)];
+  if (state !== "pre") return mine ? `<p class="belief mv">Tu marca: <b>${esc(pickName(s, mine))}</b>.</p>` : "";
+  const btn = side => `<button type="button" data-pick="${esc(pickKey(s))}" data-side="${side}" aria-pressed="${mine === side}">${esc(pickName(s, side))}</button>`;
+  return `<div class="pick" role="group" aria-label="Tu pronóstico, un juego sin dinero"><small>Tu pronóstico (juego sin dinero): ¿qué lado crees que acierta?</small><div class="opts">${pickSides(s).map(btn).join("")}</div></div>`;
+}
+// El marcador: las marcas ya decididas, el modelo en esas mismas señales y las apuestas cerradas de su dueño. Cada cifra lleva sus casos.
+function pickScore(open) {
+  if (!PUBLIC) return "";
+  const mine = [];
+  for (const r of S.history || []) for (const c of r.calls) { const side = PICKS[r.game_id + "-" + c.market]; if (side && c.side && c.result !== "empate") mine.push({r, c, side, you: side === c.side ? c.result : flip(c.result)}); }
+  const waiting = S.signals.filter(s => PICKS[pickKey(s)] && (gameOf(s.game_id) || s).state !== "post").length, n = mine.length;
+  if (!open && !n && !waiting) return "";
+  const hits = list => list.filter(x => x === "ganó").length, closed = S.positions.filter(p => p.exit && p.exit.how !== "sold");
+  const row = (k, v) => `<div class="row"><span>${k}</span><b>${v}</b></div>`;
+  const table = n ? `<div class="group">${row("Tú", hits(mine.map(m => m.you)) + " de " + n)}${row("El modelo, en esas mismas señales", hits(mine.map(m => m.c.result)) + " de " + n)}${closed.length ? row(esc(cap(owner())) + ", en sus apuestas cerradas", closed.filter(p => p.exit.won).length + " de " + closed.length) : ""}</div>` : "";
+  const list = !n ? "" : `<details data-keep="picks-mine"${keep("picks-mine")}><summary>Tus marcas ya decididas</summary><div class="group">${mine.slice(0, 40).map(m => `<div class="row"><b>${esc(m.r.away)} en ${esc(m.r.home)}<small>${m.c.market === "spread" ? "Hándicap" : "Total"} · ${m.side === m.c.side ? "fuiste con el modelo" : "fuiste contra el modelo"}</small></b>${mk(m.you, m.you === "ganó" ? "Atinaste" : m.you === "perdió" ? "Fallaste" : "Empate")}</div>`).join("")}</div></details>`;
+  const intro = n ? "" : "En cada señal fuerte que no ha empezado marca qué lado crees que acierta. Cuando termine el partido verás aquí cómo te va contra el modelo y contra " + esc(owner()) + ". ";
+  const wait = !waiting ? "" : plural(waiting, "marca espera", "marcas esperan") + " resultado. ";
+  const few = n && n < 100 ? "Son pocos casos para saber quién acierta más. " : "";
+  return `<div class="stack"><div class="cap-row"><h3 class="cap">Tu juego de pronóstico</h3><span class="capr">sin dinero</span></div>${table}${list}
+    <p class="sub">${intro}${wait}${few}Es un juego de pronóstico y no una recomendación. Tus marcas se guardan solo en este teléfono. ${n ? esc(cap(owner())) + " cuenta sus apuestas cerradas, que no son las mismas señales ni los mismos partidos." : ""}</p></div>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-pick]");
+  if (!b || !PUBLIC || !S) return;
+  const s = S.signals.find(x => pickKey(x) === b.dataset.pick), side = b.dataset.side;
+  if (!s || !pickSides(s).includes(side) || (gameOf(s.game_id) || s).state !== "pre") return;  // el partido ya empezó: no se marca
+  if (PICKS[b.dataset.pick] === side) delete PICKS[b.dataset.pick]; else PICKS[b.dataset.pick] = side;  // tocar otra vez la misma la quita
+  pickSave(); paint();
+  const again = [...document.querySelectorAll("[data-pick]")].find(x => x.dataset.pick === b.dataset.pick && x.dataset.side === side);
+  if (again) again.focus();  // el repintado cambia los botones: el foco vuelve al que se tocó
+});
 function renderAccount() {
   if (PUBLIC) {  // la copia pública no sabe nada de la cuenta: dice de quién es y que no se toca
     const name = "Rodrindex", tag = '<span class="chip">Solo lectura</span>';
-    document.title = name; document.querySelector("h1").textContent = name;
-    document.querySelector('[data-tab="bets"]').firstChild.textContent = "Apuestas"; document.querySelector('[data-tab="bank"]').textContent = "Caja";
+    document.title = name; for (const h of document.querySelectorAll("h1")) h.textContent = name;
+    document.querySelector('[data-tab="bets"]').firstChild.textContent = "Apuestas"; document.querySelector('[data-tab="bank"]').textContent = "Cuenta";
     $("foot").textContent = "Página de solo lectura con la foto que publica el panel de " + owner() + ". No opera y no es una recomendación de entrar ni de cuánto.";
-    $("pill-k").textContent = "Saldo de " + owner(); $("intro-name").textContent = cap(owner()); $("intro").hidden = introSeen;
+    $("pill-k").textContent = "Saldo de " + owner(); $("side-k").textContent = "Saldo de " + owner(); $("intro-name").textContent = cap(owner()); $("intro").hidden = introSeen;
     $("help-now").textContent = "en la última foto";
-    put("account", tag); put("account2", tag);
+    put("account", tag); put("account2", tag); put("account3", tag);
     return;
   }
   const a = S.account || {}, site = S.site || {}, out = site.outside || {};
@@ -959,7 +1396,7 @@ function renderAccount() {
   else if (site.pushed && seen != null) { words = "visto bien desde afuera " + ago + (out.ok === false ? ", y la última mirada no vio la foto nueva" : ""); tone = seen <= 15 && out.ok !== false ? "good" : "mid"; }
   else if (site.pushed) words = out.ok === false ? "subido, pero desde afuera no se ve la foto nueva" : "subido, sin comprobar desde afuera";
   const shared = site.on ? ` <span class="chip dot ${tone}" title="${esc(site.why || out.why || "")}">Sitio público ${words}</span>` : "";
-  put("account", chip + shared); put("account2", chip + shared);
+  put("account", chip + shared); put("account2", chip + shared); put("account3", chip + shared);
 }
 // Cada pantalla se pinta por su cuenta: si una falla, las demás siguen y el fallo queda anotado.
 function safe(name, work) { try { work(); } catch (e) { console.error(name, e); FAILED.push(name); } }
@@ -988,8 +1425,10 @@ function render() {
   FAILED.length = 0;
   FEE = S.fee_rate || FEE;
   safe("la cuenta", renderAccount);
-  safe("la caja", renderBank); safe("las apuestas", renderBets); safe("las señales", renderSignals); safe("los partidos", renderGames);
+  safe("la pestaña Cuenta", renderBank); safe("los resultados de la cuenta", renderPerf); safe("las apuestas", renderBets); safe("las señales", renderSignals); safe("los partidos", renderGames);
   safe("el historial de predicciones", renderPicks); safe("el historial", renderHistory);
+  safe("el resumen de tu última visita", renderSince);
+  safe("el detalle", paintPane);
   paintAlerts();
   return !FAILED.length;
 }
@@ -1025,7 +1464,7 @@ async function liveScores() {
   } catch (e) { /* si ESPN no responde se sigue con la foto */ }
 }
 function tick() {
-  const dot = (cls, text) => { $("pulse").className = "pulse " + cls; $("pulse-text").textContent = text; };
+  const dot = (cls, text) => { for (const s of ["", "2"]) { $("pulse" + s).className = "pulse " + cls; $("pulse-text" + s).textContent = text; } };  // el pulso de arriba y el del menú de PC
   if (!S) { if (LOAD.fails) LOAD.starting ? dot("", PUBLIC ? "La foto del panel todavía no está lista" : "El panel está arrancando") : dot("off", "No pude cargar los datos"); return; }  // sin fallos todavía es la primera carga: sigue "Cargando"
   if (LOAD.paint) { dot("off", PUBLIC ? "No pude mostrar todo" : "Error al pintar la página"); return; }  // con un pintado a medias el pulso no puede decir que todo está al día
   if (!lastOk) return;
@@ -1172,7 +1611,7 @@ $("form-sell").addEventListener("submit", async e => {
   try { await post("/api/venta", {id: selling.id, price: price / 100, contracts: n, fee: num("sell-fee")}); $("dlg-sell").close(); } catch (err) { $("sell-error").textContent = err.message; }
 });
 
-// Caja y topes
+// Cuenta y topes
 $("form-move").addEventListener("submit", async e => {
   e.preventDefault();
   const amount = num("move-amount");
@@ -1264,7 +1703,11 @@ function openSheet(blob, name, back) {
   document.body.appendChild(el); SHEET = {el, url, back};
   document.documentElement.style.overflow = "hidden"; el.querySelector("[data-sh]").focus();  // el fondo no se mueve y el teclado cae en la hoja
 }
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (SHEET) closeSheet();  // Escape cierra primero lo que está encima: la imagen para compartir y los formularios, y después el detalle
+  else if (!document.querySelector("dialog[open]")) closeDetail();
+});
 async function shareImage(button) {
   if (button.disabled) return;
   const label = button.dataset.label || (button.dataset.label = button.textContent);
@@ -1328,7 +1771,7 @@ function signalSpec(key) {
   if (!s) throw new Error("no hay señal " + key);
   const g = gameOf(s.game_id) || null, o = s.kalshi && s.kalshi.found ? s.kalshi : null, [away, home] = s.game.split(" @ ");
   const tA = g ? g.away : {abbr: away}, tH = g ? g.home : {abbr: home};
-  const moment = !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : g.state === "in" ? "En juego · " + clock(g) : clock(g);
+  const moment = momentOf(g);  // igual que la página: lo que está en juego dice de qué hora es la foto
   const force = s.strength === "0.1" ? ["Muy fuerte", PIC.green] : s.strength ? ["Fuerte", PIC.ink] : ["Débil", PIC.ink2];
   const price = o && o.price != null, model = o && o.p_model != null && o.needed != null;
   const card = [
@@ -1359,7 +1802,7 @@ function betSpec(key) {
   const right = p.exit ? (p.exit.how === "sold" ? "Vendida" : p.exit.won ? "Ganó" : "Perdió") : st.text;
   const score = live && g.away.score != null ? tA.abbr + " " + g.away.score + " · " + tH.abbr + " " + g.home.score : "";
   const teams = hasTeams ? picTeams(tA, tH, score || cityOf(g, p.game.away) + " en " + cityOf(g, p.game.home)) : picText(p.game.name || "Otro mercado", 38, 600);
-  const moment = !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : g.state === "in" ? "En juego · " + clock(g) : clock(g);
+  const moment = momentOf(g);  // igual que la página: lo que está en juego dice de qué hora es la foto
   const same = String(s.title).toLowerCase().startsWith(String(p.label).toLowerCase());  // un total ya se llama igual que su jugada
   const txt = plainText(s.text), pctLine = main != null && !p.exit ? prob(main) + " de ganar, " + (p.p != null ? PIC_SRC[p.p_source] || PIC_SRC.modelo : "según el precio de Kalshi") + (g && g.state === "in" ? ", a las " + hour(picNow()) : "") : "";
   const pc = p.profit > 0 ? PIC.green : p.profit < 0 ? PIC.red : PIC.ink;
@@ -1391,7 +1834,7 @@ function daySpec() {
   const parts = [];
   if (bets.length) {
     const betRows = bets.map(p => {
-      const g = gameOf(p.game.id) || null, st = status(p, g), match = p.game.home ? p.game.away + " en " + p.game.home : p.game.name || "Otro mercado", moment = g ? clock(g) : "";
+      const g = gameOf(p.game.id) || null, st = status(p, g), match = p.game.home ? p.game.away + " en " + p.game.home : p.game.name || "Otro mercado", moment = g && g.state === "in" ? momentOf(g) : g ? clock(g) : "";
       const right = p.exit ? money(p.profit, true) : st.text, tone = p.exit ? (p.profit > 0 ? "good" : p.profit < 0 ? "bad" : "info") : st.tone;
       return picPair([picText(p.label, 38, 700, PIC.ink), picGap(4), picText([match, moment].filter(Boolean).join(" · "), 28, 400, PIC.ink2)],
         [picText(money(p.cost) + " a " + cents(p.price), 30, 600, PIC.ink, 1.25, "right"), picGap(4), picText(right, 26, 600, TONE[tone], 1.25, "right")], 330);
@@ -1403,7 +1846,7 @@ function daySpec() {
   parts.push(picText("SEÑALES FUERTES DEL MODELO", 26, 700, PIC.ink2), picGap(14));
   if (!sig.length) parts.push(picCard([picText("No hay señales fuertes en esta jornada.", 32, 400, PIC.ink2)], null, null));
   else parts.push(picCard(rows(sig.map(s => {
-    const g = gameOf(s.game_id) || null, o = s.kalshi && s.kalshi.found ? s.kalshi : null, moment = g ? clock(g) : "";
+    const g = gameOf(s.game_id) || null, o = s.kalshi && s.kalshi.found ? s.kalshi : null, moment = g && g.state === "in" ? momentOf(g) : g ? clock(g) : "";
     const res = s.result ? [cap(s.result), s.result === "ganó" ? PIC.green : s.result === "perdió" ? PIC.red : PIC.ink2] : s.strength === "0.1" ? ["Muy fuerte", PIC.green] : ["Fuerte", PIC.ink];
     const line = o ? "Kalshi: " + (o.yes ? "SÍ" : "NO") + (o.price != null ? " a " + cents(o.price) : "") : s.kalshi ? "sin línea exacta en Kalshi" : "sin datos de Kalshi";
     return picPair([picText(signalName(s), 38, 700, PIC.ink), picGap(4), picText([s.game.replace(" @ ", " en "), moment].filter(Boolean).join(" · "), 28, 400, PIC.ink2)],
