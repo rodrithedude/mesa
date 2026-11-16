@@ -126,6 +126,7 @@ details.cap-sum > summary { font: 600 13px/1.25 var(--font); color: var(--ink2);
 /* Resultados del modelo por tipo de señal, y la lista de cambios */
 .tiers > div { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); gap: 8px; align-items: center; padding: 10px 16px; font-size: 14px; }
 .tiers > div:first-child { color: var(--ink2); font-size: 12px; font-weight: 600; padding-top: 8px; padding-bottom: 8px; } .tiers span + span { text-align: right; }
+.tiers.vs > div { grid-template-columns: minmax(0, 1.5fr) repeat(2, minmax(0, 1fr)); }
 .tiers b { display: block; font-weight: 700; font-size: 17px; letter-spacing: -.2px; } .tiers small { display: block; color: var(--ink2); font-size: 12px; }
 .news > div { padding: 12px 16px; font-size: 15px; line-height: 1.4; } .news small { display: block; color: var(--ink2); font-size: 12px; margin-bottom: 2px; }
 .group { background: var(--card); border-radius: 14px; overflow: hidden; }
@@ -274,6 +275,18 @@ body.public .m-act { display: none; }
 }
 @keyframes beat { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+/* Compartir como imagen */
+.share-row { display: flex; justify-content: flex-end; margin: 4px 0 0; }
+.share-row.day { justify-content: flex-start; margin: 0 4px; }
+.share-row .link { min-height: 44px; }
+.shsheet { position: fixed; inset: 0; z-index: 90; display: flex; align-items: flex-end; justify-content: center; background: rgb(0 0 0 / .62); }
+.shsheet > div { width: min(100%, 520px); max-height: 94vh; max-height: 94dvh; overflow: auto; background: var(--card); border-radius: 22px 22px 0 0; padding: 14px 16px calc(16px + env(safe-area-inset-bottom)); }
+.shsheet .pv { max-height: calc(94vh - 190px); max-height: calc(94dvh - 190px - env(safe-area-inset-bottom)); overflow: auto; border-radius: 14px; }
+.shsheet img { display: block; width: 100%; height: auto; }
+.shsheet .sub { margin: 10px 2px 0; }
+.shsheet .acts { display: flex; gap: 10px; margin-top: 12px; }
+.shsheet .acts > * { flex: 1; min-height: 50px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 14px; background: var(--card2); color: var(--ink); font: 600 16px/1 var(--font); text-decoration: none; cursor: pointer; }
+.shsheet .acts > [data-sh="send"] { background: var(--blue); }
 </style>
 </head>
 <body>
@@ -286,12 +299,14 @@ body.public .m-act { display: none; }
   <section id="tab-bets" class="stack" role="tabpanel">
     <div class="title-row"><h2 class="title"><span class="own">Mis apuestas</span><span class="pub">Apuestas</span></h2><span class="grow"></span><button class="link" data-act="buy">Anotar una compra</button></div>
     <p class="lede" id="open-sub"></p>
+    <div class="share-row day"><button class="link" data-img="day">Compartir el día</button></div>
     <div id="open" class="stack"><div class="empty">Cargando apuestas.</div></div>
     <div id="today" class="stack"></div>
   </section>
   <section id="tab-signals" class="stack" role="tabpanel" hidden>
     <div class="title-row"><h2 class="title">Señales</h2></div>
     <p class="lede" id="record"></p>
+    <div class="share-row day"><button class="link" data-img="day">Compartir el día</button></div>
     <div id="signals" class="stack"><div class="empty">Cargando señales.</div></div>
   </section>
   <section id="tab-games" class="stack" role="tabpanel" hidden>
@@ -598,6 +613,7 @@ function injuryBlock(g) {
   };
   return `<h4 class="cap">Lesionados</h4><div class="group">${team("away")}${team("home")}</div><p class="gfoot">El reporte oficial de la NBA salió ${stamp(inj.published)}, y las lesiones vienen en inglés, como en el reporte.</p>`;
 }
+function shareRow(key) { return '<div class="share-row"><button class="link" data-img="' + esc(key) + '">Compartir</button></div>'; }
 function ticket(p) {
   const g = gameOf(p.game.id), st = status(p, g), s = story(p, g), yes = p.side === "yes", main = p.p != null ? p.p : p.mid;
   const source = {modelo: "según el modelo, antes del partido", "línea": "según la línea de la casa, antes del partido", marcador: "según el marcador y el reloj", final: "el partido ya terminó"};
@@ -616,7 +632,7 @@ function ticket(p) {
   return `<article class="game" style="${tints(g)}">${scoreRow(p.game, g)}
     <div class="bet"><div><h3>${esc(s.title)}</h3>${s.text ? `<p>${s.text}</p>` : ""}</div>${chance}</div>${progress(s.bar, st.tone)}
     <div class="cash"><span>${you("Apostaste", "Apostó")} <b>${money(p.cost)}</b></span><span>${you("Si gana, cobras", "Si gana, cobra")} <b>${money(p.contracts)}</b></span><span>Ganancia <b class="pos">${money(p.if_win, true)}</b></span></div>
-    <p class="stl"><span class="st"><i class="sdot ${st.tone}"></i>${st.text}</span>${said ? `<span>${said}</span>` : ""}</p>${more}</article>`;
+    <p class="stl"><span class="st"><i class="sdot ${st.tone}"></i>${st.text}</span>${said ? `<span>${said}</span>` : ""}</p>${shareRow("bet:" + p.id)}${more}</article>`;
 }
 function historyRow(p) {
   const out = p.exit.how === "sold" ? "Vendida a " + cents(p.exit.price) : (p.exit.won ? "Ganó" : "Perdió"), edge = p.close ? p.close.price - p.price : null;
@@ -709,6 +725,19 @@ function trendBox() {
     <div style="display:flex;justify-content:space-between;color:var(--ink2);font-size:12px;margin:4px 102px 0 0"><span>${label(days[0])}</span><span>${label(days[days.length - 1])}</span></div>
     <p class="sub" style="margin-top:8px">Acumulado día por día de lo sellado en vivo. La línea punteada es 50%. ${esc(say("Todos los pronósticos:", all))} ${esc(say("Señales fuertes:", strong))}</p></div>`;
 }
+// El modelo contra Kalshi en las mismas líneas. El pronóstico de Kalshi es el lado que su precio daba por más probable al sellarse la señal.
+function versusBox() {
+  const k = (S.results || {}).kalshi;
+  if (!k || !k.comparable) return "";
+  const cell = c => !c || !c.bets ? `<small>${NIL}</small>` : `<b>${Math.round(100 * c.wins / c.bets)}%</b><small>${c.wins} de ${c.bets}</small>`;
+  const tiers = [["todos", "Todos los comparables"], ["fuerte", "Señal fuerte"], ["muy_fuerte", "Señal muy fuerte"], ["fuertes", "Fuerte + muy fuerte"]], a = k.agree || {};
+  const why = [[k.no_line, "porque Kalshi no tenía esa línea exacta"], [k.no_pick, "porque su precio estaba en 50% justo"], [k.sealed - k.comparable - k.no_line - k.no_pick, "por otros motivos"]]
+    .filter(x => x[0] > 0).map((x, i) => (i ? x[0] : plural(x[0], "quedó fuera", "quedaron fuera")) + " " + x[1]);
+  const left = why.length > 1 ? why.slice(0, -1).join(", ") + " y " + why[why.length - 1] : why[0] || "";
+  return `<div class="cap">Contra Kalshi, en las mismas líneas</div><div class="group tiers vs"><div><span></span><span>Modelo</span><span>Kalshi</span></div>` +
+    tiers.map(([key, name]) => `<div><span>${name}</span><span>${cell((k.tiers[key] || {}).model)}</span><span>${cell((k.tiers[key] || {}).kalshi)}</span></div>`).join("") + `</div>
+    <p class="sub">El pronóstico de Kalshi es el lado que su precio daba por más probable cuando se selló la señal.${k.close ? ` En estas líneas ese precio casi siempre ronda el 50%: en ${k.close} de ${k.comparable} estaba a 2 centavos o menos.` : ""} Fueron del mismo lado en ${a.same} y se separaron en ${a.apart}, y ahí el modelo atinó ${a.apart_model} y Kalshi ${a.apart_kalshi}. Con tan pocos casos todavía no se puede decir que uno le gane al otro. De ${k.sealed} pronósticos con resultado se compararon ${k.comparable}${left ? ": " + left : ""}.</p>`;
+}
 function resultsBox() {
   const r = S.results || {};
   if (!r.live && !r.season) return "";
@@ -717,7 +746,7 @@ function resultsBox() {
   const block = (title, d) => !d ? "" : `<div class="cap">${title}</div><div class="group tiers"><div><span></span><span>Hándicap</span><span>Total</span><span>Los dos</span></div>` +
     tiers.map(([k, name]) => `<div><span>${name}</span><span>${cell((d[k] || {}).spread)}</span><span>${cell((d[k] || {}).total)}</span><span>${cell((d[k] || {}).both)}</span></div>`).join("") + "</div>";
   return `<div class="stack"><div class="h-sec">Resultados del modelo</div>${block("En vivo, sellado antes del partido", r.live)}${block("Toda la temporada, aplicado hacia atrás", r.season)}
-    ${trendBox()}<p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p></div>`;
+    ${trendBox()}<p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p>${versusBox()}</div>`;
 }
 // Lo que ha cambiado en el modelo, en palabras sencillas y de lo más nuevo a lo más viejo.
 function changesBox() {
@@ -741,7 +770,7 @@ function renderSignals() {
     if (s.news && s.news.includes("+")) html += `<div class="warn">Bajas nuevas que la señal no conoce: ${esc(s.news)}</div>`;
     if (deal && deal.found) html += dealBox(s, deal);
     else if (deal) html += `<p class="verdict">Kalshi no tiene esa línea exacta${deal.options && deal.options.length ? ". Estas son las dos más cercanas, sin elegir una" : ""}.</p>` + (deal.options || []).map(o => dealBox(s, o)).join("");
-    return html + `<details class="more" data-keep="sig-${s.game_id}-${s.market}"${keep("sig-" + s.game_id + "-" + s.market)}><summary>Ver detalle</summary><div class="sheet">${whyBlock(s, "Por qué el modelo va con " + signalName(s))}${injuryBlock(g)}
+    return html + shareRow("sig:" + s.game_id + ":" + s.market) + `<details class="more" data-keep="sig-${s.game_id}-${s.market}"${keep("sig-" + s.game_id + "-" + s.market)}><summary>Ver detalle</summary><div class="sheet">${whyBlock(s, "Por qué el modelo va con " + signalName(s))}${injuryBlock(g)}
       <h4 class="cap">Líneas</h4><div class="group">
       <div class="row"><span>Ventaja que ve el modelo</span><b>${s.points.toFixed(1)} puntos</b></div>
       <div class="row"><span>Línea de apertura</span><b>${s.market === "total" ? s.line : esc(signalName(s))}</b></div>
@@ -1060,6 +1089,197 @@ document.addEventListener("click", e => {
 });
 load(); setInterval(load, PUBLIC ? 60000 : 5000); setInterval(tick, 1000);
 if (PUBLIC) setInterval(liveScores, 15000);
+// --- Compartir como imagen -----------------------------------------------------------------
+const DISCLAIMER = "Esto es lo que marca un modelo estadístico. No es una recomendación ni una indicación de apuesta. El modelo se equivoca seguido y apostar puede hacerte perder dinero.";
+const PIC = {W: 1080, pad: 60, inner: 44, bg: "#000", card: "#1c1c1e", ink: "#fff", ink2: "rgba(235,235,245,.62)", rule: "rgba(84,84,88,.65)", green: "#30d158", red: "#ff453a", orange: "#ff9f0a"};
+const picFont = (size, weight) => (weight || 400) + " " + size + "px " + (getComputedStyle(document.documentElement).getPropertyValue("--font").trim() || "system-ui, sans-serif");
+// Parte un texto en renglones que caben en el ancho.
+function picLines(ctx, str, width) { const out = []; let row = ""; for (const word of String(str).split(/\s+/)) { const next = row ? row + " " + word : word; if (row && ctx.measureText(next).width > width) { out.push(row); row = word; } else row = next; } if (row) out.push(row); return out; }
+// Cada bloque es una función (ctx, x, y, ancho, pintar) que devuelve su alto. Se llama una vez para medir y otra para pintar.
+const picText = (str, size, weight, color, lead, align) => (ctx, x, y, w, draw) => { ctx.font = picFont(size, weight); const rows = picLines(ctx, str, w), h = Math.round(size * (lead || 1.25)); if (draw) { ctx.fillStyle = color || PIC.ink; ctx.textBaseline = "top"; ctx.textAlign = align || "left"; rows.forEach((r, i) => ctx.fillText(r, align === "right" ? x + w : x, y + i * h)); } return rows.length * h; };
+// Un titular que se achica hasta caber en un renglón.
+const picFit = (str, size, min, weight, color) => (ctx, x, y, w, draw) => { let s = size; for (; s > min; s -= 4) { ctx.font = picFont(s, weight); if (ctx.measureText(str).width <= w) break; } return picText(str, s, weight, color, 1.15)(ctx, x, y, w, draw); };
+const picGap = n => () => n;
+const picStack = blocks => (ctx, x, y, w, draw) => { let h = 0; for (const b of blocks.filter(Boolean)) h += b(ctx, x, y + h, w, draw); return h; };
+// Dos columnas: la izquierda toma lo que sobra y la derecha un ancho fijo.
+const picPair = (left, right, rw) => (ctx, x, y, w, draw) => Math.max(picStack(left)(ctx, x, y, w - rw - 24, draw), picStack(right)(ctx, x + w - rw, y, rw, draw));
+const picRule = () => (ctx, x, y, w, draw) => { if (draw) { ctx.fillStyle = PIC.rule; ctx.fillRect(x, y + 20, w, 1); } return 41; };
+const picRound = (ctx, x, y, w, h, r) => { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); };
+// Una tarjeta: fondo redondeado, franja arriba con los colores de los dos equipos y los bloques adentro.
+const picCard = (blocks, a, b) => (ctx, x, y, w, draw) => { const inner = picStack(blocks), h = inner(ctx, x + PIC.inner, y + PIC.inner, w - 2 * PIC.inner, false) + 2 * PIC.inner; if (draw) { ctx.save(); picRound(ctx, x, y, w, h, 40); ctx.clip(); ctx.fillStyle = PIC.card; ctx.fillRect(x, y, w, h); if (a || b) { const g = ctx.createLinearGradient(x, 0, x + w, 0); g.addColorStop(0, a || b); g.addColorStop(1, b || a); ctx.fillStyle = g; ctx.fillRect(x, y, w, 10); } ctx.restore(); inner(ctx, x + PIC.inner, y + PIC.inner, w - 2 * PIC.inner, true); } return h; };
+// Pinta la pila de bloques en un lienzo de 1080 de ancho y el alto que haga falta.
+function picPaint(blocks) { const body = picStack(blocks), c = document.createElement("canvas"), w = PIC.W - 2 * PIC.pad; c.width = PIC.W; c.height = 10; const h = body(c.getContext("2d"), PIC.pad, PIC.pad, w, false) + 2 * PIC.pad; c.height = Math.ceil(h); const ctx = c.getContext("2d"); ctx.fillStyle = PIC.bg; ctx.fillRect(0, 0, c.width, c.height); body(ctx, PIC.pad, PIC.pad, w, true); return c; }
+// Un logo listo para el lienzo. Se pide con permiso de origen cruzado para que el lienzo se pueda exportar. Si falla, null.
+function picLogo(url) { return new Promise(done => { if (!url) return done(null); const im = new Image(), t = setTimeout(() => done(null), 2500); im.crossOrigin = "anonymous"; im.referrerPolicy = "no-referrer"; im.onload = () => { clearTimeout(t); done(im); }; im.onerror = () => { clearTimeout(t); done(null); }; im.src = url + (url.includes("?") ? "&" : "?") + "lienzo=1"; }); }
+const picBlob = c => new Promise((ok, no) => { try { c.toBlob(b => b ? ok(b) : no(new Error("sin imagen")), "image/png"); } catch (e) { no(e); } });
+let SHEET = null;
+function closeSheet() { if (!SHEET) return; SHEET.el.remove(); URL.revokeObjectURL(SHEET.url); document.documentElement.style.overflow = ""; if (SHEET.back && SHEET.back.isConnected) SHEET.back.focus(); SHEET = null; }
+// La hoja de vista previa. Enviar llama a navigator.share dentro del clic, con el archivo ya listo: así funciona en iPhone.
+function openSheet(blob, name, back) {
+  closeSheet();
+  const url = URL.createObjectURL(blob), file = new File([blob], name, {type: "image/png"}), send = !!(navigator.canShare && navigator.canShare({files: [file]}));
+  const save = !send || !matchMedia("(pointer: coarse)").matches;  // en teléfono con Enviar, guardar ya viene en la hoja del sistema
+  const el = document.createElement("div"); el.className = "shsheet"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Imagen para compartir");
+  el.innerHTML = '<div><div class="pv"><img src="' + url + '" alt="Imagen para compartir"></div><p class="sub">' + (send ? "Así se va a ver. Toca Enviar para mandarla." : "Mantén presionada la imagen para guardarla o compartirla, o usa Guardar.") + '</p><div class="acts">' + (send ? '<button type="button" data-sh="send">Enviar</button>' : "") + (save ? '<a data-sh="save" href="' + url + '" download="' + esc(name) + '">Guardar</a>' : "") + '<button type="button" data-sh="close">Cerrar</button></div></div>';
+  el.addEventListener("click", e => { if (e.target === el || e.target.closest('[data-sh="close"]')) closeSheet(); else if (e.target.closest('[data-sh="send"]')) navigator.share({files: [file]}).catch(() => {}); });
+  document.body.appendChild(el); SHEET = {el, url, back};
+  document.documentElement.style.overflow = "hidden"; el.querySelector("[data-sh]").focus();  // el fondo no se mueve y el teclado cae en la hoja
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+async function shareImage(button) {
+  if (button.disabled) return;
+  const label = button.dataset.label || (button.dataset.label = button.textContent);
+  button.disabled = true; button.textContent = "Generando";
+  try { const made = await buildImage(button.dataset.img); openSheet(made.blob, made.name, button); button.textContent = label; button.disabled = false; }
+  catch (e) { console.error(e); button.textContent = "No se pudo"; setTimeout(() => { button.textContent = label; button.disabled = false; }, 2000); }
+}
+// Un solo escucha para todos los botones de compartir como imagen.
+document.addEventListener("click", e => { const b = e.target.closest("[data-img]"); if (b) shareImage(b); });
+
+// Lo que se reusa en las tres imágenes.
+const TONE = {good: PIC.green, bad: PIC.red, mid: PIC.orange, info: PIC.ink2};  // color de cada tono de status()
+const PIC_SRC = {modelo: "según el modelo, antes del partido", "línea": "según la línea de la casa, antes del partido", marcador: "según el marcador y el reloj", final: "el partido ya terminó"};
+let PIC_LOGOS = {};  // los logos que sí cargaron, por dirección; si falta alguno, se dibuja un círculo con las siglas
+// Texto plano de un texto con etiquetas y entidades (story().text trae <b> y &amp;).
+const plainText = html => new DOMParser().parseFromString(html || "", "text/html").body.textContent.trim();
+// El nombre con que sale el dueño en la copia pública, en mayúsculas. Vacío si no hay.
+// La hora de los datos. En la copia pública la foto puede ir unos minutos atrás, y la imagen ya no se puede corregir.
+const picNow = () => new Date((S && S.now) || Date.now());
+const picWho = () => String((S.public && S.public.name) || (S.site && S.site.name) || "").toUpperCase();
+// Un logo de 72 px o, si no cargó, un círculo con las siglas.
+function picBadge(ctx, t, x, y) {
+  const img = t && t.logo && PIC_LOGOS[t.logo];
+  if (img) { ctx.drawImage(img, x, y, 72, 72); return; }
+  ctx.fillStyle = tint(t); ctx.beginPath(); ctx.arc(x + 36, y + 36, 36, 0, Math.PI * 2); ctx.fill();
+  ctx.font = picFont(String((t && t.abbr) || NIL).length > 3 ? 20 : 26, 700); ctx.fillStyle = PIC.ink; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText((t && t.abbr) || NIL, x + 36, y + 37); ctx.textAlign = "left";
+}
+// Los dos equipos con su logo y un texto entre ellos, todo alineado a la izquierda con 16 de separación.
+const picTeams = (a, b, text) => (ctx, x, y, w, draw) => {
+  ctx.font = picFont(38, 600);
+  const rows = picLines(ctx, text, w - 176), lh = 46, tw = Math.max(0, ...rows.map(r => ctx.measureText(r).width)), h = Math.max(72, rows.length * lh);
+  if (draw) {
+    picBadge(ctx, a, x, y + (h - 72) / 2);
+    ctx.font = picFont(38, 600); ctx.fillStyle = PIC.ink; ctx.textBaseline = "top"; ctx.textAlign = "left";
+    rows.forEach((r, i) => ctx.fillText(r, x + 88, y + (h - rows.length * lh) / 2 + i * lh));
+    picBadge(ctx, b, x + 88 + tw + 16, y + (h - 72) / 2);
+  }
+  return h;
+};
+// Una fila de cifras: cada una en su parte del ancho, rótulo arriba y valor abajo.
+const picCols = cols => (ctx, x, y, w, draw) => { const cw = w / cols.length; return Math.max(...cols.map((c, i) => picStack([picText(c[0], 26, 400, PIC.ink2), picGap(6), picText(c[1], 38, 700, c[2] || PIC.ink)])(ctx, x + i * cw, y, cw - 16, draw))); };
+// La marca: tres barras que suben, las dos primeras blancas y la última verde, y el nombre.
+const picBrand = () => (ctx, x, y, w, draw) => {
+  if (draw) {
+    [[22, PIC.ink], [34, PIC.ink], [46, PIC.green]].forEach(([bh, color], i) => { ctx.fillStyle = color; picRound(ctx, x + 22 * i, y + 46 - bh, 14, bh, 4); ctx.fill(); });
+    ctx.font = picFont(40, 700); ctx.fillStyle = PIC.ink; ctx.textBaseline = "middle"; ctx.textAlign = "left"; ctx.fillText("Rodrindex", x + 72, y + 23);
+  }
+  return 46;
+};
+// Encabezado de toda imagen: la marca a la izquierda y la fecha de hoy a la derecha.
+const picHead = () => picStack([picPair([picBrand()], [picText(day(picNow(), {weekday: "short", day: "numeric", month: "short"}), 30, 400, PIC.ink2, 1.25, "right")], 420), picGap(36)]);
+// Pie de toda imagen: la advertencia y de dónde sale. La dirección es la de la copia pública, también al compartir desde el panel privado.
+const picFoot = () => {
+  const addr = PUBLIC ? (location.host + location.pathname).replace(/index\.html$/, "").replace(/\/$/, "") : String((S.site && S.site.url) || "").replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const line = [addr, "Datos del " + day(picNow()) + ", " + hour(picNow())].filter(Boolean).join(" · ");
+  return picStack([picGap(36), picText(DISCLAIMER, 28, 400, PIC.ink2, 1.35), picGap(14), picText(line, 24, 400, PIC.ink2, 1.3)]);
+};
+// Imagen de una señal: lo que cree el modelo y cómo se traduce a Kalshi.
+function signalSpec(key) {
+  const rest = key.slice(4), at = rest.lastIndexOf(":"), s = S.signals.find(x => String(x.game_id) === rest.slice(0, at) && x.market === rest.slice(at + 1));
+  if (!s) throw new Error("no hay señal " + key);
+  const g = gameOf(s.game_id) || null, o = s.kalshi && s.kalshi.found ? s.kalshi : null, [away, home] = s.game.split(" @ ");
+  const tA = g ? g.away : {abbr: away}, tH = g ? g.home : {abbr: home};
+  const moment = !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : g.state === "in" ? "En juego · " + clock(g) : clock(g);
+  const force = s.strength === "0.1" ? ["Muy fuerte", PIC.green] : s.strength ? ["Fuerte", PIC.ink] : ["Débil", PIC.ink2];
+  const price = o && o.price != null, model = o && o.p_model != null && o.needed != null;
+  const card = [
+    picPair([picText("SEÑAL DEL MODELO", 26, 700, PIC.ink2)], [picText(force[0], 28, 700, force[1], 1.25, "right")], 260),
+    picGap(28), picTeams(tA, tH, cityOf(g, away) + " en " + cityOf(g, home)),
+    picGap(10), picText(moment, 30, 400, PIC.ink2),
+    picGap(30), picFit(signalName(s), 104, 60, 800),
+    picGap(14), picText("El modelo cree que " + belief(s, g) + ".", 36, 400, PIC.ink2, 1.3),
+    picRule(),
+    picText("Su contrato en Kalshi", 26, 600, PIC.ink2), picGap(6),
+    picText(o ? (o.yes ? "SÍ" : "NO") + " en «" + (o.title_es || o.title || NIL) + "»" : s.kalshi ? "Kalshi no tiene esa línea exacta" : "Sin datos de Kalshi para esta señal", 34, 600),
+    price ? picGap(6) : null, price ? picText("Precio a las " + hour(picNow()) + ": " + cents(o.price), 28, 400, PIC.ink2) : null,
+    picGap(26), picText("Lo mismo en una casa como Bet365", 26, 600, PIC.ink2), picGap(6),
+    picText(o ? bookBet(s, o) : s.market === "total" ? "Total · " + cap(s.text) : "Hándicap · " + signalName(s), 34, 600),
+    model ? picGap(26) : null, model ? picText("El modelo le da " + prob(o.p_model) + ". En Kalshi cuesta " + cents(o.needed) + " con comisión.", 30, 400, PIC.ink2) : null,
+  ];
+  return {name: "rodrindex-senal-" + s.game.replace(" @ ", "-").toLowerCase() + "-" + s.market + ".png", teams: [tA, tH], blocks: [picHead(), picCard(card, tint(tA), tint(tH)), picFoot()]};
+}
+// Imagen de una apuesta, siempre en tercera persona porque es para otros.
+function betSpec(key) {
+  const p = S.positions.find(x => String(x.id) === key.slice(4));
+  if (!p) throw new Error("no hay apuesta " + key);
+  const g = gameOf(p.game.id) || null, st = status(p, g), s = story(p, g), main = p.p != null ? p.p : p.mid, live = !!g && g.state !== "pre";
+  const who = picWho();
+  const hasTeams = !!p.game.home, tA = g ? g.away : {abbr: p.game.away}, tH = g ? g.home : {abbr: p.game.home};
+  const book = hasTeams && ["total", "spread", "winner"].includes(p.kind);  // solo las jugadas de un partido tienen su igual en una casa
+  const tone = p.exit ? (p.exit.how === "sold" ? (p.profit > 0 ? "good" : p.profit < 0 ? "bad" : "info") : (p.exit.won ? "good" : "bad")) : st.tone;
+  const right = p.exit ? (p.exit.how === "sold" ? "Vendida" : p.exit.won ? "Ganó" : "Perdió") : st.text;
+  const score = live && g.away.score != null ? tA.abbr + " " + g.away.score + " · " + tH.abbr + " " + g.home.score : "";
+  const teams = hasTeams ? picTeams(tA, tH, score || cityOf(g, p.game.away) + " en " + cityOf(g, p.game.home)) : picText(p.game.name || "Otro mercado", 38, 600);
+  const moment = !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : g.state === "in" ? "En juego · " + clock(g) : clock(g);
+  const same = String(s.title).toLowerCase().startsWith(String(p.label).toLowerCase());  // un total ya se llama igual que su jugada
+  const txt = plainText(s.text), pctLine = main != null && !p.exit ? prob(main) + " de ganar, " + (p.p != null ? PIC_SRC[p.p_source] || PIC_SRC.modelo : "según el precio de Kalshi") + (g && g.state === "in" ? ", a las " + hour(picNow()) : "") : "";
+  const pc = p.profit > 0 ? PIC.green : p.profit < 0 ? PIC.red : PIC.ink;
+  const cash = p.exit ? picCols([["Apostó", money(p.cost)], ["Resultado", money(p.profit, true), pc]]) : picCols([["Apostó", money(p.cost)], ["Si gana, cobra", money(p.contracts)], ["Ganancia", money(p.if_win, true), PIC.green]]);
+  const card = [
+    picPair([picText(who ? "APUESTA DE " + who : "APUESTA", 26, 700, PIC.ink2)], [picText(right, 28, 700, TONE[tone], 1.25, "right")], 420),
+    picGap(28), teams,
+    picGap(10), picText(moment, 30, 400, PIC.ink2),
+    picGap(30), picFit(same ? s.title : p.label, 104, 60, 800),
+    same ? null : picGap(14), same ? null : picText(String(s.title).replace(/[.!?]$/, "") + ".", 38, 600, PIC.ink, 1.25),
+    txt ? picGap(same ? 14 : 8) : null, txt ? picText(txt, 36, 400, PIC.ink2, 1.3) : null,
+    pctLine ? picGap(14) : null, pctLine ? picText(pctLine, 32, 600, TONE[st.tone]) : null,
+    picRule(), cash,
+    picGap(26), picText("Lo que compró en Kalshi", 26, 600, PIC.ink2), picGap(6),
+    picText((p.side === "yes" ? "SÍ" : "NO") + " en «" + (p.title_es || p.title || NIL) + "» a " + cents(p.price), 34, 600),
+    ...(book ? [picGap(26), picText("Lo mismo en una casa como Bet365", 26, 600, PIC.ink2), picGap(6),
+      picText((p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + p.label, 34, 600)] : []),
+  ];
+  return {name: "rodrindex-apuesta-" + p.id + ".png", teams: hasTeams ? [tA, tH] : [], blocks: [picHead(), picCard(card, tint(tA), tint(tH)), picFoot()]};
+}
+// Imagen del día: las apuestas de hoy y las señales fuertes y muy fuertes de la jornada.
+function daySpec() {
+  const now = picNow(), today = new Date().toDateString(), ord = {in: 0, pre: 1, post: 2};
+  const open = S.positions.filter(p => !p.exit).sort((a, b) => new Date(a.game.tipoff) - new Date(b.game.tipoff));
+  const shut = S.positions.filter(p => p.exit && new Date(p.exit.when).toDateString() === today).sort((a, b) => new Date(b.exit.when) - new Date(a.exit.when));
+  const bets = open.concat(shut), sig = S.signals.filter(s => s.strength).sort((a, b) => ord[a.state] - ord[b.state] || new Date(a.tipoff) - new Date(b.tipoff));
+  const who = picWho();
+  const rows = list => list.flatMap((r, i) => i ? [picRule(), r] : [r]);
+  const parts = [];
+  if (bets.length) {
+    const betRows = bets.map(p => {
+      const g = gameOf(p.game.id) || null, st = status(p, g), match = p.game.home ? p.game.away + " en " + p.game.home : p.game.name || "Otro mercado", moment = g ? clock(g) : "";
+      const right = p.exit ? money(p.profit, true) : st.text, tone = p.exit ? (p.profit > 0 ? "good" : p.profit < 0 ? "bad" : "info") : st.tone;
+      return picPair([picText(p.label, 38, 700, PIC.ink), picGap(4), picText([match, moment].filter(Boolean).join(" · "), 28, 400, PIC.ink2)],
+        [picText(money(p.cost) + " a " + cents(p.price), 30, 600, PIC.ink, 1.25, "right"), picGap(4), picText(right, 26, 600, TONE[tone], 1.25, "right")], 330);
+    });
+    parts.push(picPair([picText(who ? "APUESTAS DE " + who : "APUESTAS", 26, 700, PIC.ink2)],
+      open.length ? [picText(plural(open.length, "abierta", "abiertas") + " · " + money(S.bank.at_risk) + " en juego", 26, 400, PIC.ink2, 1.25, "right")] : [], 420),
+      picGap(14), picCard(rows(betRows), null, null), picGap(36));
+  }
+  parts.push(picText("SEÑALES FUERTES DEL MODELO", 26, 700, PIC.ink2), picGap(14));
+  if (!sig.length) parts.push(picCard([picText("No hay señales fuertes en esta jornada.", 32, 400, PIC.ink2)], null, null));
+  else parts.push(picCard(rows(sig.map(s => {
+    const g = gameOf(s.game_id) || null, o = s.kalshi && s.kalshi.found ? s.kalshi : null, moment = g ? clock(g) : "";
+    const res = s.result ? [cap(s.result), s.result === "ganó" ? PIC.green : s.result === "perdió" ? PIC.red : PIC.ink2] : s.strength === "0.1" ? ["Muy fuerte", PIC.green] : ["Fuerte", PIC.ink];
+    const line = o ? "Kalshi: " + (o.yes ? "SÍ" : "NO") + (o.price != null ? " a " + cents(o.price) : "") : s.kalshi ? "sin línea exacta en Kalshi" : "sin datos de Kalshi";
+    return picPair([picText(signalName(s), 38, 700, PIC.ink), picGap(4), picText([s.game.replace(" @ ", " en "), moment].filter(Boolean).join(" · "), 28, 400, PIC.ink2)],
+      [picText(res[0], 30, 700, res[1], 1.25, "right"), picGap(4), picText(line, 26, 400, PIC.ink2, 1.25, "right")], 330);
+  })), null, null));
+  return {name: "rodrindex-" + etDay(now) + ".png", teams: [], blocks: [picHead(), picText("Jornada del " + day(now, {weekday: "long", day: "numeric", month: "long"}), 54, 800, PIC.ink, 1.2), picGap(30), ...parts, picFoot()]};
+}
+// Arma la imagen pedida. Carga antes los logos que usa; si el lienzo no deja exportarse con ellos, lo vuelve a pintar sin logos.
+async function buildImage(key) {
+  const spec = key === "day" ? daySpec() : key.startsWith("sig:") ? signalSpec(key) : betSpec(key);
+  const urls = [...new Set(spec.teams.map(t => t && t.logo).filter(Boolean))], got = await Promise.all(urls.map(u => picLogo(u)));
+  PIC_LOGOS = {}; urls.forEach((u, i) => { if (got[i]) PIC_LOGOS[u] = got[i]; });
+  try { return {blob: await picBlob(picPaint(spec.blocks)), name: spec.name}; }
+  catch (e) { PIC_LOGOS = {}; return {blob: await picBlob(picPaint(spec.blocks)), name: spec.name}; }
+}
 </script>
 </body>
 </html>
