@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Mesa">
+<meta name="apple-mobile-web-app-title" content="Rodrindex">
 <meta name="theme-color" content="#eef1f6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a0f18" media="(prefers-color-scheme: dark)">
-<title>Mesa de anotación</title>
+<title>Rodrindex</title>
 <style>
 /* Cuatro pestañas en vez de una página larga. Cada apuesta es una boleta: una franja dice cómo va, la apuesta
    se lee en palabras, una barra muestra el avance hacia la meta y el dinero se dice como en una casa de apuestas.
@@ -211,7 +211,7 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
 <body>
 <div class="wrap">
   <header class="bar">
-    <h1>Mesa de anotación</h1>
+    <h1>Rodrindex</h1>
     <span class="pulse" id="pulse"><i></i><span id="pulse-text">Cargando</span></span>
     <span class="grow"></span>
     <span id="account"></span>
@@ -542,7 +542,7 @@ function recap() {
   const hit = l => l.filter(c => c.result === "ganó").length + " de " + l.length;
   const bets = S.positions.filter(p => p.exit && p.game.tipoff && etDay(p.game.tipoff) === d), won = bets.filter(p => p.profit > 0).length, net = bets.reduce((s, p) => s + p.profit, 0);
   const when = day(d + "T12:00:00", {weekday: "long", day: "numeric", month: "short"});
-  const text = `${PUBLIC ? "Mesa de " + owner() : "Mi mesa"}, ${when}: ` + (bets.length ? `${won} de ${bets.length} apuestas, ${money(net, true)}. ` : "") +
+  const text = `Rodrindex, ${when}: ` + (bets.length ? `${won} de ${bets.length} apuestas, ${money(net, true)}. ` : "") +
     `El modelo atinó ${hit(calls)}` + (strong.length ? ` y ${hit(strong)} en señales fuertes.` : ".");
   const fig = (k, v, c) => `<div><small>${k}</small><b class="${c || ""}">${v}</b></div>`;
   return `<div class="card pad stack"><div class="head"><h2>Resumen del ${esc(when)}</h2><span class="grow"></span><button data-share="${esc(text)}">Compartir</button></div>
@@ -702,7 +702,7 @@ function renderHistory() {
 
 function renderAccount() {
   if (PUBLIC) {  // la copia pública no sabe nada de la cuenta: dice de quién es y que no se toca
-    const name = "Mesa de " + owner(), tag = '<span class="chip">Solo lectura</span>';
+    const name = "Rodrindex", tag = '<span class="chip">Solo lectura</span>';
     document.title = name; document.querySelector("h1").textContent = name;
     document.querySelector('[data-tab="bets"]').firstChild.textContent = "Apuestas"; document.querySelector('[data-tab="bank"]').textContent = "Caja";
     $("foot").textContent = "Página de solo lectura con la foto que publica el panel de " + owner() + ". No opera y no es una recomendación de entrar ni de cuánto.";
