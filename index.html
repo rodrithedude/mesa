@@ -128,6 +128,7 @@ details[open] > summary::before { transform: rotate(45deg); } details > summary:
 .why li { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 10px; align-items: start; font: var(--t-sub); }
 .why .tag { font: var(--t-label); border-radius: 999px; padding: 4px 0; text-align: center; }
 .why .tag.pro { background: var(--good-soft); color: var(--good); } .why .tag.con { background: var(--bad-soft); color: var(--bad); }
+.why .stale { display: block; margin-top: 2px; color: var(--mid); font-weight: 600; }
 .inj .tm { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 4px; font: 600 14px/1.3 var(--body); } .inj .tm img { width: 20px; height: 20px; object-fit: contain; }
 .inj li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font: var(--t-sub); } .inj li b { font-weight: 600; } .inj .chip { font-size: 12px; padding: 3px 8px; }
 
@@ -429,7 +430,7 @@ function spark(p) {
 function whyBlock(s, title) {
   const w = s && s.why;
   if (!w || !(w.for.length + w.against.length)) return "";
-  const row = (r, pro) => `<li><span class="tag ${pro ? "pro" : "con"}">${pro ? "A favor" : "En contra"}</span><span>${esc(r.text)}</span></li>`;
+  const row = (r, pro) => `<li><span class="tag ${pro ? "pro" : "con"}">${pro ? "A favor" : "En contra"}</span><span>${esc(r.text)}${r.note ? `<span class="stale">${esc(r.note)}</span>` : ""}</span></li>`;
   return `<div class="why"><h4>${esc(title)}</h4><ul>${w.for.map(r => row(r, true)).join("")}${w.against.map(r => row(r, false)).join("")}</ul>
     <p class="sub">Todo junto, el modelo espera ${w.points.toFixed(1)} puntos de ventaja contra la línea de apertura. Pide ${w.cut.toFixed(1)} para llamarla señal fuerte. De las bajas solo sabe quién faltó en el partido anterior: no conoce el reporte de hoy.</p></div>`;
 }
@@ -450,9 +451,11 @@ function injuryBlock(g) {
     if (!t.listed) return head + '<p class="sub">El último reporte todavía no trae a este equipo para este partido.</p>';
     if (!t.submitted) return head + '<p class="sub">Todavía no envía su parte de lesiones.</p>';
     if (!t.players.length) return head + '<p class="sub">Sin jugadores en el reporte.</p>';
-    return head + `<ul>${t.players.map(p => `<li><b>${esc(p.name)}</b><span class="chip ${STATUS[p.status][1]}">${STATUS[p.status][0]}</span><span class="sub">${esc(p.reason)}</span></li>`).join("")}</ul>`;
+    const main = t.players.filter(p => !p.league), league = t.players.filter(p => p.league);
+    return head + (main.length ? `<ul>${main.map(p => `<li><b>${esc(p.name)}</b><span class="chip ${STATUS[p.status][1]}">${STATUS[p.status][0]}</span><span class="sub">${esc(p.reason)}</span></li>`).join("")}</ul>` : "") +
+      (league.length ? `<p class="sub">En la G League: ${league.map(p => esc(p.name)).join(", ")}.</p>` : "");
   };
-  return `<div class="inj"><h4>Lesionados</h4><p class="sub">Reporte oficial de la NBA de ${stamp(inj.published)}. Las lesiones vienen en inglés, como en el reporte.</p>${team("away")}${team("home")}</div>`;
+  return `<div class="inj"><h4>Lesionados</h4><p class="sub">El reporte oficial de la NBA salió ${stamp(inj.published)}, y las lesiones vienen en inglés, como en el reporte.</p>${team("away")}${team("home")}</div>`;
 }
 function ticket(p) {
   const g = gameOf(p.game.id), st = status(p, g), s = story(p, g), yes = p.side === "yes", main = p.p != null ? p.p : p.mid;
@@ -625,7 +628,7 @@ function render() {
   const names = {max_position_pct: "una apuesta pasa tu tope por apuesta", max_open_pct: "lo que tienes en juego pasa tu tope", max_day_loss_pct: "la pérdida de hoy pasó tu freno del día"};
   if (board.length && Math.min(...board) > 60) late.push("El marcador lleva " + Math.min(...board) + " s sin actualizarse.");
   if (S.live && ages.precios > 120) late.push("Los precios de Kalshi llevan " + ages.precios + " s sin actualizarse.");
-  put("alerts", (stale() ? `<div class="warn">Esta es la última foto del panel de ${esc(owner())}, de ${stamp(S.now)}. Ahora no está publicando: los marcadores y los precios pueden estar viejos.</div>` : "") +
+  put("alerts", (stale() ? `<div class="warn">La última foto del panel de ${esc(owner())} es de ${stamp(S.now)} y ahora no está publicando: los marcadores y los precios pueden estar viejos.</div>` : "") +
     (broken.length ? `<div class="warn">Contra tus topes: ${broken.map(k => names[k]).join(", ")}.</div>` : "") +
     (!a.connected && a.configured ? `<div class="warn">La cuenta de Kalshi no se pudo conectar. ${esc(a.error || "")} Mientras tanto, las compras se anotan a mano.</div>` : "") +
     (gaps.length ? `<div class="warn">El libro no cuadra con Kalshi en ${gaps.map(x => esc(x.ticker) + " (libro " + x.book + ", Kalshi " + x.kalshi + ")").join(", ")}. Se arregla con <b>python -m pipelines.panel cuenta rehacer</b>.</div>` : "") +
