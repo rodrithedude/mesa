@@ -122,6 +122,15 @@ details[open] > summary::before { transform: rotate(45deg); } details > summary:
 .spark-box .scale { display: flex; flex-direction: column; justify-content: space-between; font: var(--t-label); color: var(--muted); text-align: right; }
 .spark { width: 100%; height: 76px; display: block; background: var(--sunk); border-radius: 8px; }
 
+/* El porqué de una señal y los lesionados del partido, dentro de "Ver detalle" */
+.why, .inj { display: grid; gap: 8px; } .why h4, .inj h4 { font: 600 15px/1.3 var(--body); margin: 0; }
+.why ul, .inj ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.why li { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 10px; align-items: start; font: var(--t-sub); }
+.why .tag { font: var(--t-label); border-radius: 999px; padding: 4px 0; text-align: center; }
+.why .tag.pro { background: var(--good-soft); color: var(--good); } .why .tag.con { background: var(--bad-soft); color: var(--bad); }
+.inj .tm { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 4px; font: 600 14px/1.3 var(--body); } .inj .tm img { width: 20px; height: 20px; object-fit: contain; }
+.inj li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font: var(--t-sub); } .inj li b { font-weight: 600; } .inj .chip { font-size: 12px; padding: 3px 8px; }
+
 /* Señales */
 .sig .teams { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font: 600 15px/1.2 var(--body); color: var(--muted); } .sig .teams img { width: 26px; height: 26px; object-fit: contain; }
 .sig h3 { font: 600 26px/1.1 var(--display); margin: 0; } .sig .body { gap: 14px; padding-bottom: 18px; } .sig p b { font-weight: 600; }
@@ -225,6 +234,8 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
       <p><b>Kalshi.</b> El precio del contrato ahora mismo. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
       <p class="own"><b>Llave completa.</b> La llave con que el panel lee tu cuenta de Kalshi también podría operar. El panel solo lee.</p>
       <p><b>Señales.</b> Lo que el modelo previo ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. El precio de ahora ya trae el movimiento de la línea.</p>
+      <p><b>El porqué.</b> Son las cosas que el modelo previo sabe del partido, dichas en palabras y de la que más pesa a la que menos. No dice lo que va a pasar: dice de dónde sale su ventaja contra la línea de apertura.</p>
+      <p><b>Lesionados.</b> El último reporte oficial de la NBA que guardó la PC, que lo baja cada hora. "Le falta" es la parte de la producción habitual del equipo que el modelo da por ausente con ese reporte.</p>
     </div></details>
   </footer>
 </div>
@@ -414,12 +425,41 @@ function spark(p) {
     <path d="${path(1)}" fill="none" stroke="var(--accent)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg></div>
     <div class="sub">La probabilidad desde que el panel la sigue: modelo en azul, Kalshi en gris y ${you("lo que pagaste", "lo que pagó")} en línea punteada.</div>`;
 }
+// El porqué de una señal: lo que empuja a favor y lo que empuja en contra, de lo que más pesa a lo que menos.
+function whyBlock(s, title) {
+  const w = s && s.why;
+  if (!w || !(w.for.length + w.against.length)) return "";
+  const row = (r, pro) => `<li><span class="tag ${pro ? "pro" : "con"}">${pro ? "A favor" : "En contra"}</span><span>${esc(r.text)}</span></li>`;
+  return `<div class="why"><h4>${esc(title)}</h4><ul>${w.for.map(r => row(r, true)).join("")}${w.against.map(r => row(r, false)).join("")}</ul>
+    <p class="sub">Todo junto, el modelo espera ${w.points.toFixed(1)} puntos de ventaja contra la línea de apertura. Pide ${w.cut.toFixed(1)} para llamarla señal fuerte. De las bajas solo sabe quién faltó en el partido anterior: no conoce el reporte de hoy.</p></div>`;
+}
+// La señal del modelo para el partido y el mercado de una apuesta, y si van del mismo lado.
+function betWhy(p) {
+  const market = p.kind === "total" ? "total" : "spread", s = S.signals.find(x => x.game_id === p.game.id && x.market === market);
+  if (!s || !s.why) return "";
+  const [away, home] = s.game.split(" @ ");
+  const same = market === "total" ? (s.side === "over") === (p.side === "yes") : p.subject === (s.side === "home" ? home : away);
+  return whyBlock(s, same ? "Por qué el modelo va con esta apuesta" : "El modelo se inclina por el otro lado: " + signalName(s));
+}
+const STATUS = {Out: ["Fuera", "bad"], Doubtful: ["Casi seguro fuera", "bad"], Questionable: ["En duda", "mid"], Probable: ["Casi seguro juega", ""], Available: ["Disponible", "good"]};
+function injuryBlock(g) {
+  const inj = g && g.injuries;
+  if (!inj) return "";
+  const team = side => {
+    const t = inj[side], head = `<div class="tm">${logo(g[side], 20)}<span>${esc(g[side].city || g[side].abbr)}</span>${t.missing != null ? `<span class="sub">le falta ${pct(t.missing)} de su producción habitual</span>` : ""}</div>`;
+    if (!t.listed) return head + '<p class="sub">El último reporte todavía no trae a este equipo para este partido.</p>';
+    if (!t.submitted) return head + '<p class="sub">Todavía no envía su parte de lesiones.</p>';
+    if (!t.players.length) return head + '<p class="sub">Sin jugadores en el reporte.</p>';
+    return head + `<ul>${t.players.map(p => `<li><b>${esc(p.name)}</b><span class="chip ${STATUS[p.status][1]}">${STATUS[p.status][0]}</span><span class="sub">${esc(p.reason)}</span></li>`).join("")}</ul>`;
+  };
+  return `<div class="inj"><h4>Lesionados</h4><p class="sub">Reporte oficial de la NBA de ${stamp(inj.published)}. Las lesiones vienen en inglés, como en el reporte.</p>${team("away")}${team("home")}</div>`;
+}
 function ticket(p) {
   const g = gameOf(p.game.id), st = status(p, g), s = story(p, g), yes = p.side === "yes", main = p.p != null ? p.p : p.mid;
   const source = {modelo: "según el modelo, antes del partido", "línea": "según la línea de la casa, antes del partido", marcador: "según el marcador y el reloj", final: "el partido ya terminó"};
   const chance = main == null ? "" : `<div class="chance"><span class="big ${st.tone}">${big(main)}<i>%</i></span><span class="txt"><b>de probabilidad de ganar</b>, ${p.p != null ? source[p.p_source] || "según el modelo" : "según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la tiene en " + prob(p.mid) + "." : ""}</span></div>`;
   const fact = (k, v) => `<div><div class="k">${k}</div><div class="v">${v}</div></div>`;
-  const more = `<details data-keep="pos-${p.id}"${keep("pos-" + p.id)}><summary>Ver detalle</summary><div class="more-body"><div class="facts">` +
+  const more = `<details data-keep="pos-${p.id}"${keep("pos-" + p.id)}><summary>Ver detalle</summary><div class="more-body">${betWhy(p)}${injuryBlock(g)}<div class="facts">` +
     fact(you("En Kalshi compraste", "En Kalshi compró"), `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("Cuánto", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
     fact(you("Te costó cada contrato", "Le costó cada contrato"), cents(p.needed) + " con comisión") + fact(you("Si vendes ahora", "Si vende ahora"), p.sale == null ? "Nadie compra ahora" : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`) +
     (p.expected == null ? "" : fact("Lo que vale según el modelo", `<span class="${cls(p.expected)}">${money(p.expected, true)}</span> esperado`)) +
@@ -481,7 +521,7 @@ function renderSignals() {
     if (s.news && s.news.includes("+")) html += `<div class="warn">Bajas nuevas que la señal no conoce: ${esc(s.news)}</div>`;
     if (deal && deal.found) html += dealBox(s, deal);
     else if (deal) html += `<p class="verdict">Kalshi no tiene esa línea exacta${deal.options && deal.options.length ? ". Estas son las dos más cercanas, sin elegir una" : ""}.</p>` + (deal.options || []).map(o => dealBox(s, o)).join("");
-    return html + `<details data-keep="sig-${s.game_id}-${s.market}"${keep("sig-" + s.game_id + "-" + s.market)}><summary>Ver detalle</summary><div class="more-body"><div class="facts">
+    return html + `<details data-keep="sig-${s.game_id}-${s.market}"${keep("sig-" + s.game_id + "-" + s.market)}><summary>Ver detalle</summary><div class="more-body">${whyBlock(s, "Por qué el modelo va con " + signalName(s))}${injuryBlock(g)}<div class="facts">
       <div><div class="k">Ventaja que ve el modelo</div><div class="v">${s.points.toFixed(1)} puntos</div></div>
       <div><div class="k">Línea de apertura</div><div class="v">${s.market === "total" ? s.line : esc(signalName(s))}</div></div>
       <div><div class="k">Línea de ahora</div><div class="v">${s.now == null ? NIL : s.market === "total" ? s.now : esc((s.side === "home" ? home : away) + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now))}</div></div>
