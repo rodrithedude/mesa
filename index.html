@@ -327,15 +327,15 @@ body.public .m-act { display: none; }
     <details><summary>Cómo leer el panel</summary><div class="more-body">
       <p><b>El punto de color.</b> Dice cómo va la apuesta según la probabilidad de ganar: "Va bien" de 60% para arriba, "Va mal" por debajo de 40% y "Está parejo" en medio.</p>
       <p><b>La barra.</b> La marca blanca es la meta. El relleno es por dónde va el partido y el círculo es dónde terminaría a este paso.</p>
-      <p><b>La probabilidad.</b> Antes del partido viene del modelo previo (union_v1). Ya en juego viene del modelo en vivo (vivo_v1), que usa la línea previa, el marcador y el reloj. Se revisó con tres temporadas que no había visto. En el último medio minuto de un final cerrado es poco precisa.</p>
+      <p><b>La probabilidad.</b> Antes del partido viene del modelo prepartido (union_v1). Ya en juego viene del modelo en vivo (vivo_v1), que usa la línea de antes del partido, el marcador y el reloj. Se revisó con tres temporadas que no había visto. En el último medio minuto de un final cerrado es poco precisa.</p>
       <p><b>Kalshi.</b> El precio del contrato ahora mismo. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
       <p><b>Kalshi y una casa como Bet365.</b> Es la misma apuesta dicha de dos formas. En Kalshi compras SÍ o NO de un contrato y pagas su precio. En una casa eliges el equipo con su hándicap, como +5.5 o −5.5, o "más" y "menos", y la cuota la pone la casa. Comprar NO de «PHI gana por más de 5.5» es lo mismo que Brooklyn +5.5. El panel no lee los precios de Bet365: solo te dice cómo se llama ahí la apuesta.</p>
       <p class="own"><b>Llave completa.</b> La llave con que el panel lee tu cuenta de Kalshi también podría operar. El panel solo lee.</p>
-      <p><b>Señales.</b> Lo que el modelo previo ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. El precio de ahora ya trae el movimiento de la línea.</p>
+      <p><b>Señales.</b> Lo que el modelo prepartido ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. El precio de ahora ya trae el movimiento de la línea.</p>
       <p><b>Como app en el teléfono.</b> En el menú del navegador elige "Agregar a pantalla de inicio". En iPhone es el botón de compartir de Safari. Se abre a pantalla completa y con su ícono.</p>
       <p><b>La gráfica de "Ver detalle".</b> Sus tres líneas miden la probabilidad de que la apuesta gane, y arriba es mejor. La punteada es lo que costó cada contrato y no se mueve. Si la de Kalshi está arriba de la punteada, la apuesta va ganando sobre el papel. Si la del modelo está arriba de la de Kalshi, el modelo es más optimista que el mercado. Ningún cruce dice quién tiene la razón.</p>
       <p><b>Historial de predicciones.</b> En la pestaña Partidos. De cada partido terminado dice qué lado eligió el modelo en el hándicap y en el total, si atinó y si era señal fuerte. Cubre los últimos 14 días.</p>
-      <p><b>El porqué.</b> Son las cosas que el modelo previo sabe del partido, dichas en palabras y de la que más pesa a la que menos. No dice lo que va a pasar: dice de dónde sale su ventaja contra la línea de apertura.</p>
+      <p><b>El porqué.</b> Son las cosas que el modelo prepartido sabe del partido, dichas en palabras y de la que más pesa a la que menos. No dice lo que va a pasar: dice de dónde sale su ventaja contra la línea de apertura.</p>
       <p><b>Lesionados.</b> El último reporte oficial de la NBA que guardó la PC, que lo baja cada hora. "Le falta" es la parte de la producción habitual del equipo que el modelo da por ausente con ese reporte.</p>
     </div></details>
   </footer>
@@ -793,14 +793,14 @@ function renderGames() {
   if (!S.games.length) { put("games-sub", ""); put("games", '<div class="empty">No hay partidos en la jornada.</div>'); return; }
   const rest = S.games.filter(g => !live.includes(g) && !soon.includes(g)), ended = rest.filter(g => g.state === "post").length, later = rest.length - ended;
   put("games-sub", [live.length ? live.length + " en juego" : "", soon.length ? soon.length + " por empezar hoy" : ""].filter(Boolean).join(" · ") || "Nada en juego ahora");
-  const by = {modelo: "modelo previo", "línea": "línea de la casa", marcador: "modelo en vivo"};
+  const by = {modelo: "modelo prepartido", "línea": "línea de la casa", marcador: "modelo en vivo"};
   const row = g => {
     const o = g.outlook, over = g.state === "post";
     const line = !g.line ? "Sin línea todavía" : (g.line.margin === 0 ? "Parejo" : esc(g.home.abbr) + " " + (g.line.margin > 0 ? "−" : "+") + Math.abs(g.line.margin)) + " · total " + g.line.total;
     const proj = o && !over ? `${esc(g.away.abbr)} ${o.away.toFixed(0)} · ${esc(g.home.abbr)} ${o.home.toFixed(0)} · total ${o.expected_total.toFixed(1)} <span class="nw">(${by[g.source]})</span>` : "";
     const fav = g.p_home == null || over ? "" : g.p_home >= 0.5 ? esc(g.home.abbr) + " " + prob(g.p_home) : esc(g.away.abbr) + " " + prob(1 - g.p_home);
     return `<div class="match">${board(g.away, g.home, g.state !== "pre", chipFor(g), 34)}
-      <div class="said"><span class="k">Línea previa</span><b>${line}</b></div>
+      <div class="said"><span class="k">Línea prepartido</span><b>${line}</b></div>
       ${proj ? `<div class="said"><span class="k">Proyección</span><b>${proj}</b></div>` : ""}${fav ? `<div class="said"><span class="k">Favorito ahora</span><b>${fav}</b></div>` : ""}
       ${over ? "" : `<div class="m-act"><button class="link" data-act="buy" data-game="${g.id}">Anotar compra</button></div>`}</div>`;
   };
