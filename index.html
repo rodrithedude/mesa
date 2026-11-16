@@ -185,7 +185,7 @@ details.cap-sum > summary { font: 600 13px/1.25 var(--font); color: var(--ink2);
 .ghost { position: absolute; top: -3px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; border: 2px solid #fff; background: var(--base); }
 .tags { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; margin-top: 8px; font: 500 12px/1.3 var(--font); color: var(--sec); }
 .tags span:last-child { margin-left: auto; text-align: right; }
-.cash { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; color: var(--sec); font-size: 13px; margin: 12px 2px 0; } .cash b { color: var(--ink); font-weight: 600; }
+.cash { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; color: var(--sec); font-size: 13px; margin: 12px 2px 0; } .cash b { color: var(--ink); font-weight: 600; } .cash .odds { display: block; font-size: 11px; color: var(--sec); }
 .stl { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; color: var(--sec); font-size: 13px; margin: 8px 2px 0; }
 .st { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); font-weight: 600; }
 .sdot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); flex: none; }
@@ -508,6 +508,7 @@ body.public .m-act { display: none; }
       <p><b>La probabilidad.</b> Antes del partido viene del modelo prepartido<span class="own"> (union_v1)</span>. Ya en juego viene del modelo en vivo<span class="own"> (vivo_v1)</span>, que usa la línea de antes del partido, el marcador y el reloj. Se revisó con tres temporadas que no había visto. En el último medio minuto de un final cerrado es poco precisa.</p>
       <p><b>Kalshi.</b> El precio del contrato <span id="help-now">ahora mismo</span>. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
       <p><b>Kalshi y una casa como Bet365.</b> Es la misma apuesta dicha de dos formas. En Kalshi compras SÍ o NO de un contrato y pagas su precio. En una casa eliges el equipo con su hándicap, como +5.5 o −5.5, o "más" y "menos", y la cuota la pone la casa. Comprar NO de «PHI gana por más de 5.5» es lo mismo que Brooklyn +5.5. El panel no lee los precios de Bet365: solo te dice cómo se llama ahí la apuesta.</p>
+      <p><b>La cuota.</b> Es el precio de Kalshi dicho como en una casa de apuestas: lo que se cobra si gana entre lo que se pagó. Ya trae la comisión. Por ejemplo, 57.7¢ con comisión equivalen a una cuota de 1.73. Es solo otra unidad para el mismo precio.</p>
       <p class="own"><b>Llave completa.</b> La llave con que el panel lee tu cuenta de Kalshi también podría operar. El panel solo lee.</p>
       <p><b>Señales.</b> Lo que el modelo prepartido ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. Esa prueba usó tres temporadas que el modelo no vio y quedó congelada el 11 nov 2026. Lo que va de esta temporada es otra medición y es la que dicen las tablas de resultados. El precio de ahora ya trae el movimiento de la línea.</p>
       <p><b>Como app en el teléfono.</b> En el menú del navegador elige "Agregar a pantalla de inicio". En iPhone es el botón de compartir de Safari. Se abre a pantalla completa y con su ícono.</p>
@@ -582,7 +583,7 @@ const DETAIL = {bets: null, signals: null};  // el detalle abierto en el panel d
 const SHEETS = new Map();  // el detalle de cada apuesta y de cada señal en este repintado, para el panel
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
-const BUILD = 1794865211;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
+const BUILD = 1794865733;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
 let PAGEV = null;  // versión de la primera foto vista: solo se usa con BUILD en 0
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
@@ -595,6 +596,8 @@ const prob = v => v == null ? NIL : v > 0 && v < 0.005 ? "menos de 1%" : v < 1 &
 const big = v => v > 0 && v < 0.005 ? "&lt;1" : v < 1 && v >= 0.995 ? "&gt;99" : String(Math.round(100 * v));
 const centNum = v => { const c = Math.round(1000 * v) / 10; return Number.isInteger(c) ? String(c) : c.toFixed(1); };
 const cents = v => v == null ? NIL : centNum(v) + "¢";
+// Cuota decimal: lo que cobra si gana entre lo que paga, con la comisión dentro. Es solo otra unidad para el mismo precio.
+const decimal = (win, pay) => win == null || pay == null || !(pay > 0) ? NIL : (win / pay).toFixed(2);
 const qty = v => v.toLocaleString("en-US", {maximumFractionDigits: 2});
 const hour = t => t.toLocaleTimeString("es-GT", {hour: "numeric", minute: "2-digit", hour12: true});
 const day = (t, opts) => new Date(t).toLocaleDateString("es", opts || {day: "numeric", month: "short"});
@@ -882,18 +885,18 @@ function ticket(p) {
   const body = `${how}${betWhy(p)}${injuryBlock(g, "inj-pos-" + p.id)}
     <h4 class="cap">${you("Tu compra", "Su compra")}</h4><div class="group">` +
     fact("Contrato", `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("En una casa como Bet365 sería", (p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + esc(p.label)) + fact("Cantidad", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
-    fact("Costo por contrato", cents(p.needed) + " con comisión") + (old ? "" : fact(you("Si vendes ahora", "Si vendiera a las " + snapAt()), p.sale == null ? you("Nadie compra ahora", "Nadie compraba") : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`)) +
+    fact("Costo por contrato", cents(p.needed) + " con comisión") + fact("Cuota decimal equivalente", decimal(p.contracts, p.cost) + (decimal(p.contracts, p.cost) === NIL ? "" : ", con comisión")) + (old ? "" : fact(you("Si vendes ahora", "Si vendiera a las " + snapAt()), p.sale == null ? you("Nadie compra ahora", "Nadie compraba") : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`)) +
     (p.note ? fact("Nota", esc(p.note)) : "") + `</div>
     <div class="card-actions"><button class="link" data-act="sell" data-id="${p.id}">Anotar venta</button><button class="link" data-act="settle" data-id="${p.id}">Liquidar a mano</button><button class="link danger" data-act="remove" data-id="${p.id}">Borrar</button></div>`;
   const key = "pos-" + p.id, head = {title: s.title, sub: (p.game.home ? p.game.away + " en " + p.game.home : p.game.name || "Otro mercado") + (g ? " · " + clock(g) : "")};
   return `<article id="${esc(key)}" tabindex="-1" class="game${sel("bets", key)}" style="${tints(g)}">${scoreRow(p.game, g)}
     <div class="bet"><div><h3>${esc(s.title)}</h3>${s.text && !s.dup ? `<p>${s.text}</p>` : ""}</div>${chance}</div>${progress(s.bar, st.tone)}
-    <div class="cash"><span>${you("Apostaste", esc(owner()) + " apostó")} <b>${money(p.cost)}</b></span><span>${you("Si gana, cobras", "Si gana, cobra")} <b>${money(p.contracts)}</b></span><span>Ganancia <b class="pos">${money(p.if_win, true)}</b></span></div>
+    <div class="cash"><span>${you("Apostaste", esc(owner()) + " apostó")} <b>${money(p.cost)}</b></span><span>${you("Si gana, cobras", "Si gana, cobra")} <b>${money(p.contracts)}</b><small class="odds">cuota ${decimal(p.contracts, p.cost)}</small></span><span>Ganancia <b class="pos">${money(p.if_win, true)}</b></span></div>
     <p class="stl"><span class="st"><i class="sdot ${st.tone}"></i>${st.text}</span>${said ? `<span>${said}</span>` : ""}</p>${cardFoot("bets", key, "bet:" + p.id, "Ver detalle", head, body)}</article>`;
 }
 function historyRow(p) {
   const out = p.exit.how === "sold" ? "Vendida a " + cents(p.exit.price) : (p.exit.won ? "Ganó" : "Perdió"), edge = p.close ? p.close.price - p.price : null;
-  return `<div class="row h"><b>${esc(p.label)}<small>${day(p.exit.when)} · ${refName(p.game)} · ${qty(p.contracts)} a ${cents(p.price)}</small><small>${out}${edge == null ? "" : " · cierre " + (edge >= 0 ? "+" : "−") + cents(Math.abs(edge))}</small></b>
+  return `<div class="row h"><b>${esc(p.label)}<small>${day(p.exit.when)} · ${refName(p.game)} · ${qty(p.contracts)} a ${cents(p.price)} · cuota ${decimal(p.contracts, p.cost)}</small><small>${out}${edge == null ? "" : " · cierre " + (edge >= 0 ? "+" : "−") + cents(Math.abs(edge))}</small></b>
     <span class="hr"><b class="${cls(p.profit)}">${money(p.profit, true)}</b><span class="x"><button class="link" data-act="reopen" data-id="${p.id}">Reabrir</button></span></span></div>`;
 }
 // Resumen de la última jornada terminada: cómo le fue al modelo y a las apuestas, listo para compartir.
@@ -957,7 +960,8 @@ function bookBox(s, o) {
   const [away, home] = s.game.split(" @ "), mine = s.side === "home" ? home : away;
   const now = s.now == null ? "" : s.market === "total" ? String(s.now) : mine + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now);
   const note = s.now != null && Math.abs(s.now) !== o.strike ? "En las casas la línea de " + asNow() + " va en " + now + "." : "La cuota la pone la casa.";
-  return `<div class="row"><span>Lo mismo en una casa como Bet365</span><b>${esc(bookBet(s, o))}<small>${esc(note)}</small></b></div>`;
+  const quota = o.needed == null ? "" : `<small>${esc("El costo en Kalshi, " + cents(o.needed) + " con comisión, equivale a una cuota de " + decimal(1, o.needed) + ".")}</small>`;
+  return `<div class="row"><span>Lo mismo en una casa como Bet365</span><b>${esc(bookBet(s, o))}<small>${esc(note)}</small>${quota}</b></div>`;
 }
 // Una línea dicha como en la casa: el equipo con su hándicap o más y menos.
 function lineAt(s, v) {
@@ -1788,7 +1792,7 @@ function signalSpec(key) {
     price ? picGap(6) : null, price ? picText("Precio a las " + hour(picNow()) + ": " + cents(o.price), 28, 400, PIC.ink2) : null,
     picGap(26), picText("Lo mismo en una casa como Bet365", 26, 600, PIC.ink2), picGap(6),
     picText(o ? bookBet(s, o) : s.market === "total" ? "Total · " + cap(s.text) : "Hándicap · " + signalName(s), 34, 600),
-    model ? picGap(26) : null, model ? picText("El modelo le da " + prob(o.p_model) + ". En Kalshi cuesta " + cents(o.needed) + " con comisión.", 30, 400, PIC.ink2) : null,
+    model ? picGap(26) : null, model ? picText("El modelo le da " + prob(o.p_model) + ". En Kalshi cuesta " + cents(o.needed) + " con comisión, que equivale a una cuota de " + decimal(1, o.needed) + ".", 30, 400, PIC.ink2) : null,
   ];
   return {name: "rodrindex-senal-" + s.game.replace(" @ ", "-").toLowerCase() + "-" + s.market + ".png", teams: [tA, tH], blocks: [picHead(), picCard(card, tint(tA), tint(tH)), picFoot()]};
 }
@@ -1820,6 +1824,7 @@ function betSpec(key) {
     picRule(), cash,
     picGap(26), picText("Lo que compró en Kalshi", 26, 600, PIC.ink2), picGap(6),
     picText((p.side === "yes" ? "SÍ" : "NO") + " en «" + (p.title_es || p.title || NIL) + "» a " + cents(p.price), 34, 600),
+    decimal(p.contracts, p.cost) === NIL ? null : picGap(8), decimal(p.contracts, p.cost) === NIL ? null : picText("Equivale a una cuota decimal de " + decimal(p.contracts, p.cost) + ", con comisión.", 28, 400, PIC.ink2),
     ...(book ? [picGap(26), picText("Lo mismo en una casa como Bet365", 26, 600, PIC.ink2), picGap(6),
       picText((p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + p.label, 34, 600)] : []),
   ];
@@ -1839,7 +1844,7 @@ function daySpec() {
       const g = gameOf(p.game.id) || null, st = status(p, g), match = p.game.home ? p.game.away + " en " + p.game.home : p.game.name || "Otro mercado", moment = g && g.state === "in" ? momentOf(g) : g ? clock(g) : "";
       const right = p.exit ? money(p.profit, true) : st.text, tone = p.exit ? (p.profit > 0 ? "good" : p.profit < 0 ? "bad" : "info") : st.tone;
       return picPair([picText(p.label, 38, 700, PIC.ink), picGap(4), picText([match, moment].filter(Boolean).join(" · "), 28, 400, PIC.ink2)],
-        [picText(money(p.cost) + " a " + cents(p.price), 30, 600, PIC.ink, 1.25, "right"), picGap(4), picText(right, 26, 600, TONE[tone], 1.25, "right")], 330);
+        [picText(money(p.cost) + " a " + cents(p.price), 30, 600, PIC.ink, 1.25, "right"), picGap(4), picText((decimal(p.contracts, p.cost) === NIL ? "" : "Cuota " + decimal(p.contracts, p.cost) + " · ") + right, 26, 600, TONE[tone], 1.25, "right")], 330);
     });
     parts.push(picPair([picText(who ? "APUESTAS DE " + who : "APUESTAS", 26, 700, PIC.ink2)],
       open.length ? [picText(plural(open.length, "abierta", "abiertas") + " · " + money(S.bank.at_risk) + " en juego", 26, 400, PIC.ink2, 1.25, "right")] : [], 420),
