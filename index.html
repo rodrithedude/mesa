@@ -124,9 +124,9 @@ details.cap-sum > summary { font: 600 13px/1.25 var(--font); color: var(--ink2);
 
 /* Listas agrupadas: etiqueta a la izquierda, dato a la derecha */
 /* Resultados del modelo por tipo de señal, y la lista de cambios */
-.res > div { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); gap: 8px; align-items: center; padding: 10px 16px; font-size: 14px; }
-.res > div:first-child { color: var(--ink2); font-size: 12px; font-weight: 600; padding-top: 8px; padding-bottom: 8px; } .res span + span { text-align: right; }
-.res b { display: block; font-weight: 700; font-size: 17px; letter-spacing: -.2px; } .res small { display: block; color: var(--ink2); font-size: 12px; }
+.tiers > div { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); gap: 8px; align-items: center; padding: 10px 16px; font-size: 14px; }
+.tiers > div:first-child { color: var(--ink2); font-size: 12px; font-weight: 600; padding-top: 8px; padding-bottom: 8px; } .tiers span + span { text-align: right; }
+.tiers b { display: block; font-weight: 700; font-size: 17px; letter-spacing: -.2px; } .tiers small { display: block; color: var(--ink2); font-size: 12px; }
 .news > div { padding: 12px 16px; font-size: 15px; line-height: 1.4; } .news small { display: block; color: var(--ink2); font-size: 12px; margin-bottom: 2px; }
 .group { background: var(--card); border-radius: 14px; overflow: hidden; }
 .group > * + * { border-top: .5px solid var(--line); }
@@ -690,7 +690,7 @@ function resultsBox() {
   if (!r.live && !r.season) return "";
   const cell = c => !c || !c.bets ? `<small>${NIL}</small>` : `<b>${Math.round(100 * c.wins / c.bets)}%</b><small>${c.wins} de ${c.bets}</small>`;
   const tiers = [["todos", "Todos los pronósticos"], ["fuerte", "Señal fuerte"], ["muy_fuerte", "Señal muy fuerte"], ["fuertes", "Fuerte + muy fuerte"]];
-  const block = (title, d) => !d ? "" : `<div class="cap">${title}</div><div class="group res"><div><span></span><span>Hándicap</span><span>Total</span><span>Los dos</span></div>` +
+  const block = (title, d) => !d ? "" : `<div class="cap">${title}</div><div class="group tiers"><div><span></span><span>Hándicap</span><span>Total</span><span>Los dos</span></div>` +
     tiers.map(([k, name]) => `<div><span>${name}</span><span>${cell((d[k] || {}).spread)}</span><span>${cell((d[k] || {}).total)}</span><span>${cell((d[k] || {}).both)}</span></div>`).join("") + "</div>";
   return `<div class="stack"><div class="h-sec">Resultados del modelo</div>${block("En vivo, sellado antes del partido", r.live)}${block("Toda la temporada, aplicado hacia atrás", r.season)}
     <p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p></div>`;
