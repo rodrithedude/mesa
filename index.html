@@ -174,6 +174,11 @@ details[open] > summary::before { transform: rotate(45deg); } details > summary:
 .pr .pk { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; } .pr .pk .k { font: var(--t-label); color: var(--muted); } .pr .pk b { font-weight: 600; } .pr .chip { font-size: 12px; padding: 3px 8px; }
 @media (max-width: 760px) { .pr { grid-template-columns: minmax(0, 1fr); padding-left: 16px; padding-right: 16px; } }
 
+/* Resultados del modelo por tipo de señal */
+.res > div { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, 1fr)); gap: 8px; align-items: center; padding: 8px 0; border-top: 1px solid var(--line); font: var(--t-sub); }
+.res > div:first-child { border-top: 0; font: var(--t-label); color: var(--muted); } .res span + span { text-align: right; }
+.res b { display: block; font: 600 17px/1.2 var(--display); } .res small { font: var(--t-label); color: var(--muted); }
+
 /* Mi caja */
 .hero { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 6px 28px; }
 .hero .k { font: var(--t-label); color: var(--muted); } .hero .v { font: 600 44px/1 var(--display); } .hero .d { font: var(--t-sub); color: var(--muted); }
@@ -586,7 +591,7 @@ function bookBet(s, o) {
 function bookBox(s, o) {
   const [away, home] = s.game.split(" @ "), mine = s.side === "home" ? home : away;
   const now = s.now == null ? "" : s.market === "total" ? String(s.now) : mine + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now);
-  const note = s.now != null && Math.abs(s.now) !== o.strike ? "Ahí la línea de ahora va en " + now + "." : "La cuota la pone la casa.";
+  const note = s.now != null && Math.abs(s.now) !== o.strike ? "En las casas la línea de ahora va en " + now + "." : "La cuota la pone la casa.";
   return `<div class="kalshi"><div><small>Lo mismo en una casa como Bet365</small><b>${esc(bookBet(s, o))}</b><span class="sub" style="display:block">${esc(note)}</span></div></div>`;
 }
 function dealBox(s, o) {
@@ -597,13 +602,30 @@ function dealBox(s, o) {
       <span>Tu costo sería</span><div class="b"><i class="cost" style="width:${100 * o.needed}%"></i></div><b>${cents(o.needed)}</b></div>`) +
     (verdict ? `<p class="verdict">${verdict}</p>` : "") + `<div class="card-actions"><button data-act="buy" data-game="${s.game_id}" data-ticker="${esc(o.ticker)}" data-side="${o.yes ? "yes" : "no"}">${held ? "Anotar otra compra" : "Anotar compra"}</button></div>`;
 }
+// Resultados del modelo: todos sus pronósticos y cada tipo de señal, en vivo y en la temporada.
+function resultsBox() {
+  const r = S.results || {};
+  if (!r.live && !r.season) return "";
+  const cell = c => !c || !c.bets ? `<small>${NIL}</small>` : `<b>${Math.round(100 * c.wins / c.bets)}%</b><small>${c.wins} de ${c.bets}</small>`;
+  const tiers = [["todos", "Todos los pronósticos"], ["fuerte", "Señal fuerte"], ["muy_fuerte", "Señal muy fuerte"], ["fuertes", "Fuerte + muy fuerte"]];
+  const block = (title, d) => !d ? "" : `<div class="res"><div><span>${title}</span><span>Hándicap</span><span>Total</span><span>Los dos</span></div>` +
+    tiers.map(([k, name]) => `<div><span>${name}</span><span>${cell((d[k] || {}).spread)}</span><span>${cell((d[k] || {}).total)}</span><span>${cell((d[k] || {}).both)}</span></div>`).join("") + "</div>";
+  return `<div class="card pad stack"><div class="head"><h2>Resultados del modelo</h2></div>${block("En vivo, sellado antes del partido", r.live)}${block("Toda la temporada, aplicado hacia atrás", r.season)}
+    <p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p></div>`;
+}
+// Lo que ha cambiado en el modelo, en palabras sencillas y de lo más nuevo a lo más viejo.
+function changesBox() {
+  const c = S.changes || [];
+  return !c.length ? "" : `<details data-keep="changes"${keep("changes")}><summary>Qué ha cambiado en el modelo</summary><div class="card">` +
+    c.map(x => `<div class="mini" style="grid-template-columns:minmax(0,1fr)"><span class="gm">${day(x.date + "T12:00:00", {day: "numeric", month: "short", year: "numeric"})}</span><span>${esc(x.text)}</span></div>`).join("") + "</div></details>";
+}
 function renderSignals() {
   const rec = S.record.map(r => `<span class="nw">${esc(r.market.toLowerCase())} ${r.wins} de ${r.bets}</span>`).join(", ");
-  put("record", rec ? "Así van las señales fuertes esta temporada: " + rec + ". En la prueba fueron 56 de cada 100." : "");
+  put("record", rec && !(S.results && S.results.season) ? "Así van las señales fuertes esta temporada: " + rec + ". En la prueba fueron 56 de cada 100." : "");
   const strong = S.signals.filter(s => s.strength), weak = S.signals.filter(s => !s.strength), order = {in: 0, pre: 1};
   const ahead = strong.filter(s => s.state !== "post").sort((a, b) => order[a.state] - order[b.state] || new Date(a.tipoff) - new Date(b.tipoff)), done = strong.filter(s => s.state === "post");
   $("n-signals").textContent = ahead.length || "";
-  if (!S.signals.length) { put("signals", '<div class="empty">Todavía no hay señales para la jornada. Salen cuando la casa publica su primera línea y la PC está encendida.</div>'); return; }
+  if (!S.signals.length) { put("signals", resultsBox() + '<div class="empty">Todavía no hay señales para la jornada. Salen cuando la casa publica su primera línea y la PC está encendida.</div>' + changesBox()); return; }
   const item = s => {
     const g = gameOf(s.game_id), deal = s.kalshi, [away, home] = s.game.split(" @ "), top = s.strength === "0.1";
     const when = !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : "En juego · " + clock(g);
@@ -626,7 +648,7 @@ function renderSignals() {
     html += `<details data-keep="sig-done"${keep("sig-done")}><summary>${plural(done.length, "señal fuerte ya terminó", "señales fuertes ya terminaron")}: ${plural(won, "ganó", "ganaron")}, ${plural(lost, "perdió", "perdieron")}</summary><div class="card">${done.map(mini).join("")}</div></details>`;
   }
   if (weak.length) html += `<details data-keep="sig-weak"${keep("sig-weak")}><summary>${plural(weak.length, "señal más débil", "señales más débiles")}</summary><div class="card">${weak.map(mini).join("")}</div></details>`;
-  put("signals", html + '<p class="note">Es la traducción de la señal a Kalshi. No es una recomendación de entrar ni de cuánto.</p>');
+  put("signals", resultsBox() + html + changesBox() + '<p class="note">Es la traducción de la señal a Kalshi. No es una recomendación de entrar ni de cuánto.</p>');
 }
 
 function renderGames() {
