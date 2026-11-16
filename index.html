@@ -276,6 +276,11 @@ body.public .m-act { display: none; }
 @keyframes beat { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 /* Compartir como imagen */
+.cap-note { margin: -6px 4px -2px; }
+.intro { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 14px; padding: 12px 16px; border-radius: 14px; background: var(--card); color: var(--sec); font-size: 14px; }
+.intro b { color: var(--ink); font-weight: 600; } .intro button { height: 44px; min-height: 44px; padding: 0 18px; }
+.sumline { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 8px; padding: 2px 4px 2px 16px; border-radius: 14px; background: var(--card); }
+.sumline p { flex: 1 1 220px; padding: 8px 0; color: var(--ink2); font-size: 13px; } .sumline b { color: var(--ink); font-weight: 600; }
 .share-row { display: flex; justify-content: flex-end; margin: 4px 0 0; }
 .share-row.day { justify-content: flex-start; margin: 0 4px; }
 .share-row .link { min-height: 44px; }
@@ -292,9 +297,11 @@ body.public .m-act { display: none; }
 <body>
 <div class="wrap">
   <header class="topbar">
-    <div class="r1"><h1>Rodrindex</h1><p class="figs">Bank<b id="pill-bank">…</b> · Hoy<b id="pill-day">…</b></p></div>
+    <div class="r1"><h1>Rodrindex</h1><p class="figs"><span id="pill-k">Bank</span><b id="pill-bank">…</b> · Hoy<b id="pill-day">…</b></p></div>
     <div class="r2"><span class="pulse" id="pulse"><i></i><span id="pulse-text">Cargando</span></span><span id="account"></span></div>
   </header>
+  <div class="intro" id="intro" role="note" hidden><p><b id="intro-name"></b> apuesta en Kalshi, un mercado donde se compra SÍ o NO de un resultado, siguiendo un modelo estadístico.</p>
+    <p>Aquí solo ves cómo le va. No es una recomendación.</p><button class="primary" id="intro-ok" type="button">Entendido</button></div>
   <div id="alerts"></div>
   <section id="tab-bets" class="stack" role="tabpanel">
     <div class="title-row"><h2 class="title"><span class="own">Mis apuestas</span><span class="pub">Apuestas</span></h2><span class="grow"></span><button class="link" data-act="buy">Anotar una compra</button></div>
@@ -327,11 +334,11 @@ body.public .m-act { display: none; }
     <details><summary>Cómo leer el panel</summary><div class="more-body">
       <p><b>El punto de color.</b> Dice cómo va la apuesta según la probabilidad de ganar: "Va bien" de 60% para arriba, "Va mal" por debajo de 40% y "Está parejo" en medio.</p>
       <p><b>La barra.</b> La marca blanca es la meta. El relleno es por dónde va el partido y el círculo es dónde terminaría a este paso.</p>
-      <p><b>La probabilidad.</b> Antes del partido viene del modelo prepartido (union_v1). Ya en juego viene del modelo en vivo (vivo_v1), que usa la línea de antes del partido, el marcador y el reloj. Se revisó con tres temporadas que no había visto. En el último medio minuto de un final cerrado es poco precisa.</p>
-      <p><b>Kalshi.</b> El precio del contrato ahora mismo. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
+      <p><b>La probabilidad.</b> Antes del partido viene del modelo prepartido<span class="own"> (union_v1)</span>. Ya en juego viene del modelo en vivo<span class="own"> (vivo_v1)</span>, que usa la línea de antes del partido, el marcador y el reloj. Se revisó con tres temporadas que no había visto. En el último medio minuto de un final cerrado es poco precisa.</p>
+      <p><b>Kalshi.</b> El precio del contrato <span id="help-now">ahora mismo</span>. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
       <p><b>Kalshi y una casa como Bet365.</b> Es la misma apuesta dicha de dos formas. En Kalshi compras SÍ o NO de un contrato y pagas su precio. En una casa eliges el equipo con su hándicap, como +5.5 o −5.5, o "más" y "menos", y la cuota la pone la casa. Comprar NO de «PHI gana por más de 5.5» es lo mismo que Brooklyn +5.5. El panel no lee los precios de Bet365: solo te dice cómo se llama ahí la apuesta.</p>
       <p class="own"><b>Llave completa.</b> La llave con que el panel lee tu cuenta de Kalshi también podría operar. El panel solo lee.</p>
-      <p><b>Señales.</b> Lo que el modelo prepartido ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. El precio de ahora ya trae el movimiento de la línea.</p>
+      <p><b>Señales.</b> Lo que el modelo prepartido ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. Esa prueba usó tres temporadas que el modelo no vio y quedó congelada el 11 nov 2026. Lo que va de esta temporada es otra medición y es la que dicen las tablas de resultados. El precio de ahora ya trae el movimiento de la línea.</p>
       <p><b>Como app en el teléfono.</b> En el menú del navegador elige "Agregar a pantalla de inicio". En iPhone es el botón de compartir de Safari. Se abre a pantalla completa y con su ícono.</p>
       <p><b>La gráfica de "Ver detalle".</b> Sus tres líneas miden la probabilidad de que la apuesta gane, y arriba es mejor. La punteada es lo que costó cada contrato y no se mueve. Si la de Kalshi está arriba de la punteada, la apuesta va ganando sobre el papel. Si la del modelo está arriba de la de Kalshi, el modelo es más optimista que el mercado. Ningún cruce dice quién tiene la razón.</p>
       <p><b>Historial de predicciones.</b> En la pestaña Partidos. De cada partido terminado dice qué lado eligió el modelo en el hándicap y en el total, si atinó y si era señal fuerte. Cubre los últimos 14 días.</p>
@@ -397,9 +404,12 @@ body.public .m-act { display: none; }
 <script>
 "use strict";
 let S = null, lastOk = 0, contracts = [], selling = null, FEE = 0.07, TAB = "bets";
+const LOAD = {fails: 0, busy: false, timer: 0, resuming: false, paint: false, starting: false};  // cómo va la carga: fallos seguidos, si hay una en curso, si se vuelve de segundo plano, si el pintado falló y si el motivo es que el panel arranca
+const FAILED = [];  // las pantallas que no se pudieron pintar en el último repintado
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
-let PAGEV = null;  // versión de la página: si el panel trae otra, se recarga sola
+const BUILD = 1794861024;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
+let PAGEV = null;  // versión de la primera foto vista: solo se usa con BUILD en 0
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
 if (PUBLIC) document.body.classList.add("public");
@@ -425,8 +435,13 @@ const connected = () => !!(S && S.account && S.account.connected);
 const gameOf = id => S.games.find(g => g.id === id);
 // En la copia pública los datos son una foto: se dice de cuándo es y se avisa si el panel dejó de publicar.
 const ageMin = () => Math.max(0, Math.round((Date.now() - new Date(S.now)) / 60000));
-const stale = () => PUBLIC && ageMin() > 2 * ((S.public || {}).every || 360) / 60 + 5;
+const stale = () => PUBLIC && !LOAD.resuming && ageMin() > 2 * ((S.public || {}).every || 360) / 60 + 5;  // al volver de segundo plano no se alarma hasta ver si hay foto nueva
 const stamp = t => { const d = new Date(t); return (d.toDateString() === new Date().toDateString() ? "hoy" : "el " + day(d)) + " a las " + hour(d); };
+// En la copia pública las probabilidades y los precios son de la foto: se dice a qué hora, no "ahora" ni "en vivo".
+const snapAt = () => hour(new Date(S.now));
+const endDot = t => t.endsWith(".") ? t : t + ".";  // la hora de es-GT ya termina en punto ("p. m."): al cerrar la frase no se duplica
+const asNow = () => PUBLIC && S ? "las " + snapAt() : "ahora";
+const modelNote = s => s.p_source === "marcador" ? (PUBLIC ? ", con el marcador de las " + snapAt() : " en vivo") : "";
 function put(id, html) { const el = $(id); if (el._html !== html) { el.innerHTML = html; el._html = html; } }
 // Lo que el usuario despliega se queda desplegado aunque la página se vuelva a pintar cada pocos segundos.
 document.addEventListener("toggle", e => { const key = e.target.dataset && e.target.dataset.keep; if (key) e.target.open ? OPEN.add(key) : OPEN.delete(key); }, true);
@@ -467,7 +482,7 @@ const tints = g => `--a:${tint(g && g.away)};--h:${tint(g && g.home)}`;
 // Acierto, fallo o empate: una marca redonda.
 const mk = (r, label) => `<i class="mk ${r === "ganó" ? "ok" : r === "perdió" ? "no" : "eq"}" role="img" aria-label="${esc(label)}">${r === "ganó" ? "✓" : r === "perdió" ? "✕" : "="}</i>`;
 // Un margen en palabras, para no cruzar su signo con el del hándicap: "gana por 2", "pierde por 7".
-const byWords = v => v === 0 ? "empata" : (v > 0 ? "gana por " : "pierde por ") + (+Math.abs(v).toFixed(1));
+const byWords = (v, subj) => v === 0 ? (subj ? "empate" : "empata") : (v > 0 ? (subj ? "gane por " : "gana por ") : (subj ? "pierda por " : "pierde por ")) + (+Math.abs(v).toFixed(1));  // subj: tras "espera que
 function matchup(g) {
   if (g.state === "pre") return esc(g.away.abbr) + " en " + esc(g.home.abbr);
   return `${esc(g.away.abbr)} <b>${g.away.score}</b> · ${esc(g.home.abbr)} <b>${g.home.score}</b>`;
@@ -481,7 +496,8 @@ function board(away, home, playing, when, size) {
 function whenBox(g) {
   if (!g) return "";
   const t = esc(clock(g));
-  return g.state === "in" ? `<span class="live"><i></i>En vivo</span>${t}` : g.state === "pre" ? t.replace(", ", "<br>") : t;
+  const live = PUBLIC && !g.over ? "En juego a las " + snapAt() : "En vivo";  // sin el marcador de ESPN, lo "en vivo" es solo lo que decía la foto
+  return g.state === "in" ? `<span class="live"><i></i>${live}</span>${t}` : g.state === "pre" ? t.replace(", ", "<br>") : t;
 }
 function scoreRow(ref, g) {
   if (!ref.home) return `<div class="score name">${esc(ref.name || "Otro mercado")}</div>`;
@@ -504,35 +520,41 @@ function status(p, g) {
   if (final != null) return final ? {tone: "good", text: "Ganó. Falta que Kalshi la pague"} : {tone: "bad", text: "Perdió. Falta que Kalshi la cierre"};
   if (p.kind === "total" && g && g.state !== "pre" && g.home.score + g.away.score > p.strike) return p.side === "yes" ? {tone: "good", text: "Ya ganó"} : {tone: "bad", text: "Ya no puede ganar"};
   if (!g || g.state === "pre") return {tone: "info", text: "Por empezar"};
-  if (p.p == null) return {tone: "info", text: "En juego"};
+  if (p.p == null) return {tone: "info", text: g.state !== "post" ? "En juego" : g.status === "STATUS_FINAL" ? "Terminó, falta el resultado" : "Sin jugarse"};  // ESPN lo cerró y Kalshi todavía no: no es "en juego"
   return p.p >= GOOD ? {tone: "good", text: "Va bien"} : p.p < BAD ? {tone: "bad", text: "Va mal"} : {tone: "mid", text: "Está parejo"};
 }
 // La apuesta en palabras: qué tiene que pasar, cómo va y los datos de la barra de avance.
 function story(p, g) {
-  const yes = p.side === "yes", live = !!g && g.state !== "pre", playing = live && g.state === "in";
+  const yes = p.side === "yes", done = !!g && g.state === "post" && g.status === "STATUS_FINAL", playing = !!g && g.state === "in", live = playing || done;  // done: ya terminó y se habla en pasado. Un partido cerrado sin final (pospuesto) se cuenta como no empezado
   const mins = playing ? Math.max(1, Math.round(minutesLeft(g))) : null, left = mins == null ? "" : mins === 1 ? " y queda 1 minuto" : " y quedan " + mins + " minutos";
   if (p.kind === "total") {
     const top = Math.floor(p.strike), have = live ? g.home.score + g.away.score : null;
     let text = p.projection != null ? `El modelo espera <b>${p.projection.toFixed(0)} puntos</b>.` : "";
-    if (have != null) text = have > p.strike ? `Van <b>${have}</b>. ${yes ? "La meta ya se pasó" : "Ya se pasó del tope"}.` :
+    if (have != null && done) text = have > p.strike ? `Terminó con <b>${have}</b>. ${yes ? "Se pasó la meta" : "Se pasó del tope"}.` :
+      yes ? `Terminó con <b>${have}</b>. Faltaron <b>${plural(top + 1 - have, "punto", "puntos")}</b>.` : `Terminó con <b>${have}</b>. Quedó <b>${plural(top - have, "punto", "puntos")}</b> por debajo del tope.`;
+    else if (have != null) text = have > p.strike ? `Van <b>${have}</b>. ${yes ? "La meta ya se pasó" : "Ya se pasó del tope"}.` :
       yes ? `Van <b>${have}</b>. Faltan <b>${plural(top + 1 - have, "punto", "puntos")}</b>${left}.` : `Van <b>${have}</b>. Caben <b>${plural(top - have, "punto", "puntos")}</b> más${left}.`;
-    return {title: (yes ? "Más" : "Menos") + " de " + p.strike + " puntos", text, bar: {total: true, have, goal: yes ? top + 1 : top, goalText: (yes ? "Meta " : "Tope ") + (yes ? top + 1 : top),
-      proj: p.projection, haveText: have == null ? "" : "Van " + have, projText: p.projection == null ? "" : (live ? "A este paso " : "El modelo espera ") + p.projection.toFixed(0)}};
+    return {title: (yes ? "Más" : "Menos") + " de " + p.strike + " puntos", text, dup: text !== "" && have == null, bar: {total: true, have, goal: yes ? top + 1 : top, goalText: (yes ? "Meta " : "Tope ") + (yes ? top + 1 : top),
+      proj: done ? null : p.projection, haveText: have == null ? "" : (done ? "Terminó con " : "Van ") + have, projText: p.projection == null || done ? "" : (live ? "A este paso " : "El modelo espera ") + p.projection.toFixed(0)}};
   }
   if (p.kind !== "spread" && p.kind !== "winner") return {title: p.label, text: "", bar: null};
   const who = cityOf(g, p.subject), n = p.kind === "spread" ? Math.floor(p.strike) : 0, goal = p.kind === "winner" ? 1 : yes ? n + 1 : -n;
   const m = live ? (p.subject === g.home.abbr ? 1 : -1) * (g.home.score - g.away.score) : null;
   const title = p.kind === "winner" ? "Gana " + who : yes ? `${who} gana por ${n + 1} o más` : `${who} pierde por ${n} o menos, o gana`;
-  let text = p.projection != null ? `El modelo espera que ${esc(who)} <b>${byWords(+p.projection.toFixed(1))}</b>.` : "";
+  let text = p.projection != null ? `El modelo espera que ${esc(who)} <b>${byWords(+p.projection.toFixed(1), true)}</b>.` : "";
+  const dup = text !== "" && !live;  // antes del partido la barra repite esta expectativa: se dice una sola vez, en la barra
   if (m != null) {
-    const lead = m > 0 ? `${esc(who)} va ganando por <b>${m}</b>` : m < 0 ? `${esc(who)} va perdiendo por <b>${-m}</b>` : "Van empatados";
+    const lead = done ? (m > 0 ? `${esc(who)} ganó por <b>${m}</b>` : m < 0 ? `${esc(who)} perdió por <b>${-m}</b>` : "Terminaron empatados") :
+      m > 0 ? `${esc(who)} va ganando por <b>${m}</b>` : m < 0 ? `${esc(who)} va perdiendo por <b>${-m}</b>` : "Van empatados";
     const gap = goal - m;  // lo que le falta de ventaja; negativo es que le sobra
-    text = lead + (p.kind === "winner" ? "." : gap > 0 ? (yes ? `. Le faltan <b>${plural(gap, "punto", "puntos")}</b> de ventaja.` : `. Tiene que recortar <b>${plural(gap, "punto", "puntos")}</b>.`) :
+    text = lead + (p.kind === "winner" ? "." : done ? (gap > 0 ? (yes ? `. Le faltaron <b>${plural(gap, "punto", "puntos")}</b> de ventaja.` : `. No alcanzó a recortar <b>${plural(gap, "punto", "puntos")}</b>.`) :
+      gap === 0 ? ". Quedó justo en la meta." : yes ? `. Le sobraron <b>${plural(-gap, "punto", "puntos")}</b>.` : `. Quedó con <b>${plural(-gap, "punto", "puntos")}</b> de colchón.`) :
+      gap > 0 ? (yes ? `. Le faltan <b>${plural(gap, "punto", "puntos")}</b> de ventaja.` : `. Tiene que recortar <b>${plural(gap, "punto", "puntos")}</b>.`) :
       gap === 0 ? ". Está justo en la meta." : yes ? `. Le sobran <b>${plural(-gap, "punto", "puntos")}</b>.` : `. Tiene <b>${plural(-gap, "punto", "puntos")}</b> de colchón.`);
   }
-  return {title, text, bar: {total: false, have: m, goal, goalText: p.kind === "winner" ? "Meta: ganar" : yes ? "Meta: ganar por " + (n + 1) : "Meta: no perder por más de " + n,
-    proj: p.projection, haveText: m == null ? "" : m === 0 ? "Van empatados" : "Va " + (m > 0 ? "ganando" : "perdiendo") + " por " + Math.abs(m),
-    projText: p.projection == null ? "" : (live ? "A este paso " : "El modelo espera que ") + byWords(+p.projection.toFixed(1))}};
+  return {title, text, dup, bar: {total: false, have: m, goal, goalText: p.kind === "winner" ? "Meta: ganar" : yes ? "Meta: ganar por " + (n + 1) : "Meta: no perder por más de " + n,
+    proj: done ? null : p.projection, haveText: m == null ? "" : done ? (m === 0 ? "Terminaron empatados" : (m > 0 ? "Ganó" : "Perdió") + " por " + Math.abs(m)) : m === 0 ? "Van empatados" : "Va " + (m > 0 ? "ganando" : "perdiendo") + " por " + Math.abs(m),
+    projText: p.projection == null || done ? "" : (live ? "A este paso " + byWords(+p.projection.toFixed(1)) : "El modelo espera que " + who + " " + byWords(+p.projection.toFixed(1), true))}};
 }
 function progress(bar, tone) {
   if (!bar) return "";
@@ -615,23 +637,26 @@ function injuryBlock(g) {
 }
 function shareRow(key) { return '<div class="share-row"><button class="link" data-img="' + esc(key) + '">Compartir</button></div>'; }
 function ticket(p) {
-  const g = gameOf(p.game.id), st = status(p, g), s = story(p, g), yes = p.side === "yes", main = p.p != null ? p.p : p.mid;
+  const g = gameOf(p.game.id), old = PUBLIC && !!g && g.state === "post" && p.p_source !== "final";  // ESPN ya lo dio por terminado y la foto todavía no
+  const st = status(old ? {...p, p: null} : p, g), s = story(p, g), yes = p.side === "yes", main = old ? null : p.p != null ? p.p : p.mid;
   const source = {modelo: "según el modelo, antes del partido", "línea": "según la línea de la casa, antes del partido", marcador: "según el marcador y el reloj", final: "el partido ya terminó"};
   const chance = main == null ? "" : `<div class="pct"><b class="${st.tone}">${big(main)}<i>%</i></b><small>de ganar</small></div>`;
-  const said = main == null ? "" : `${p.p != null ? cap(source[p.p_source] || "según el modelo") : "Según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la tiene en " + prob(p.mid) + "." : ""}${PUBLIC && g && g.state === "in" ? " La probabilidad es la de la última foto." : ""}`;
+  // la foto no es del momento: se dice de cuándo es, y solo lo que de verdad salió de ella
+  const photo = !(PUBLIC && g && g.state === "in") ? "" : p.p_source === "marcador" ? " Calculada con el marcador y el precio de las " + endDot(snapAt()) : p.mid != null || p.p == null ? " El precio es de las " + endDot(snapAt()) : "";
+  const said = old ? `${g.status === "STATUS_FINAL" ? "El partido ya terminó." : "El partido ya no está en juego."} La probabilidad de las ${snapAt()} ya no vale.` : main == null ? "" : `${p.p != null ? cap(source[p.p_source] || "según el modelo") : "Según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la cotiza en " + prob(p.mid) + "." : ""}${photo}`;
   const fact = (k, v) => `<div class="row"><span>${k}</span><b>${v}</b></div>`;
-  const chart = spark(p), worth = (p.expected == null ? "" : fact("Lo que vale según el modelo", `<span class="${cls(p.expected)}">${money(p.expected, true)}</span> esperado`)) +
+  const chart = old ? "" : spark(p), worth = old ? "" : (p.expected == null ? "" : fact("Lo que vale según el modelo", `<span class="${cls(p.expected)}">${money(p.expected, true)}</span> esperado`)) +
     (p.p_overtime > 0.02 ? fact("Chance de tiempo extra", pct(p.p_overtime)) : "");
   const how = chart || worth ? `<h4 class="cap">Cómo va</h4><div class="group">${chart ? `<div class="cell">${chart}</div>` : ""}${worth}</div>` : "";
   const more = `<details class="more" data-keep="pos-${p.id}"${keep("pos-" + p.id)}><summary>Ver detalle</summary><div class="sheet">${how}${betWhy(p)}${injuryBlock(g)}
     <h4 class="cap">${you("Tu compra", "Su compra")}</h4><div class="group">` +
     fact("Contrato", `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("En una casa como Bet365 sería", (p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + esc(p.label)) + fact("Cantidad", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
-    fact("Costo por contrato", cents(p.needed) + " con comisión") + fact(you("Si vendes ahora", "Si vende ahora"), p.sale == null ? "Nadie compra ahora" : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`) +
+    fact("Costo por contrato", cents(p.needed) + " con comisión") + (old ? "" : fact(you("Si vendes ahora", "Si vendiera a las " + snapAt()), p.sale == null ? you("Nadie compra ahora", "Nadie compraba") : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`)) +
     (p.note ? fact("Nota", esc(p.note)) : "") + `</div>
     <div class="card-actions"><button class="link" data-act="sell" data-id="${p.id}">Anotar venta</button><button class="link" data-act="settle" data-id="${p.id}">Liquidar a mano</button><button class="link danger" data-act="remove" data-id="${p.id}">Borrar</button></div></div></details>`;
   return `<article class="game" style="${tints(g)}">${scoreRow(p.game, g)}
-    <div class="bet"><div><h3>${esc(s.title)}</h3>${s.text ? `<p>${s.text}</p>` : ""}</div>${chance}</div>${progress(s.bar, st.tone)}
-    <div class="cash"><span>${you("Apostaste", "Apostó")} <b>${money(p.cost)}</b></span><span>${you("Si gana, cobras", "Si gana, cobra")} <b>${money(p.contracts)}</b></span><span>Ganancia <b class="pos">${money(p.if_win, true)}</b></span></div>
+    <div class="bet"><div><h3>${esc(s.title)}</h3>${s.text && !s.dup ? `<p>${s.text}</p>` : ""}</div>${chance}</div>${progress(s.bar, st.tone)}
+    <div class="cash"><span>${you("Apostaste", esc(owner()) + " apostó")} <b>${money(p.cost)}</b></span><span>${you("Si gana, cobras", "Si gana, cobra")} <b>${money(p.contracts)}</b></span><span>Ganancia <b class="pos">${money(p.if_win, true)}</b></span></div>
     <p class="stl"><span class="st"><i class="sdot ${st.tone}"></i>${st.text}</span>${said ? `<span>${said}</span>` : ""}</p>${shareRow("bet:" + p.id)}${more}</article>`;
 }
 function historyRow(p) {
@@ -647,10 +672,12 @@ function recap() {
   const hit = l => l.filter(c => c.result === "ganó").length + " de " + l.length;
   const bets = S.positions.filter(p => p.exit && p.game.tipoff && etDay(p.game.tipoff) === d), won = bets.filter(p => p.profit > 0).length, net = bets.reduce((s, p) => s + p.profit, 0);
   const when = day(d + "T12:00:00", {weekday: "long", day: "numeric", month: "short"});
-  const text = `Rodrindex, ${when}: ` + (bets.length ? `${won} de ${bets.length} apuestas, ${money(net, true)}. ` : "") +
+  const left = S.games.filter(g => etDay(g.tipoff) === d && g.state !== "post").length;  // partidos de ese día que aún no terminan
+  const part = left ? (left === 1 ? "falta 1 partido" : "faltan " + left + " partidos") : "";
+  const text = `Rodrindex, ${when}${part ? " (parcial, " + part + ")" : ""}: ` + (bets.length ? `${won} de ${bets.length} apuestas, ${money(net, true)}. ` : "") +
     `El modelo atinó ${hit(calls)}` + (strong.length ? ` y ${hit(strong)} en señales fuertes.` : ".");
   const fig = (k, v, c) => `<div><small>${k}</small><b class="${c || ""}">${v}</b></div>`;
-  return `<div class="recap"><div class="cap-row"><h3 class="cap">Resumen del ${esc(when)}</h3><button class="link" data-share="${esc(text)}">Compartir</button></div>
+  return `<div class="recap"><div class="cap-row"><h3 class="cap">Resumen ${part ? "parcial " : ""}del ${esc(when)}</h3><button class="link" data-share="${esc(text)}">Compartir</button></div>${part ? `<p class="sub cap-note">Parcial: ${part} por terminar.</p>` : ""}
     <div class="stats">${bets.length ? fig(you("Tus apuestas", "Sus apuestas"), won + " de " + bets.length) + fig("Resultado", money(net, true), cls(net)) : ""}${fig("El modelo atinó", hit(calls))}${strong.length ? fig("Señales fuertes", hit(strong)) : ""}</div></div>`;
 }
 async function share(button) {
@@ -667,7 +694,7 @@ function renderBets() {
   put("open-sub", open.length ? plural(open.length, "apuesta abierta", "apuestas abiertas") + " · " + money(S.bank.at_risk) + " en juego" : "");
   const rank = p => { const g = gameOf(p.game.id); return p.final != null ? 2 : g && g.state === "in" ? 0 : 1; };  // en juego, por empezar, ya decididas
   open.sort((a, b) => rank(a) - rank(b) || new Date(a.game.tipoff) - new Date(b.game.tipoff));
-  put("open", open.length ? open.map(ticket).join("") : `<div class="empty"><span>${PUBLIC ? "No hay apuestas abiertas ahora." : connected() ? "No tienes apuestas abiertas. Lo que compres en Kalshi aparece aquí solo." :
+  put("open", open.length ? open.map(ticket).join("") : `<div class="empty"><span>${PUBLIC ? "No hay apuestas abiertas." : connected() ? "No tienes apuestas abiertas. Lo que compres en Kalshi aparece aquí solo." :
     "No tienes apuestas abiertas. Cuando compres algo en Kalshi, anótalo aquí y el panel lo sigue en vivo."}</span><button data-go="signals">Ver las señales</button></div>`);
   const won = done.filter(p => p.profit > 0).length, total = done.reduce((sum, p) => sum + p.profit, 0);
   put("today", recap() + (done.length ? `<div class="cap-row"><h3 class="cap">Terminadas hoy</h3><span class="capr">${plural(done.length, "apuesta", "apuestas")} · ${plural(won, "ganada", "ganadas")} · <span class="${cls(total)}">${money(total, true)}</span></span></div>
@@ -690,29 +717,56 @@ function bookBet(s, o) {
 function bookBox(s, o) {
   const [away, home] = s.game.split(" @ "), mine = s.side === "home" ? home : away;
   const now = s.now == null ? "" : s.market === "total" ? String(s.now) : mine + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now);
-  const note = s.now != null && Math.abs(s.now) !== o.strike ? "En las casas la línea de ahora va en " + now + "." : "La cuota la pone la casa.";
+  const note = s.now != null && Math.abs(s.now) !== o.strike ? "En las casas la línea de " + asNow() + " va en " + now + "." : "La cuota la pone la casa.";
   return `<div class="row"><span>Lo mismo en una casa como Bet365</span><b>${esc(bookBet(s, o))}<small>${esc(note)}</small></b></div>`;
 }
-function dealBox(s, o) {
+// Una línea dicha como en la casa: el equipo con su hándicap o más y menos.
+function lineAt(s, v) {
+  if (s.market === "total") return (s.side === "over" ? "más de " : "menos de ") + v;
+  const [away, home] = s.game.split(" @ "), mine = s.side === "home" ? 1 : -1, shown = mine * v;
+  return (s.side === "home" ? home : away) + " " + (shown === 0 ? "0" : (shown > 0 ? "+" : "−") + Math.abs(shown));
+}
+const belowCost = o => o.p_model != null && o.needed != null && Math.round(100 * (o.p_model - o.needed)) < 0;
+// Si el modelo queda por debajo de lo que cuesta, por qué: la señal se midió contra la apertura y el precio es el de ahora.
+function belowNote(s, deals) {
+  if (!deals.some(belowCost)) return "";
+  const first = `La señal se midió contra la apertura (${esc(lineAt(s, s.line))}). `;
+  return '<p class="verdict">' + first + (s.now == null ? `El precio de Kalshi es el de ${asNow()} y ya trae lo que se haya movido la línea.` : s.now !== s.line ?
+    `La línea de ${asNow()} es ${esc(lineAt(s, s.now))} y el precio de Kalshi ya trae ese movimiento.` : `La línea de ${asNow()} sigue igual y el precio de Kalshi es el de ${asNow()}, con su comisión.`) + "</p>";
+}
+function dealBox(s, o, near) {
   const held = S.positions.some(p => !p.exit && p.ticker === o.ticker), edge = o.p_model != null && o.needed != null ? Math.round(100 * (o.p_model - o.needed)) : null;
   const verdict = edge == null ? "" : edge === 0 ? "El modelo la ve igual a lo que cuesta." : `El modelo la ve <b>${plural(Math.abs(edge), "punto", "puntos")} por ${edge > 0 ? "encima" : "debajo"}</b> de lo que cuesta.`;
-  return `<div class="group deal"><div class="deal-top"><div><small>Cómo se compra en Kalshi${held ? you(" · ya la tienes", " · " + esc(owner()) + " ya la tiene") : ""}</small><b><span class="side">${o.yes ? "SÍ" : "NO"}</span> en «${esc(o.title_es || o.title)}»</b></div><div class="price">${o.price == null ? '<span class="sub">sin oferta</span>' : cents(o.price)}</div></div>` + bookBox(s, o) +
-    (o.p_model == null || o.needed == null ? "" : `<div class="versus"><span>Modelo${s.p_source === "marcador" ? " en vivo" : ""}</span><div class="b"><i style="width:${100 * o.p_model}%"></i></div><b>${prob(o.p_model)}</b>
-      <span>Tu costo sería</span><div class="b"><i class="cost" style="width:${100 * o.needed}%"></i></div><b>${cents(o.needed)}</b></div>`) +
+  return `<div class="group deal"><div class="deal-top"><div><small>${you("Cómo se compra en Kalshi", "Contrato en Kalshi")}${near ? " · línea cercana" : ""}${held ? you(" · ya la tienes", " · " + esc(owner()) + " ya la tiene") : ""}</small><b><span class="side">${o.yes ? "SÍ" : "NO"}</span> en «${esc(o.title_es || o.title)}»</b></div><div class="price">${o.price == null ? '<span class="sub">sin oferta</span>' : cents(o.price)}</div></div>` + bookBox(s, o) +
+    (o.p_model == null || o.needed == null ? "" : `<div class="versus"><span>Modelo${modelNote(s)}</span><div class="b"><i style="width:${100 * o.p_model}%"></i></div><b>${prob(o.p_model)}</b>
+      <span>${you("Tu costo sería", "Costo con comisión")}</span><div class="b"><i class="cost" style="width:${100 * o.needed}%"></i></div><b>${cents(o.needed)}</b></div>`) +
     (verdict ? `<p class="verdict">${verdict}</p>` : "") + `<div class="card-actions"><button class="link" data-act="buy" data-game="${s.game_id}" data-ticker="${esc(o.ticker)}" data-side="${o.yes ? "yes" : "no"}">${held ? "Anotar otra compra" : "Anotar compra"}</button></div></div>`;
 }
+// Una celda de resultados: con menos de 10 casos el dato principal es "X de Y" y el porcentaje queda atenuado.
+const rate = c => !c || !c.bets ? `<small>${NIL}</small>` : c.bets < 10 ? `<b>${c.wins} de ${c.bets}</b><small>${Math.round(100 * c.wins / c.bets)}%</small>` : `<b>${Math.round(100 * c.wins / c.bets)}%</b><small>${c.wins} de ${c.bets}</small>`;
+// Aciertos y casos de los pronósticos que no son señal fuerte: todos menos fuertes y muy fuertes.
+function others(d) {
+  const a = d && d.todos && d.todos.both, f = d && d.fuertes && d.fuertes.both;
+  return a && f && a.bets > f.bets ? {wins: a.wins - f.wins, bets: a.bets - f.bets} : null;
+}
+const othersLine = () => {
+  const r = S.results || {}, live = others(r.live), season = others(r.season), say = (o, name) => `${o.wins} de ${o.bets} ${name} (${Math.round(100 * o.wins / o.bets)}%${o.bets < 100 ? ", pocos casos" : ""})`;
+  return live && season ? `Los demás pronósticos acertaron ${say(live, "en vivo")} y ${say(season, "en la temporada")}.` : live || season ? `Los demás pronósticos acertaron ${say(live || season, live ? "en vivo" : "en la temporada")}.` : "";
+};
 // Resultados del modelo: todos sus pronósticos y cada tipo de señal, en vivo y en la temporada.
 // Cómo ha ido la tasa de aciertos: el acumulado día por día de lo sellado en vivo, todos y solo las señales fuertes.
 function trendBox() {
-  const rows = S.history || [], days = [...new Set(rows.map(r => r.day))].sort();
-  if (days.length < 2) return "";
-  const run = keep => { let w = 0, n = 0; return days.map(d => { for (const c of rows.filter(r => r.day === d).flatMap(r => r.calls)) if (c.result !== "empate" && keep(c)) { n++; if (c.result === "ganó") w++; } return n ? w / n : null; }); };
-  const all = run(() => true), strong = run(c => !!c.strength), seen = [...all, ...strong, 0.5].filter(v => v != null);
+  const rows = S.history || [], every = [...new Set(rows.map(r => r.day))].sort(), MIN = 10;  // la serie arranca cuando ya hay MIN casos acumulados
+  const run = keep => { let w = 0, n = 0; return every.map(d => { for (const c of rows.filter(r => r.day === d).flatMap(r => r.calls)) if (c.result !== "empate" && keep(c)) { n++; if (c.result === "ganó") w++; } return {rate: n >= MIN ? w / n : null, n}; }); };
+  const rawAll = run(() => true), rawStrong = run(c => !!c.strength), from = rawAll.findIndex(r => r.rate != null);
+  if (from < 0 || every.length - from < 2) return "";
+  const days = every.slice(from), all = rawAll.slice(from).map(r => r.rate), strong = rawStrong.slice(from).map(r => r.rate), cases = [rawAll[rawAll.length - 1].n, rawStrong[rawStrong.length - 1].n];
+  const seen = [...all, ...strong, 0.5].filter(v => v != null);
   const lo = Math.max(0, Math.min(...seen) - 0.06), hi = Math.min(1, Math.max(...seen) + 0.06), W = 300, H = 96;
   const x = i => 4 + (W - 8) * i / (days.length - 1), y = v => 8 + (H - 16) * (1 - (v - lo) / (hi - lo));
   const path = s => { let on = false; return s.map((v, i) => { if (v == null) return ""; const step = (on ? "L" : "M") + x(i).toFixed(1) + " " + y(v).toFixed(1); on = true; return step; }).join(" "); };
   const ends = s => { const got = s.filter(v => v != null); return [got[0], got[got.length - 1]]; };
-  const say = (name, s) => { const [a, b] = ends(s); if (a == null) return ""; const d = Math.round(100 * (b - a)); return name + " " + (d === 0 ? "sigue en " + pct(b) : (d > 0 ? "subió" : "bajó") + " de " + pct(a) + " a " + pct(b)) + "."; };
+  const say = (name, s, n) => { const [a, b] = ends(s); if (a == null) return ""; const d = Math.round(100 * (b - a)); return name + " " + (d === 0 ? "sigue en " + pct(b) : (d > 0 ? "subió" : "bajó") + " de " + pct(a) + " a " + pct(b)) + " (" + n + " casos)."; };
   const tags = [["Fuertes " + pct(ends(strong)[1]), ends(strong)[1], "var(--green)"], ["Todos " + pct(ends(all)[1]), ends(all)[1], "var(--ink2)"]]
     .filter(t => t[1] != null).map(t => ({text: t[0], color: t[2], top: y(t[1]) - 8})).sort((p, q) => p.top - q.top);
   if (tags.length > 1 && tags[1].top - tags[0].top < 15) tags[1].top = tags[0].top + 15;
@@ -723,68 +777,72 @@ function trendBox() {
     <path d="${path(all)}" fill="none" stroke="var(--ink2)" stroke-width="2" vector-effect="non-scaling-stroke"/><path d="${path(strong)}" fill="none" stroke="var(--green)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
     <div style="position:relative;font:600 12px/16px var(--font)">${tags.map(t => `<span style="position:absolute;left:0;top:${Math.max(0, Math.min(H - 16, t.top)).toFixed(0)}px;color:${t.color};white-space:nowrap">${esc(t.text)}</span>`).join("")}</div></div>
     <div style="display:flex;justify-content:space-between;color:var(--ink2);font-size:12px;margin:4px 102px 0 0"><span>${label(days[0])}</span><span>${label(days[days.length - 1])}</span></div>
-    <p class="sub" style="margin-top:8px">Acumulado día por día de lo sellado en vivo. La línea punteada es 50%. ${esc(say("Todos los pronósticos:", all))} ${esc(say("Señales fuertes:", strong))}</p></div>`;
+    <p class="sub" style="margin-top:8px">Acumulado día por día de lo sellado en vivo. La línea punteada es 50%. Empieza cuando hay al menos 10 casos acumulados. ${esc(say("Todos los pronósticos:", all, cases[0]))} ${esc(say("Señales fuertes:", strong, cases[1]))}</p></div>`;
 }
 // El modelo contra Kalshi en las mismas líneas. El pronóstico de Kalshi es el lado que su precio daba por más probable al sellarse la señal.
 function versusBox() {
   const k = (S.results || {}).kalshi;
   if (!k || !k.comparable) return "";
-  const cell = c => !c || !c.bets ? `<small>${NIL}</small>` : `<b>${Math.round(100 * c.wins / c.bets)}%</b><small>${c.wins} de ${c.bets}</small>`;
+  const cell = rate;
   const tiers = [["todos", "Todos los comparables"], ["fuerte", "Señal fuerte"], ["muy_fuerte", "Señal muy fuerte"], ["fuertes", "Fuerte + muy fuerte"]], a = k.agree || {};
-  const why = [[k.no_line, "porque Kalshi no tenía esa línea exacta"], [k.no_pick, "porque su precio estaba en 50% justo"], [k.sealed - k.comparable - k.no_line - k.no_pick, "por otros motivos"]]
+  const why = [[k.no_line, "porque Kalshi no tenía esa línea ni una menor"], [k.no_pick, "porque su precio estaba en 50% justo"], [k.sealed - k.comparable - k.no_line - k.no_pick, "por otros motivos"]]
     .filter(x => x[0] > 0).map((x, i) => (i ? x[0] : plural(x[0], "quedó fuera", "quedaron fuera")) + " " + x[1]);
   const left = why.length > 1 ? why.slice(0, -1).join(", ") + " y " + why[why.length - 1] : why[0] || "";
-  return `<div class="cap">Contra Kalshi, en las mismas líneas</div><div class="group tiers vs"><div><span></span><span>Modelo</span><span>Kalshi</span></div>` +
+  return `<div class="cap">Contra Kalshi, en el mismo contrato</div><div class="group tiers vs"><div><span></span><span>Modelo</span><span>Kalshi</span></div>` +
     tiers.map(([key, name]) => `<div><span>${name}</span><span>${cell((k.tiers[key] || {}).model)}</span><span>${cell((k.tiers[key] || {}).kalshi)}</span></div>`).join("") + `</div>
-    <p class="sub">El pronóstico de Kalshi es el lado que su precio daba por más probable cuando se selló la señal.${k.close ? ` En estas líneas ese precio casi siempre ronda el 50%: en ${k.close} de ${k.comparable} estaba a 2 centavos o menos.` : ""} Fueron del mismo lado en ${a.same} y se separaron en ${a.apart}, y ahí el modelo atinó ${a.apart_model} y Kalshi ${a.apart_kalshi}. Con tan pocos casos todavía no se puede decir que uno le gane al otro. De ${k.sealed} pronósticos con resultado se compararon ${k.comparable}${left ? ": " + left : ""}.</p>`;
+    <p class="sub">El pronóstico de Kalshi es el lado que su precio daba por más probable cuando se selló la señal.${k.close ? ` En estas líneas ese precio casi siempre ronda el 50%: en ${k.close} de ${k.comparable} estaba a 2 centavos o menos.` : ""} Fueron del mismo lado en ${a.same} y se separaron en ${a.apart}, y ahí el modelo atinó ${a.apart_model} y Kalshi ${a.apart_kalshi}. ${k.comparable < 100 ? `Con solo ${k.comparable} casos comparables todavía no se puede decir que uno le gane al otro. ` : ""}De ${k.sealed} pronósticos con resultado se compararon ${k.comparable}${k.lower ? `: ${k.exact} en la línea exacta y ${k.lower} en la línea menor más cercana, porque Kalshi pone sus totales de 2 en 2. En esos ${k.lower} el lado del modelo se recalcula contra esa línea y en ${k.flips} cambia. Ahí casi siempre los dos van con «más» (${k.lower_over} de ${k.lower}), así que dicen poco sobre quién es mejor` : ""}${left ? (k.lower ? ". Además " : ": ") + left : ""}.</p>`;
 }
 function resultsBox() {
   const r = S.results || {};
   if (!r.live && !r.season) return "";
-  const cell = c => !c || !c.bets ? `<small>${NIL}</small>` : `<b>${Math.round(100 * c.wins / c.bets)}%</b><small>${c.wins} de ${c.bets}</small>`;
+  const cell = rate;
   const tiers = [["todos", "Todos los pronósticos"], ["fuerte", "Señal fuerte"], ["muy_fuerte", "Señal muy fuerte"], ["fuertes", "Fuerte + muy fuerte"]];
-  const block = (title, d) => !d ? "" : `<div class="cap">${title}</div><div class="group tiers"><div><span></span><span>Hándicap</span><span>Total</span><span>Los dos</span></div>` +
+  const block = (title, what, d) => !d ? "" : `<div class="cap">${title}</div><p class="sub cap-note">${what}</p><div class="group tiers"><div><span></span><span>Hándicap</span><span>Total</span><span>Hándicap y total</span></div>` +
     tiers.map(([k, name]) => `<div><span>${name}</span><span>${cell((d[k] || {}).spread)}</span><span>${cell((d[k] || {}).total)}</span><span>${cell((d[k] || {}).both)}</span></div>`).join("") + "</div>";
-  return `<div class="stack"><div class="h-sec">Resultados del modelo</div>${block("En vivo, sellado antes del partido", r.live)}${block("Toda la temporada, aplicado hacia atrás", r.season)}
-    ${trendBox()}<p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p>${versusBox()}</div>`;
+  const test = !r.live && !r.season ? "" : "La prueba de 56 de cada 100 salió de tres temporadas que el modelo no vio y quedó congelada el 11 nov 2026. Las tablas miden otra cosa: lo que va de esta temporada.";
+  return `<div class="stack" id="results-box"><div class="h-sec">Resultados del modelo</div>${block("En vivo, sellado antes del partido", "Sellado: se guardó antes de que empezara el partido y ya no se puede cambiar.", r.live)}${block("Toda la temporada, aplicado hacia atrás", "Hacia atrás: el modelo aplicado a partidos que ya se jugaron, no sellado antes de cada uno.", r.season)}
+    <p class="sub">${test}</p>${trendBox()}<p class="sub">Qué parte de sus pronósticos atinó contra la línea de apertura. Atinar la mitad no alcanza: hace falta más para cubrir la comisión.</p>${versusBox()}</div>`;
 }
 // Lo que ha cambiado en el modelo, en palabras sencillas y de lo más nuevo a lo más viejo.
 function changesBox() {
   const c = S.changes || [];
   return !c.length ? "" : `<details data-keep="changes"${keep("changes")}><summary>Qué ha cambiado en el modelo</summary><div class="group news">` +
-    c.map(x => `<div><small>${day(x.date + "T12:00:00", {day: "numeric", month: "short", year: "numeric"})}</small>${esc(x.text)}</div>`).join("") + "</div></details>";
+    c.map(x => `<div><small>${day(x.date + "T12:00:00", {day: "numeric", month: "short", year: "numeric"})}</small>${esc(PUBLIC ? x.text.replace(/ \((?:union|vivo)_v1\)/g, "") : x.text)}</div>`).join("") + "</div></details>";  // los nombres internos de los modelos son del dueño
 }
 function renderSignals() {
   const rec = S.record.map(r => `<span class="nw">${esc(r.market.toLowerCase())} <b>${r.wins} de ${r.bets}</b></span>`).join(", ");
-  put("record", rec && !(S.results && S.results.season) ? "Así van las señales fuertes esta temporada: " + rec + ". En la prueba fueron 56 de cada 100." : "");
+  put("record", rec && !(S.results && S.results.season) ? "Así van las señales fuertes esta temporada: " + rec + ". En la prueba, con tres temporadas que el modelo no vio, fueron 56 de cada 100." : "");
   const strong = S.signals.filter(s => s.strength), weak = S.signals.filter(s => !s.strength), order = {in: 0, pre: 1};
-  const ahead = strong.filter(s => s.state !== "post").sort((a, b) => order[a.state] - order[b.state] || new Date(a.tipoff) - new Date(b.tipoff)), done = strong.filter(s => s.state === "post");
+  const phase = s => { const g = gameOf(s.game_id); return g ? g.state : s.state; };  // manda el partido: en la copia pública ESPN puede ir por delante de la foto
+  const ahead = strong.filter(s => phase(s) !== "post").sort((a, b) => order[phase(a)] - order[phase(b)] || new Date(a.tipoff) - new Date(b.tipoff)), done = strong.filter(s => phase(s) === "post");
   $("n-signals").textContent = ahead.length || "";
-  if (!S.signals.length) { put("signals", resultsBox() + '<div class="empty">Todavía no hay señales para la jornada. Salen cuando la casa publica su primera línea y la PC está encendida.</div>' + changesBox()); return; }
+  if (!S.signals.length) { put("signals", '<div class="empty">Todavía no hay señales para la jornada. Salen cuando la casa publica su primera línea y la PC está encendida.</div>' + resultsBox() + changesBox()); return; }
   const item = s => {
     const g = gameOf(s.game_id), deal = s.kalshi, [away, home] = s.game.split(" @ "), top = s.strength === "0.1";
-    const when = !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : "En juego · " + clock(g);
+    const when = !g ? "" : g.state === "pre" ? "Juegan " + low(clock(g)) : "En juego" + (PUBLIC && !g.over ? " a las " + snapAt() : "") + " · " + clock(g);  // el reloj de la foto no es la hora del día: se dice de cuándo es
     let html = `<article class="game sig" style="${tints(g)}"><div class="sig-top"><span>${esc(when)}</span><span class="meter">${top ? "Señal muy fuerte" : "Señal fuerte"} <span aria-hidden="true"><i></i><i></i><i${top ? "" : ' class="off"'}></i></span></span></div>
       <div class="teams">${logo(g && g.away, 28)}<span>${esc(cityOf(g, away))} en ${esc(cityOf(g, home))}</span>${logo(g && g.home, 28)}</div>
       <h3>${esc(signalName(s))}</h3><p class="belief">El modelo cree que <b>${esc(belief(s, g))}</b>.</p>`;
     if (s.news && s.news.includes("+")) html += `<div class="warn">Bajas nuevas que la señal no conoce: ${esc(s.news)}</div>`;
-    if (deal && deal.found) html += dealBox(s, deal);
-    else if (deal) html += `<p class="verdict">Kalshi no tiene esa línea exacta${deal.options && deal.options.length ? ". Estas son las dos más cercanas, sin elegir una" : ""}.</p>` + (deal.options || []).map(o => dealBox(s, o)).join("");
+    if (deal && deal.found) html += dealBox(s, deal) + belowNote(s, [deal]);
+    else if (deal) html += `<p class="verdict">Kalshi no tiene esa línea exacta${deal.options && deal.options.length ? ". Estas son las dos más cercanas, sin elegir una" : ""}.</p>` + (deal.options || []).map(o => dealBox(s, o, true)).join("") + belowNote(s, deal.options || []);
     return html + shareRow("sig:" + s.game_id + ":" + s.market) + `<details class="more" data-keep="sig-${s.game_id}-${s.market}"${keep("sig-" + s.game_id + "-" + s.market)}><summary>Ver detalle</summary><div class="sheet">${whyBlock(s, "Por qué el modelo va con " + signalName(s))}${injuryBlock(g)}
       <h4 class="cap">Líneas</h4><div class="group">
       <div class="row"><span>Ventaja que ve el modelo</span><b>${s.points.toFixed(1)} puntos</b></div>
       <div class="row"><span>Línea de apertura</span><b>${s.market === "total" ? s.line : esc(signalName(s))}</b></div>
-      <div class="row"><span>Línea de ahora</span><b>${s.now == null ? NIL : s.market === "total" ? s.now : esc((s.side === "home" ? home : away) + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now))}</b></div>
+      <div class="row"><span>Línea de ${asNow()}</span><b>${s.now == null ? NIL : s.market === "total" ? s.now : esc((s.side === "home" ? home : away) + " " + ((s.side === "home" ? 1 : -1) * s.now > 0 ? "+" : "−") + Math.abs(s.now))}</b></div>
       <div class="row"><span>Cuota de la casa al abrir</span><b>${s.house_price || NIL}</b></div></div></div></details></article>`;
   };
-  const mini = s => `<div class="row"><b>${esc(signalName(s))}<small>${esc(s.game.replace(" @ ", " en "))}</small></b><b>${s.result ? `<span class="res">${mk(s.result, s.result)}${esc(s.result)}</span>` : "por " + s.points.toFixed(1)}</b></div>`;
+  const mini = s => { const g = gameOf(s.game_id), [a, h] = s.game.split(" @ "); return `<div class="row"><b>${esc(signalName(s))}<small>${esc(cityOf(g, a) + " en " + cityOf(g, h))}</small></b><b>${s.result ? `<span class="res">${mk(s.result, s.result)}${esc(s.result)}</span>` : g && g.state === "post" ? "Terminó, resultado por confirmar" : "por " + s.points.toFixed(1) + " puntos de ventaja"}</b></div>`; };
+  const lr = (S.results || {}).live, lall = lr && lr.todos && lr.todos.both, lstrong = lr && lr.fuertes && lr.fuertes.both;
+  const brief = lall && lall.bets ? `<div class="sumline"><p>En vivo contra la apertura, el modelo atinó <b>${lall.wins} de ${lall.bets}</b>${lstrong && lstrong.bets ? ` y <b>${lstrong.wins} de ${lstrong.bets}</b> en señales fuertes` : ""}.${lall.bets < 100 ? " Son pocos casos para concluir." : ""}</p><button class="link" data-scroll="results-box">Ver resultados</button></div>` : "";
   let html = ahead.length ? ahead.map(item).join("") : '<div class="empty">No hay señales fuertes en partidos por jugarse o en juego.</div>';
   if (done.length) {
-    const won = done.filter(s => s.result === "ganó").length, lost = done.filter(s => s.result === "perdió").length;
-    html += `<details data-keep="sig-done"${keep("sig-done")}><summary>${plural(done.length, "señal fuerte ya terminó", "señales fuertes ya terminaron")}: ${plural(won, "ganó", "ganaron")}, ${plural(lost, "perdió", "perdieron")}</summary><div class="group">${done.map(mini).join("")}</div></details>`;
+    const won = done.filter(s => s.result === "ganó").length, lost = done.filter(s => s.result === "perdió").length, wait = done.filter(s => !s.result).length;
+    html += `<details data-keep="sig-done"${keep("sig-done")}><summary>${plural(done.length, "señal fuerte ya terminó", "señales fuertes ya terminaron")}: ${plural(won, "ganó", "ganaron")}, ${plural(lost, "perdió", "perdieron")}${wait ? ", " + wait + " por confirmar" : ""}</summary><div class="group">${done.map(mini).join("")}</div></details>`;
   }
   if (weak.length) html += `<details data-keep="sig-weak"${keep("sig-weak")}><summary>${plural(weak.length, "señal más débil", "señales más débiles")}</summary><div class="group">${weak.map(mini).join("")}</div></details>`;
-  put("signals", resultsBox() + html + changesBox() + '<p class="note">Es la traducción de la señal a Kalshi. No es una recomendación de entrar ni de cuánto.</p>');
+  put("signals", brief + html + resultsBox() + changesBox() + '<p class="note">Es la traducción de la señal a Kalshi. No es una recomendación de entrar ni de cuánto.</p>');
 }
 
 function renderGames() {
@@ -792,8 +850,9 @@ function renderGames() {
   $("n-games").textContent = live.length || "";
   if (!S.games.length) { put("games-sub", ""); put("games", '<div class="empty">No hay partidos en la jornada.</div>'); return; }
   const rest = S.games.filter(g => !live.includes(g) && !soon.includes(g)), ended = rest.filter(g => g.state === "post").length, later = rest.length - ended;
-  put("games-sub", [live.length ? live.length + " en juego" : "", soon.length ? soon.length + " por empezar hoy" : ""].filter(Boolean).join(" · ") || "Nada en juego ahora");
-  const by = {modelo: "modelo prepartido", "línea": "línea de la casa", marcador: "modelo en vivo"};
+  const dates = [...new Set(rest.filter(g => g.state !== "post").map(g => new Date(g.tipoff).toLocaleDateString("es", {weekday: "short", day: "numeric"})))], otherDays = dates.length === 1 ? "otro día (" + dates[0] + ")" : dates.length === 2 ? "otros días (" + dates.join(" y ") + ")" : "otros días";
+  put("games-sub", [live.length ? live.length + " en juego" : "", soon.length ? soon.length + " por empezar hoy" : ""].filter(Boolean).join(" · ") || you("Nada en juego ahora", "Nada en juego"));
+  const by = {modelo: "modelo prepartido", "línea": "línea de la casa", marcador: PUBLIC ? "modelo con el marcador de las " + snapAt() : "modelo en vivo"};
   const row = g => {
     const o = g.outlook, over = g.state === "post";
     const line = !g.line ? "Sin línea todavía" : (g.line.margin === 0 ? "Parejo" : esc(g.home.abbr) + " " + (g.line.margin > 0 ? "−" : "+") + Math.abs(g.line.margin)) + " · total " + g.line.total;
@@ -801,11 +860,11 @@ function renderGames() {
     const fav = g.p_home == null || over ? "" : g.p_home >= 0.5 ? esc(g.home.abbr) + " " + prob(g.p_home) : esc(g.away.abbr) + " " + prob(1 - g.p_home);
     return `<div class="match">${board(g.away, g.home, g.state !== "pre", chipFor(g), 34)}
       <div class="said"><span class="k">Línea prepartido</span><b>${line}</b></div>
-      ${proj ? `<div class="said"><span class="k">Proyección</span><b>${proj}</b></div>` : ""}${fav ? `<div class="said"><span class="k">Favorito ahora</span><b>${fav}</b></div>` : ""}
+      ${proj ? `<div class="said"><span class="k">Proyección</span><b>${proj}</b></div>` : ""}${fav ? `<div class="said"><span class="k">${PUBLIC ? "Favorito a las " + snapAt() : "Favorito ahora"}</span><b>${fav}</b></div>` : ""}
       ${over ? "" : `<div class="m-act"><button class="link" data-act="buy" data-game="${g.id}">Anotar compra</button></div>`}</div>`;
   };
   let html = live.length + soon.length ? `<div class="group">${[...live, ...soon].map(row).join("")}</div>` : '<div class="empty">No hay partidos en juego ni por empezar hoy.</div>';
-  if (rest.length) html += `<details data-keep="games-rest"${keep("games-rest")}><summary>${[ended ? plural(ended, "terminado", "terminados") : "", later ? later + " de otro día" : ""].filter(Boolean).join(" y ")}</summary><div class="group">${rest.map(row).join("")}</div></details>`;
+  if (rest.length) html += `<details data-keep="games-rest"${keep("games-rest")}><summary>${[ended ? plural(ended, "terminado", "terminados") : "", later ? plural(later, "partido", "partidos") + " de " + otherDays + ", aparte porque no se juegan hoy" : ""].filter(Boolean).join(" y ")}</summary><div class="group">${rest.map(row).join("")}</div></details>`;
   put("games", html);
 }
 
@@ -827,7 +886,7 @@ function renderPicks() {
       games.map(g => `<div class="match"><div class="top"><div class="team">${side(g.away, g.away_score, g.home_score)}</div><div class="when">Final</div><div class="team h">${side(g.home, g.home_score, g.away_score)}</div></div>${cell(g.calls.find(c => c.market === "spread"))}${cell(g.calls.find(c => c.market === "total"))}</div>`).join("") + "</div></details>";
   };
   put("picks", `<div class="sec-head"><h3 class="h-sec">Historial de predicciones</h3><p class="lede">Hándicap <b>${count(all.filter(c => c.market === "spread"))}</b> · total <b>${count(all.filter(c => c.market === "total"))}</b> · señales fuertes <b>${strong.length ? count(strong) : "sin terminar"}</b></p></div>` +
-    days.map(block).join("") + '<p class="note">Son todos los pronósticos del modelo contra la línea de apertura, no solo las señales fuertes. Los que no son señal fuerte aciertan poco más de la mitad y no alcanzan para apostar.</p>');
+    days.map(block).join("") + '<p class="note">Son todos los pronósticos del modelo contra la línea de apertura, no solo las señales fuertes. ' + esc(othersLine()) + "</p>");
 }
 
 function renderBank() {
@@ -843,16 +902,17 @@ function renderBank() {
   const record = b.closed ? plural(b.won, "ganada", "ganadas") + " y " + plural(b.lost, "perdida", "perdidas") + (b.sold ? ", " + plural(b.sold, "vendida", "vendidas") : "") : "Sin apuestas cerradas";
   const limit = (label, used, top) => `<div class="row"><span>${label}</span><b class="${top != null && used != null && used > top + 1e-9 ? "neg" : ""}">${used == null ? NIL : used.toFixed(1) + "%"}${top != null ? " · tope " + (+top.toFixed(1)) + "%" : ""}</b></div>`;
   const anyTop = Object.values(b.rules).some(v => v != null);
-  put("bank", `<div class="hero"><div class="k">${you("Tu bank", "Bank de " + esc(owner()))}</div><div class="big">${money(b.equity)}</div><p class="lede">${you("Pusiste", "Puso")} ${money(b.contributed)} y ${you("llevas", "lleva")} ${tone(b.realized)} en total.</p></div>
+  put("bank", `<div class="hero"><div class="k">${you("Tu bank", "Saldo de " + esc(owner()))}</div><div class="big">${money(b.equity)}</div><p class="lede">${you("Pusiste", "Puso")} ${money(b.contributed)} y ${you("llevas", "lleva")} ${tone(b.realized)} en total.</p></div>
     <div class="stats">${fig("Disponible", money(b.cash), "Para apostar")}${fig("En juego", money(b.at_risk), b.open ? plural(b.open, "apuesta", "apuestas") + ". Pagan " + money(b.if_all_win - b.cash) + " si ganan" : "Sin apuestas abiertas")}
       ${fig("Hoy", tone(b.day), "")}${fig("Récord", b.closed ? b.won + " a " + b.lost : NIL, record)}</div>
+    ${b.closed ? `<p class="sub">Se cuenta con ${plural(b.closed, "apuesta cerrada", "apuestas cerradas")}.${b.closed < 100 ? " Son pocas para saber si el método gana." : ""}</p>` : ""}
     <div class="limits"><h3 class="cap">${anyTop ? "Tus topes, en % del bank" : "No has puesto topes"}</h3>${anyTop ? `<div class="group">${limit("Apuesta más grande", b.usage.position_pct, b.rules.max_position_pct) + limit("Total en juego", b.usage.open_pct, b.rules.max_open_pct) + limit("Pérdida de hoy", b.usage.day_loss_pct, b.rules.max_day_loss_pct)}</div>` : ""}
       <div class="btns"><button data-act="rules">${anyTop ? "Cambiar topes" : "Poner topes"}</button><button data-act="move">Depósito o retiro</button></div></div>
     <details data-keep="bank"${keep("bank")}><summary>Más números</summary><div class="group">` +
-    (b.open ? fact("Si todas ganan, el bank queda en", money(b.if_all_win)) + fact("Si todas pierden, queda en", money(b.if_all_lose)) +
+    (b.open ? fact(you("Si todas ganan, el bank queda en", "Si todas ganan, el saldo queda en"), money(b.if_all_win)) + fact("Si todas pierden, queda en", money(b.if_all_lose)) +
       fact("Esperado según el modelo", money(b.expected_model)) + fact("Esperado según Kalshi", money(b.expected_market)) : "") +
-    fact("Apuesta más grande", b.usage.position_pct == null ? NIL : b.usage.position_pct.toFixed(1) + "% del bank") +
-    fact("Total en juego", b.usage.open_pct == null ? NIL : b.usage.open_pct.toFixed(1) + "% del bank") +
+    fact("Apuesta más grande", b.usage.position_pct == null ? NIL : b.usage.position_pct.toFixed(1) + "% " + you("del bank", "del saldo")) +
+    fact("Total en juego", b.usage.open_pct == null ? NIL : b.usage.open_pct.toFixed(1) + "% " + you("del bank", "del saldo")) +
     fact("Ganancia sobre lo apostado", b.roi == null ? NIL : pct(b.roi, 1)) +
     (b.clv != null ? fact(you("Precio de cierre contra el tuyo", "Precio de cierre contra el suyo"), (b.clv >= 0 ? "+" : "−") + cents(Math.abs(b.clv))) : "") + "</div></details>");
 }
@@ -864,46 +924,76 @@ function renderHistory() {
     const W = 800, H = 150, v = S.curve.map(c => c.equity), lo = Math.min(...v), hi = Math.max(...v), span = hi - lo || 1, x = i => 6 + (W - 12) * i / (v.length - 1), y = e => 12 + (H - 30) * (1 - (e - lo) / span);
     let d = "M" + x(0) + " " + y(v[0]);
     for (let i = 1; i < v.length; i++) d += " H" + x(i).toFixed(1) + " V" + y(v[i]).toFixed(1);
-    body += `<div class="curve-box"><svg class="curve" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Curva del bank"><defs><linearGradient id="curve-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30d158" stop-opacity=".35"/><stop offset="1" stop-color="#30d158" stop-opacity="0"/></linearGradient></defs>
+    body += `<div class="curve-box"><svg class="curve" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${PUBLIC ? "Curva del saldo" : "Curva del bank"}"><defs><linearGradient id="curve-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30d158" stop-opacity=".35"/><stop offset="1" stop-color="#30d158" stop-opacity="0"/></linearGradient></defs>
       <path d="${d} V${H - 4} H${x(0)} Z" fill="url(#curve-fill)"/><path d="${d}" fill="none" stroke="var(--green)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
-      <p class="sub">${you("Tu bank", "El bank")} después de cada apuesta cerrada. Ha ido de ${money(lo)} a ${money(hi)}.</p></div>`;
+      <p class="sub">${you("Tu bank", "El saldo")} después de cada apuesta cerrada. Su punto más bajo fue ${money(lo)} y el más alto ${money(hi)}. Ahora está en ${money(S.bank.equity)}.</p></div>`;
   }
   if (closed.length) body += '<div class="group">' + closed.map(historyRow).join("") + "</div>";
   if (S.moves.length) body += `<details data-keep="moves"${keep("moves")}><summary>${plural(S.moves.length, "movimiento de dinero", "movimientos de dinero")}</summary><div class="group">${S.moves.map(m => `<div class="row"><b>${({deposit: "Depósito", withdrawal: "Retiro", adjustment: "Ajuste"})[m.kind]}<small>${day(m.when, {day: "numeric", month: "short", year: "numeric"})}${m.note ? " · " + esc(m.note) : ""}</small></b><b>${money(m.kind === "withdrawal" ? -m.amount : m.amount, true)}</b></div>`).join("")}</div></details>`;
-  put("history", body || '<div class="empty">' + you("Aquí quedan tus apuestas cerradas", "Aquí quedan las apuestas cerradas") + ", con su resultado y la curva del bank.</div>");
+  put("history", body || '<div class="empty">' + you("Aquí quedan tus apuestas cerradas", "Aquí quedan las apuestas cerradas") + ", con su resultado y la curva " + you("del bank", "del saldo") + ".</div>");
 }
 
+let introSeen = false;  // la franja de la primera visita: se recuerda en el navegador si ya se cerró
+try { introSeen = localStorage.getItem("mesa-intro") === "1"; } catch (e) { /* sin memoria del navegador, la franja sale siempre */ }
+$("intro-ok").addEventListener("click", () => { introSeen = true; $("intro").hidden = true; try { localStorage.setItem("mesa-intro", "1"); } catch (e) { /* no pasa nada */ } });
+document.addEventListener("click", e => { const b = e.target.closest("[data-scroll]"); const el = b && $(b.dataset.scroll); if (el) el.scrollIntoView({block: "start"}); });
 function renderAccount() {
   if (PUBLIC) {  // la copia pública no sabe nada de la cuenta: dice de quién es y que no se toca
     const name = "Rodrindex", tag = '<span class="chip">Solo lectura</span>';
     document.title = name; document.querySelector("h1").textContent = name;
     document.querySelector('[data-tab="bets"]').firstChild.textContent = "Apuestas"; document.querySelector('[data-tab="bank"]').textContent = "Caja";
     $("foot").textContent = "Página de solo lectura con la foto que publica el panel de " + owner() + ". No opera y no es una recomendación de entrar ni de cuánto.";
+    $("pill-k").textContent = "Saldo de " + owner(); $("intro-name").textContent = cap(owner()); $("intro").hidden = introSeen;
+    $("help-now").textContent = "en la última foto";
     put("account", tag); put("account2", tag);
     return;
   }
-  const a = S.account || {}, site = S.site || {};
+  const a = S.account || {}, site = S.site || {}, out = site.outside || {};
   document.body.classList.toggle("connected", !!a.connected);
   const chip = a.connected ? `<span class="chip dot ${a.read_only && !a.error ? "good" : "mid"}">Kalshi conectada${a.read_only ? "" : " · llave completa"}${a.error ? " · falló la última lectura" : ""}</span>` :
     '<span class="chip">Sin cuenta conectada</span>';
-  const shared = site.on ? ` <span class="chip dot ${site.pushed ? "good" : "mid"}" title="${esc(site.why || "")}">Sitio público ${site.pushed ? "al día" : "sin subir"}</span>` : "";
+  // "Subido" solo dice que GitHub aceptó la foto: lo que vale es cuánto hace que se vio bien desde afuera.
+  const seen = out.ok_at ? Math.max(0, Math.round((Date.now() - Date.parse(out.ok_at)) / 60000)) : null, ago = seen == null ? "" : seen < 1 ? "hace menos de 1 min" : "hace " + seen + " min";
+  let tone = "mid", words = "sin subir";
+  if (site.held) { words = "en espera, " + site.held; tone = ""; }  // esperar al tope de subidas o al marcador es normal: no se pinta como fallo
+  else if (site.pushed && seen != null) { words = "visto bien desde afuera " + ago + (out.ok === false ? ", y la última mirada no vio la foto nueva" : ""); tone = seen <= 15 && out.ok !== false ? "good" : "mid"; }
+  else if (site.pushed) words = out.ok === false ? "subido, pero desde afuera no se ve la foto nueva" : "subido, sin comprobar desde afuera";
+  const shared = site.on ? ` <span class="chip dot ${tone}" title="${esc(site.why || out.why || "")}">Sitio público ${words}</span>` : "";
   put("account", chip + shared); put("account2", chip + shared);
 }
-function render() {
-  FEE = S.fee_rate || FEE;
-  renderAccount(); renderBank(); renderBets(); renderSignals(); renderGames(); renderPicks(); renderHistory();
+// Cada pantalla se pinta por su cuenta: si una falla, las demás siguen y el fallo queda anotado.
+function safe(name, work) { try { work(); } catch (e) { console.error(name, e); FAILED.push(name); } }
+const SOURCE = name => name.startsWith("marcador") ? "el marcador" : name === "kalshi" || name === "precios" ? "los precios de Kalshi" : null;
+function alertsHtml() {
   const a = S.account || {}, ages = S.ages || {}, board = Object.entries(ages).filter(e => e[0].startsWith("marcador")).map(e => e[1]);
-  const errors = Object.keys(S.errors || {}), broken = S.bank.broken || [], gaps = a.mismatch || [], late = [];
+  const keys = Object.keys(S.errors || {}), errors = PUBLIC ? [...new Set(keys.map(SOURCE).filter(Boolean))] : keys, broken = S.bank.broken || [], gaps = a.mismatch || [], late = [];
   const names = {max_position_pct: "una apuesta pasa tu tope por apuesta", max_open_pct: "lo que tienes en juego pasa tu tope", max_day_loss_pct: "la pérdida de hoy pasó tu freno del día"};
-  if (S.live && board.length && Math.min(...board) > 60) late.push("El marcador lleva " + Math.min(...board) + " s sin actualizarse.");
-  if (S.live && ages.precios > 120) late.push("Los precios de Kalshi llevan " + ages.precios + " s sin actualizarse.");
-  put("alerts", (stale() ? `<div class="warn">La última foto del panel de ${esc(owner())} es de ${stamp(S.now)} y ahora no está publicando: los marcadores y los precios pueden estar viejos.</div>` : "") +
+  const before = PUBLIC ? "Al sacar la foto, " : "";  // en la copia pública el atraso es el que traía la foto, no el de ahora
+  const lag = s => s < 120 ? s + " s" : Math.round(s / 60) + " min", slow = [];  // en minutos para quien lee, y un solo aviso
+  if (S.live && board.length && Math.min(...board) > 60) slow.push(["el marcador", Math.min(...board)]);
+  if (S.live && ages.precios > 120) slow.push(["los precios de Kalshi", ages.precios]);
+  if (slow.length) { const said = slow[0][0] + " " + (PUBLIC ? "llevaba " : "lleva ") + lag(slow[0][1]) + (slow[1] ? " y " + slow[1][0] + " " + lag(slow[1][1]) : "") + " sin actualizarse."; late.push(PUBLIC ? before + said : said.charAt(0).toUpperCase() + said.slice(1)); }
+  return (stale() ? `<div class="warn">La última foto del panel de ${esc(owner())} es de ${stamp(S.now)} y ahora no está publicando: los marcadores y los precios pueden estar viejos.</div>` : "") +
     (broken.length ? `<div class="warn">Contra tus topes: ${broken.map(k => names[k]).join(", ")}.</div>` : "") +
     (!a.connected && a.configured ? `<div class="warn">La cuenta de Kalshi no se pudo conectar. ${esc(a.error || "")} Mientras tanto, las compras se anotan a mano.</div>` : "") +
     (gaps.length ? `<div class="warn">El libro no cuadra con Kalshi en ${gaps.map(x => esc(x.ticker) + " (libro " + x.book + ", Kalshi " + x.kalshi + ")").join(", ")}. Se arregla con <b>python -m pipelines.panel cuenta rehacer</b>.</div>` : "") +
-    (errors.length ? `<div class="warn">Una fuente no responde y se muestra lo último que se vio: ${errors.map(esc).join(", ")}.</div>` : "") +
-    late.map(text => `<div class="warn">${text}</div>`).join(""));
+    (errors.length ? `<div class="warn">${PUBLIC ? "Al sacar la foto no respondían " + errors.join(" ni ") + ". Se muestra lo último que se vio." : "Una fuente no responde y se muestra lo último que se vio: " + errors.map(esc).join(", ") + "."}</div>` : "") +
+    late.map(text => `<div class="warn">${text}</div>`).join("");
 }
+// El aviso de lo que no se pudo pintar: sencillo en la copia pública, con la pista de dónde mirar en la privada.
+const failNote = () => !FAILED.length ? "" : `<div class="warn">${PUBLIC ? "No pude mostrar " + FAILED.join(", ") + ". Prueba recargar la página en un rato." : "No pude pintar " + FAILED.join(", ") + ". Lo demás sigue. El detalle está en la consola del navegador."}</div>`;
+function paintAlerts() { let html = ""; safe("los avisos", () => { html = alertsHtml(); }); put("alerts", html + failNote()); }
+// Dice si todo se pintó. Solo entonces la página puede darse por al día.
+function render() {
+  FAILED.length = 0;
+  FEE = S.fee_rate || FEE;
+  safe("la cuenta", renderAccount);
+  safe("la caja", renderBank); safe("las apuestas", renderBets); safe("las señales", renderSignals); safe("los partidos", renderGames);
+  safe("el historial de predicciones", renderPicks); safe("el historial", renderHistory);
+  paintAlerts();
+  return !FAILED.length;
+}
+function paint() { LOAD.paint = !render(); return !LOAD.paint; }
 // En la copia pública el marcador se lee directo de ESPN mientras hay partido, entre una foto y la siguiente.
 const LIVE = {at: 0, games: {}};
 const etDay = t => new Date(t).toLocaleDateString("en-CA", {timeZone: "America/New_York"});
@@ -912,7 +1002,7 @@ function applyLive() {
   for (const g of S.games) {
     const l = LIVE.games[g.id];
     if (!l) continue;
-    Object.assign(g, {state: l.state, status: l.status, detail: l.detail, period: l.period, clock: l.clock});
+    Object.assign(g, {state: l.state, status: l.status, detail: l.detail, period: l.period, clock: l.clock, over: true});  // over: el estado y el marcador son de ESPN, más nuevos que la foto
     g.home.score = l.home; g.away.score = l.away;
   }
   S.live = S.games.some(g => g.state === "in");
@@ -931,35 +1021,76 @@ async function liveScores() {
         LIVE.games[e.id] = {state: st.type.state, status: st.type.name, detail: st.type.shortDetail || "", period: +st.period || 0, clock: +st.clock || 0, home: score("home"), away: score("away")};
       }
     }
-    LIVE.at = Date.now(); applyLive(); render();
+    LIVE.at = Date.now(); applyLive(); paint();
   } catch (e) { /* si ESPN no responde se sigue con la foto */ }
 }
 function tick() {
+  const dot = (cls, text) => { $("pulse").className = "pulse " + cls; $("pulse-text").textContent = text; };
+  if (!S) { if (LOAD.fails) LOAD.starting ? dot("", PUBLIC ? "La foto del panel todavía no está lista" : "El panel está arrancando") : dot("off", "No pude cargar los datos"); return; }  // sin fallos todavía es la primera carga: sigue "Cargando"
+  if (LOAD.paint) { dot("off", PUBLIC ? "No pude mostrar todo" : "Error al pintar la página"); return; }  // con un pintado a medias el pulso no puede decir que todo está al día
   if (!lastOk) return;
   if (PUBLIC) {
-    const mins = ageMin(), old = stale();
-    $("pulse").className = "pulse " + (old ? "off" : S.live ? "on" : "");
-    $("pulse-text").textContent = old ? "Sin publicar desde " + stamp(S.now) : (S.live ? (Date.now() - LIVE.at < 40000 ? "Marcador en vivo" : "En vivo") : "Sin partidos en juego") + (S.live && Date.now() - LIVE.at < 40000 ? " · lo demás de hace " : " · datos de hace ") + (mins < 1 ? "menos de 1 min" : mins + " min");
+    const mins = ageMin(), old = stale(), away = Math.round((Date.now() - lastOk) / 60000), fresh = Date.now() - LIVE.at < 40000;
+    const when = mins < 1 ? "menos de 1 min" : mins + " min";
+    if (away >= 3 && !LOAD.resuming) dot("off", "No pude actualizar desde hace " + away + " min · foto de hace " + when);  // es la conexión de quien mira, no la PC del dueño
+    else dot(old ? "off" : S.live ? "on" : "", old ? "Sin publicar desde " + stamp(S.now) : S.live ? (fresh ? "Marcador en vivo · lo demás de hace " : "Con partidos en juego · datos de hace ") + when : "Sin partidos en juego · datos de hace " + when);
     return;
   }
   const age = Math.round((Date.now() - lastOk) / 1000);
-  $("pulse").className = "pulse " + (age > 20 ? "off" : S && S.live ? "on" : "");
-  $("pulse-text").textContent = age > 20 ? "Sin respuesta del panel desde hace " + age + " s. ¿Sigue abierto el programa en la PC?" : (S && S.live ? "En vivo" : "Sin partidos en juego") + " · hace " + age + " s";
+  dot(age > 20 ? "off" : S.live ? "on" : "", age > 20 ? "Sin respuesta del panel desde hace " + age + " s. ¿Sigue abierto el programa en la PC?" : (S.live ? "En vivo" : "Sin partidos en juego") + " · hace " + age + " s");
+}
+// ¿La foto trae otra página que la que corre? Con BUILD, si es distinta (también una más vieja: así se recarga al revertir una página mala) y no se acaba de recargar por ella: así no se encadena.
+function newer(data) {
+  if (!data.page) return false;
+  if (BUILD) return data.page !== BUILD && new URLSearchParams(location.search).get("v") !== String(data.page);
+  if (PAGEV == null) { PAGEV = data.page; return false; }
+  return data.page !== PAGEV;
+}
+// Una carga fallida se reintenta con espera creciente (5, 10, 20, 40 y 60 s, o desde 2 s si el panel solo está arrancando) y una sola cadena de reintentos.
+function retry(why, first = 5, starting = false) {
+  LOAD.fails++; LOAD.starting = starting;
+  const wait = Math.min(60, first * 2 ** (LOAD.fails - 1));
+  clearTimeout(LOAD.timer); LOAD.timer = setTimeout(load, wait * 1000);
+  if (S) return;
+  put("alerts", `<div class="warn">${esc(why)} Reintento en ${wait} s. <button class="link" data-retry type="button">Reintentar ahora</button></div>`);
+  for (const id of ["open", "signals", "games", "bank"]) put(id, '<div class="empty">Todavía sin datos.</div>');
+}
+function show(data) {
+  S = data;
+  try { applyLive(); } catch (e) { console.error(e); }
+  if (paint()) lastOk = Date.now();
 }
 async function load() {
+  if (LOAD.busy) return;
+  LOAD.busy = true; clearTimeout(LOAD.timer);
+  const cut = new AbortController(), timer = setTimeout(() => cut.abort(), 10000);  // tope de tiempo: un pedido colgado no deja la página esperando
+  let ok = false;
   try {
-    const r = await fetch(PUBLIC ? "estado.json?t=" + Date.now() : "/api/estado", {cache: "no-store"});
+    const r = await fetch(PUBLIC ? "estado.json?t=" + Date.now() : "/api/estado", {cache: "no-store", signal: cut.signal});
     if (!r.ok) throw new Error(r.status);
     const data = await r.json();
-    if (data.ready) { if (PAGEV == null) PAGEV = data.page; else if (data.page && data.page !== PAGEV) { location.replace(location.pathname + "?v=" + data.page); return; } S = data; lastOk = Date.now(); applyLive(); render(); if (PUBLIC && !LIVE.at) liveScores(); } else setTimeout(load, 1000);
-  } catch (e) { /* el aviso lo pone tick() cuando pasa el tiempo */ }
+    if (!data.ready) retry(PUBLIC ? "La foto del panel todavía no está lista." : "El panel todavía está arrancando.", 2, true);
+    else if (newer(data)) location.replace(location.pathname + "?v=" + data.page);
+    else { ok = true; LOAD.fails = 0; show(data); if (PUBLIC && !LIVE.at) liveScores(); }
+  } catch (e) {
+    console.error(e);
+    retry(PUBLIC ? "No pude cargar la foto del panel." : "No pude cargar los datos del panel.");
+  } finally {
+    clearTimeout(timer); LOAD.busy = false;
+    if (LOAD.resuming) { LOAD.resuming = false; if (S) paintAlerts(); }  // ya se miró si hay foto nueva: si sigue vieja, ahora sí vale el aviso
+  }
 }
 async function post(path, body) {
   const r = await fetch(path, {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
   const data = await r.json().catch(() => ({error: "El panel no respondió."}));
   if (!r.ok || data.error) throw new Error(data.error || "No se pudo anotar.");
-  S = data; lastOk = Date.now(); render();
+  show(data);
 }
+// Al volver a primer plano se carga de inmediato y no se alarma por una foto que el reloj dejó vieja mientras la página dormía.
+function back() { LOAD.resuming = true; load(); if (PUBLIC) liveScores(); }
+document.addEventListener("visibilitychange", () => { if (!document.hidden) back(); });
+window.addEventListener("pageshow", e => { if (e.persisted) back(); });
+document.addEventListener("click", e => { if (e.target.closest("[data-retry]")) load(); });
 
 // Compra a mano (solo sin la cuenta conectada)
 function fillContracts(pick) {
@@ -1087,7 +1218,7 @@ document.addEventListener("click", e => {
   else if (d.act === "remove") ask("Borrar la apuesta", p.label + ", " + qty(p.contracts) + " contratos a " + cents(p.price) + ". Se borra del libro como si no se hubiera anotado.", [{label: "Borrar", path: "/api/borrar", body: {id: p.id}, primary: true}]);
   else if (d.act === "reopen") ask("Reabrir la apuesta", p.label + ". Vuelve a quedar abierta y el panel la liquida de nuevo con el marcador.", [{label: "Reabrir", path: "/api/reabrir", body: {id: p.id}, primary: true}]);
 });
-load(); setInterval(load, PUBLIC ? 60000 : 5000); setInterval(tick, 1000);
+load(); setInterval(() => { if (S || !LOAD.fails) load(); }, PUBLIC ? 60000 : 5000); setInterval(tick, 1000);  // sin datos y con fallos manda la espera creciente de retry()
 if (PUBLIC) setInterval(liveScores, 15000);
 // --- Compartir como imagen -----------------------------------------------------------------
 const DISCLAIMER = "Esto es lo que marca un modelo estadístico. No es una recomendación ni una indicación de apuesta. El modelo se equivoca seguido y apostar puede hacerte perder dinero.";
@@ -1207,7 +1338,7 @@ function signalSpec(key) {
     picGap(30), picFit(signalName(s), 104, 60, 800),
     picGap(14), picText("El modelo cree que " + belief(s, g) + ".", 36, 400, PIC.ink2, 1.3),
     picRule(),
-    picText("Su contrato en Kalshi", 26, 600, PIC.ink2), picGap(6),
+    picText("Contrato en Kalshi", 26, 600, PIC.ink2), picGap(6),
     picText(o ? (o.yes ? "SÍ" : "NO") + " en «" + (o.title_es || o.title || NIL) + "»" : s.kalshi ? "Kalshi no tiene esa línea exacta" : "Sin datos de Kalshi para esta señal", 34, 600),
     price ? picGap(6) : null, price ? picText("Precio a las " + hour(picNow()) + ": " + cents(o.price), 28, 400, PIC.ink2) : null,
     picGap(26), picText("Lo mismo en una casa como Bet365", 26, 600, PIC.ink2), picGap(6),
