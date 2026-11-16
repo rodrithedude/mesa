@@ -1123,16 +1123,15 @@ function copyImage(button, blob) {
 function openSheet(blob, name, back) {
   closeSheet();
   const url = URL.createObjectURL(blob), file = new File([blob], name, {type: "image/png"}), touch = matchMedia("(pointer: coarse)").matches;
-  // En teléfono la imagen se manda por la hoja del sistema, que ya trae guardar. En PC esa hoja no sirve: la imagen baja sola y se puede copiar.
+  // En teléfono la imagen se manda por la hoja del sistema, que ya trae guardar. En PC esa hoja no sirve: la imagen se muestra y se puede copiar o guardar.
   const send = touch && !!(navigator.canShare && navigator.canShare({files: [file]})), copy = !touch && !!(navigator.clipboard && window.ClipboardItem), save = !send;
   const el = document.createElement("div"); el.className = "shsheet"; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Imagen para compartir");
   el.innerHTML = '<div><div class="pv"><img src="' + url + '" alt="Imagen para compartir"></div><p class="sub">' + (send ? "Así se va a ver. Toca Enviar para mandarla." : touch ? "Mantén presionada la imagen para guardarla o compartirla, o usa Guardar." :
-    "Se descargó la imagen. Si no la ves en tus descargas, usa Guardar." + (copy ? " También puedes copiarla y pegarla en un chat." : "")) + '</p><div class="acts">' + (send ? '<button type="button" data-sh="send">Enviar</button>' : "") + (copy ? '<button type="button" data-sh="copy">Copiar</button>' : "") + (save ? '<a data-sh="save" href="' + url + '" download="' + esc(name) + '">Guardar</a>' : "") + '<button type="button" data-sh="close">Cerrar</button></div></div>';
+    copy ? "Así se va a ver. Puedes copiarla para pegarla en un chat, o guardarla." : "Así se va a ver. Usa Guardar para bajarla.") + '</p><div class="acts">' + (send ? '<button type="button" data-sh="send">Enviar</button>' : "") + (copy ? '<button type="button" data-sh="copy">Copiar</button>' : "") + (save ? '<a data-sh="save" href="' + url + '" download="' + esc(name) + '">Guardar</a>' : "") + '<button type="button" data-sh="close">Cerrar</button></div></div>';
   el.addEventListener("click", e => { if (e.target === el || e.target.closest('[data-sh="close"]')) closeSheet(); else if (e.target.closest('[data-sh="send"]')) navigator.share({files: [file]}).catch(() => {});
     else if (e.target.closest('[data-sh="copy"]')) copyImage(e.target.closest('[data-sh="copy"]'), blob); });
   document.body.appendChild(el); SHEET = {el, url, back};
   document.documentElement.style.overflow = "hidden"; el.querySelector("[data-sh]").focus();  // el fondo no se mueve y el teclado cae en la hoja
-  if (!touch) el.querySelector('[data-sh="save"]').click();  // en PC, compartir es generar la imagen: baja sola
 }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
 async function shareImage(button) {
