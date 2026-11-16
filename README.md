@@ -1,4 +1,4 @@
-# Mesa de Rodri
+# Rodrindex
 
 Página de solo lectura con las apuestas, las señales y los partidos del panel de Rodri.
 
