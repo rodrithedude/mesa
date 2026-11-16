@@ -118,7 +118,9 @@ details[open] > summary::before { transform: rotate(45deg); } details > summary:
 .more-body { display: flex; flex-direction: column; gap: 12px; padding-bottom: 12px; }
 .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 18px; }
 .facts .k { font: var(--t-label); color: var(--muted); } .facts .v { font: 600 15px/1.35 var(--body); margin-top: 2px; }
-.spark-box { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; align-items: stretch; }
+.spark-box { display: grid; grid-template-columns: auto minmax(0, 1fr) 98px; gap: 8px; align-items: stretch; }
+.spark-box .ends { position: relative; height: 76px; } .spark-box .ends span { position: absolute; left: 0; font: 600 12px/16px var(--body); white-space: nowrap; }
+.read { font: 600 14px/1.45 var(--body); }
 .spark-box .scale { display: flex; flex-direction: column; justify-content: space-between; font: var(--t-label); color: var(--muted); text-align: right; }
 .spark { width: 100%; height: 76px; display: block; background: var(--sunk); border-radius: 8px; }
 
@@ -193,6 +195,7 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
   .score b { font-size: 26px; } .score img { width: 34px; height: 34px; } .score { gap: 10px; } .bet h3 { font-size: 20px; } .money b { font-size: 19px; }
   .hero .v { font-size: 38px; } .two { grid-template-columns: 1fr; } .mini { grid-template-columns: minmax(0, 1fr) auto; } .mini .gm { grid-column: 1 / -1; }
   .versus { grid-template-columns: 92px minmax(0, 1fr) 52px; } button { min-height: 44px; }
+  .spark-box { grid-template-columns: minmax(0, 1fr) 98px; } .spark-box .scale { display: none; }
 }
 @media (prefers-reduced-motion: no-preference) { .track .fill { transition: width .5s ease; } }
 </style>
@@ -242,6 +245,7 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
       <p><b>Kalshi.</b> El precio del contrato ahora mismo. Un precio de 56¢ equivale a 56%. Cada contrato paga 100¢ si gana.</p>
       <p class="own"><b>Llave completa.</b> La llave con que el panel lee tu cuenta de Kalshi también podría operar. El panel solo lee.</p>
       <p><b>Señales.</b> Lo que el modelo previo ve distinto de la línea de apertura de la casa. En la prueba acertó 56 de cada 100 contra esa apertura. El precio de ahora ya trae el movimiento de la línea.</p>
+      <p><b>La gráfica de "Ver detalle".</b> Sus tres líneas miden la probabilidad de que la apuesta gane, y arriba es mejor. La punteada es lo que costó cada contrato y no se mueve. Si la de Kalshi está arriba de la punteada, la apuesta va ganando sobre el papel. Si la del modelo está arriba de la de Kalshi, el modelo es más optimista que el mercado. Ningún cruce dice quién tiene la razón.</p>
       <p><b>Historial de predicciones.</b> En la pestaña Partidos. De cada partido terminado dice qué lado eligió el modelo en el hándicap y en el total, si atinó y si era señal fuerte. Cubre los últimos 14 días.</p>
       <p><b>El porqué.</b> Son las cosas que el modelo previo sabe del partido, dichas en palabras y de la que más pesa a la que menos. No dice lo que va a pasar: dice de dónde sale su ventaja contra la línea de apertura.</p>
       <p><b>Lesionados.</b> El último reporte oficial de la NBA que guardó la PC, que lo baja cada hora. "Le falta" es la parte de la producción habitual del equipo que el modelo da por ausente con ese reporte.</p>
@@ -419,20 +423,44 @@ function progress(bar, tone) {
     <div class="rail">${bar.have == null ? "" : `<i class="fill ${tone}" style="width:${at(bar.have)}%"></i>`}</div><div class="goal" style="left:${g}%"></div>
     ${bar.proj == null ? "" : `<div class="ghost" style="left:${at(bar.proj)}%"></div>`}<div class="tags"><span>${esc(bar.haveText)}</span><span>${esc(bar.projText)}</span></div></div>`;
 }
+// La gráfica dicha en una frase: cómo está cada línea contra lo que se pagó y hacia dónde se ha movido.
+function reading(p, pts, model, market) {
+  const edge = i => [pts.find(r => r[i] != null), [...pts].reverse().find(r => r[i] != null)].map(r => r ? r[i] : null);
+  const versus = v => v >= p.needed ? "más" : "menos", paid = you("pagaste", "pagó"), out = [];
+  if (model != null && market != null && (model >= p.needed) === (market >= p.needed)) out.push(`El modelo y Kalshi coinciden: vale ${versus(model)} de lo que ${paid}.`);
+  else {
+    if (model != null) out.push(`Según el modelo vale ${versus(model)} de lo que ${paid}.`);
+    if (market != null) out.push(`En Kalshi vale ${versus(market)}${model == null ? " de lo que " + paid : ""}.`);
+  }
+  const moved = (name, [a, b]) => a == null || b == null || Math.abs(b - a) < 0.01 ? null : `${name} ${b > a ? "subió" : "bajó"} ${plural(Math.round(100 * Math.abs(b - a)), "punto", "puntos")}`;
+  const moves = [moved("el modelo", edge(1)), moved("Kalshi", edge(2))].filter(Boolean);
+  out.push(moves.length ? "Desde que el panel la sigue, " + moves.join(" y ") + "." : "Desde que el panel la sigue casi no se ha movido.");
+  return out.join(" ");
+}
 function spark(p) {
   const pts = (p.trail || []).filter(r => r[1] != null || r[2] != null);
   if (pts.length < 4) return "";
+  const now = Date.parse(S.now) / 1000;  // las líneas llegan hasta el dato de ahora, para que la etiqueta quede en su punta
+  if (now > pts[pts.length - 1][0] && (p.p != null || p.mid != null)) pts.push([now, p.p, p.mid]);
+  const tip = i => { const r = [...pts].reverse().find(r => r[i] != null); return r ? r[i] : null; }, model = tip(1), market = tip(2);
   const seen = pts.flatMap(r => [r[1], r[2]]).filter(v => v != null).concat([p.needed]);
   let lo = Math.max(0, Math.min(...seen) - 0.04), hi = Math.min(1, Math.max(...seen) + 0.04);
   if (hi - lo < 0.2) { const mid = (hi + lo) / 2; lo = Math.max(0, Math.min(mid - 0.1, 0.8)); hi = lo + 0.2; }
   const W = 600, H = 76, t0 = pts[0][0], t1 = pts[pts.length - 1][0], x = t => 6 + (W - 12) * (t - t0) / Math.max(1, t1 - t0), y = v => 8 + (H - 16) * (1 - (v - lo) / (hi - lo));
   const path = i => pts.filter(r => r[i] != null).map((r, k) => (k ? "L" : "M") + x(r[0]).toFixed(1) + " " + y(r[i]).toFixed(1)).join(" ");
+  // Una etiqueta al final de cada línea. Si dos quedan a la misma altura se separan lo justo para leerse.
+  const tags = [["Modelo " + prob(model), model, "var(--accent)"], ["Kalshi " + prob(market), market, "var(--muted)"], [you("Tu costo ", "Su costo ") + cents(p.needed), p.needed, "var(--ink)"]]
+    .filter(t => t[1] != null).map(t => ({text: t[0], color: t[2], top: y(t[1]) - 8})).sort((a, b) => a.top - b.top);
+  for (let i = 1; i < tags.length; i++) tags[i].top = Math.max(tags[i].top, tags[i - 1].top + 15);
+  if (tags.length && tags[tags.length - 1].top > H - 16) { tags[tags.length - 1].top = H - 16; for (let i = tags.length - 2; i >= 0; i--) tags[i].top = Math.min(tags[i].top, tags[i + 1].top - 15); }
   return `<div class="spark-box"><div class="scale"><span>${pct(hi)}</span><span>${pct(lo)}</span></div>
-    <svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Probabilidad en el tiempo">
+    <svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Probabilidad de que gane la apuesta en el tiempo. ${esc(tags.map(t => t.text).join(", "))}">
     <line x1="0" x2="${W}" y1="${y(p.needed).toFixed(1)}" y2="${y(p.needed).toFixed(1)}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="4 5" vector-effect="non-scaling-stroke"/>
     <path d="${path(2)}" fill="none" stroke="var(--muted)" stroke-width="2" vector-effect="non-scaling-stroke"/>
-    <path d="${path(1)}" fill="none" stroke="var(--accent)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg></div>
-    <div class="sub">La probabilidad desde que el panel la sigue: modelo en azul, Kalshi en gris y ${you("lo que pagaste", "lo que pagó")} en línea punteada.</div>`;
+    <path d="${path(1)}" fill="none" stroke="var(--accent)" stroke-width="2.5" vector-effect="non-scaling-stroke"/></svg>
+    <div class="ends">${tags.map(t => `<span style="top:${Math.max(0, t.top).toFixed(0)}px;color:${t.color}">${esc(t.text)}</span>`).join("")}</div></div>
+    <div class="sub">Probabilidad de que gane la apuesta desde que el panel la sigue. Arriba es mejor. La línea punteada es lo que ${you("pagaste", "pagó")} y no se mueve.</div>
+    <p class="read">${esc(reading(p, pts, model, market))}</p>`;
 }
 // El porqué de una señal: lo que empuja a favor y lo que empuja en contra, de lo que más pesa a lo que menos.
 function whyBlock(s, title) {
