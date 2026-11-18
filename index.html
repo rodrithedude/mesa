@@ -466,9 +466,10 @@ body.public .m-act { display: none; }
 .pr-g { margin-left: auto; color: var(--ink2); font-size: 13px; }
 .pr-mk { font: 600 17px/1.25 var(--font); letter-spacing: -.2px; margin-top: 4px; }
 .pr-b { color: var(--ink2); font-size: 12px; }
-.pr-nums { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); gap: 8px; margin-top: 8px; }
+.pr-nums { display: grid; grid-template-columns: minmax(76px, auto) minmax(0, 1fr) auto; gap: 8px 14px; margin-top: 8px; }
 .pr-nums .k { display: block; color: var(--ink2); font: 500 12px/1.3 var(--font); }
 .pr-nums b { display: block; font: 700 18px/1.25 var(--font); letter-spacing: -.3px; }
+.pr-nums .s { display: block; color: var(--ink2); font: 400 13px/1.3 var(--font); white-space: nowrap; }
 .pr-nums b.d5 { color: var(--blue); } .pr-nums b.d10 { color: var(--amber); }
 .pr-l { color: var(--ink2); font-size: 12px; margin-top: 6px; }
 .pr.compact { gap: 2px; }
@@ -493,7 +494,8 @@ body.public .m-act { display: none; }
 .ladders { margin-top: 6px; }
 .lrow { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; align-items: center; padding: 10px 0; border-top: .5px solid var(--line); }
 .lrow:first-child { border-top: 0; }
-.ln b { display: block; font: 600 14px/1.25 var(--font); } .ln small { display: block; color: var(--ink2); font-size: 13px; margin-top: 2px; }
+.ln b { display: block; font: 600 14px/1.25 var(--font); } .ln small { display: block; color: var(--ink2); font-size: 12px; line-height: 1.25; margin-top: 3px; }
+.ln em { display: block; color: #fff; font: 700 17px/1.2 var(--font); font-style: normal; }
 .lad { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
 .lc { flex: none; min-width: 54px; text-align: center; padding: 6px 4px; border-radius: 10px; border: 1.5px solid transparent; background: var(--card2); display: flex; flex-direction: column; gap: 1px; }
 .lc .u { font: 600 13px/1.3 var(--font); color: var(--ink2); } .lc .m { font: 700 16px/1.25 var(--font); letter-spacing: -.3px; } .lc .k { font: 500 13px/1.3 var(--font); color: var(--ink2); }
@@ -654,7 +656,7 @@ const OVER = {key: null};  // la hoja abierta: "how" (cómo se mide) o un jugado
 const SHEETS = new Map();  // el detalle de cada apuesta y de cada señal en este repintado, para el panel
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
-const BUILD = 1795034223;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
+const BUILD = 1795035629;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
 let PAGEV = null;  // versión de la primera foto vista: solo se usa con BUILD en 0
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
@@ -1236,7 +1238,7 @@ function propCard(r, full) {
   const tone = r.band === "grande" || Math.round(Math.abs(100 * r.diff)) >= 10 ? "d10" : "d5";
   return `<article class="pr${full ? "" : " compact"}"><div class="pr-top">${full ? logo(teamOf(r.team), 24) : ""}<b>${esc(r.player)}</b><span class="pr-g">${full ? esc(r.match) + " · " + esc(hourOf(r.tipoff)) : esc(r.team)}</span></div>
     <div class="pr-mk">${esc(r.text)}</div>${full ? `<div class="pr-b">En Bet365: ${esc(r.bet365)}</div>` : ""}
-    <div class="pr-nums"><div><span class="k">Modelo</span><b>${pct(r.model)}</b></div><div><span class="k">Kalshi</span><b class="nw">${kalshiPair(r)}</b></div><div><span class="k">Diferencia</span><b class="${tone}">${dsign(r.diff)}</b></div></div>
+    <div class="pr-nums"><div><span class="k">Modelo</span><b>${pct(r.model)}</b>${r.expect != null ? `<span class="s">espera ${f1(r.expect)}</span>` : ""}</div><div><span class="k">Kalshi</span><b class="nw">${kalshiPair(r)}</b>${r.implied != null ? `<span class="s">cuota implícita ${Number(r.implied).toFixed(2)}</span>` : ""}</div><div><span class="k">Diferencia</span><b class="${tone}">${dsign(r.diff)}</b></div></div>
     ${full ? `<div class="pr-l">${sideLine(r)}</div>` : ""}</article>`;
 }
 // El estado del modelo, en una frase: con el registro propio si ya alcanza y, si no, con la prueba contra la historia de Kalshi.
@@ -1257,6 +1259,8 @@ function propHow(rec) {
   return `<div class="group">${item("Un modelo aparte", "El modelo de jugadores tiene su propio nombre y su propio registro. No se mezcla con las señales de partido ni con las cifras de cómo le ha ido al modelo de partidos.")}
     ${item("Modelo", "La probabilidad que el modelo le da a que el jugador llegue a la cifra, por ejemplo 25 o más puntos.")}
     ${item("Kalshi", "Lo que pide y lo que paga el mercado por ese contrato. Entre los dos queda el precio medio, que se lee como probabilidad.")}
+    ${item("Espera", "Lo que el modelo calcula que hará el jugador en esa estadística si juega. Es un promedio, no un tope.")}
+    ${item("Cuota implícita", "1 entre el precio medio de Kalshi. Es la cuota que le corresponde a ese precio, sin comisión.")}
     ${item("Diferencia", "El modelo menos el precio medio de Kalshi, en puntos de porcentaje. Con signo menos, el modelo ve menos que el mercado.")}
     ${item(cost, "Lo que cuesta un contrato del lado que ve el modelo, con la comisión de Kalshi. La cuota es 1 entre ese costo.")}
     ${item("Cómo se mide", "Se compara el error de pronóstico de los dos sobre los mismos mercados ya cerrados, con el log loss. Menos es mejor.")}${test}${own}
@@ -1316,11 +1320,11 @@ function ladders(p) {
     const cells = ms.map(([, n, model, bid, ask]) => {
       const mid = bid == null || ask == null ? null : (bid + ask) / 2, d = mid == null ? null : model - mid;
       const c = d != null && Math.abs(d) >= 0.05 - 1e-9 ? (d > 0 ? " mas" : " menos") : "";
-      return `<div class="lc${c}"${c ? ` title="El modelo ve ${c === " mas" ? "más" : "menos"}"` : ""}><b class="u">${n}+</b><b class="m">${pct(model)}</b><span class="k">${mid == null ? NIL : cents(mid)}</span></div>`;
+      return `<div class="lc${c}"${c ? ` title="El modelo ve ${c === " mas" ? "más" : "menos"}"` : ""}><b class="u">${n}+</b><b class="m">${pct(model)}</b>${mid == null ? `<span class="k">${NIL}</span>` : `<span class="k">${cents(mid)}</span><span class="k">${decimal(1, mid)}</span>`}</div>`;
     }).join("");
-    return `<div class="lrow"><div class="ln"><b>${PNAME[k]}</b><small>espera ${f1((p.mean || {})[k])}</small></div><div class="lad">${cells}</div></div>`;
+    return `<div class="lrow"><div class="ln"><b>${PNAME[k]}</b>${(p.mean || {})[k] != null ? `<small>el modelo espera</small><em>${f1(p.mean[k])}</em>` : ""}</div><div class="lad">${cells}</div></div>`;
   }).join("");
-  return rows ? `<div class="ladders">${rows}</div><p class="legend">Arriba el modelo, abajo el precio de Kalshi. Con borde cuando difieren 5 puntos o más.</p><p class="legend sw-l"><i class="sw mas"></i>El modelo ve más <i class="sw menos"></i>El modelo ve menos</p>` : '<p class="gnote">Sin mercados para este jugador.</p>';
+  return rows ? `<div class="ladders">${rows}</div><p class="legend">Arriba el modelo, abajo el precio de Kalshi. La última cifra es la cuota que implica ese precio. Con borde cuando difieren 5 puntos o más.</p><p class="legend sw-l"><i class="sw mas"></i>El modelo ve más <i class="sw menos"></i>El modelo ve menos</p>` : '<p class="gnote">Sin mercados para este jugador.</p>';
 }
 // Las hojas: en teléfono suben desde abajo, en PC el jugador va al panel de la derecha. "Cómo se mide" es una hoja en los dos.
 function paintOver() {
