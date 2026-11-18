@@ -259,7 +259,8 @@ body.public [data-act], body.public .card-actions, body.public .limits, body.pub
 body.public .m-act { display: none; }
 
 @media (min-width: 600px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-@media (min-width: 600px) { #perf .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* Cinco casillas: tres arriba y dos abajo, sin fila coja (seis columnas, de a dos y de a tres) */
+@media (min-width: 600px) { #perf .stats { grid-template-columns: repeat(6, minmax(0, 1fr)); } #perf .stats > div { grid-column: span 2; } #perf .stats > div:nth-child(n+4) { grid-column: span 3; } }
 @media (max-width: 560px) {
   .topbar #account { display: none; } .two { grid-template-columns: minmax(0, 1fr); }
   .spark-box { grid-template-columns: minmax(0, 1fr) 98px; } .spark-box .scale { display: none; }
@@ -298,6 +299,7 @@ body.public .m-act { display: none; }
 /* Cómo le ha ido: tres cifras y las tablas por corte. Con pocas apuestas todo va atenuado y con su número de casos */
 .perf-grid { display: flex; flex-direction: column; gap: 12px; } .perf-grid > div { display: flex; flex-direction: column; gap: 8px; min-width: 0; } .perf-grid .cap { margin-top: 6px; }
 @media (max-width: 599px) { #perf .stats > div:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+#perf .stats .sub2 { display: block; margin-top: 2px; }
 .tiers.perf > div { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, .8fr) minmax(0, 1.1fr); gap: 6px; padding: 10px 14px; }
 .tiers.perf b { font-size: 15px; } .tiers.perf > div:not(:first-child) > span:nth-child(3) { color: var(--ink2); }
 .concl { padding: 11px 16px; font-size: 15px; line-height: 1.4; } .concl b { font-weight: 600; }
@@ -515,7 +517,7 @@ body.public .m-act { display: none; }
       <p><b>La gráfica de "Ver detalle".</b> Sus tres líneas miden la probabilidad de que la apuesta gane, y arriba es mejor. La punteada es lo que costó cada contrato y no se mueve. Si la de Kalshi está arriba de la punteada, la apuesta va ganando sobre el papel. Si la del modelo está arriba de la de Kalshi, el modelo es más optimista que el mercado. Ningún cruce dice quién tiene la razón.</p>
       <p><b>Historial de predicciones.</b> En la pestaña Partidos. De cada partido terminado dice qué lado eligió el modelo en el hándicap y en el total, si atinó y si era señal fuerte. Cubre los últimos 14 días.</p>
       <p><b>Margen de error y meta.</b> El ± de una tasa es su margen de error con 95% de confianza: con pocos casos es ancho. La meta de equilibrio es el acierto que deja en cero comprar el lado del modelo en Kalshi, con su comisión. Son medidas del modelo y no una indicación de apostar.</p>
-      <p><b>Cuenta.</b> Junta el saldo y cómo han ido las apuestas cerradas: en general, por tipo, por equipo, favorito o no, local o visitante y "más" contra "menos". Una apuesta vendida antes de tiempo cuenta en la ganancia y no en el porcentaje. Con pocas apuestas solo describe lo que pasó y no dice qué funciona.</p>
+      <p><b>Cuenta.</b> Junta el saldo y cómo han ido las apuestas cerradas: en general, por tipo, por equipo, favorito o no, local o visitante y "más" contra "menos". La tasa de apuesta promedio es la cuota promedio de las apuestas cerradas y la ganancia promedio es la ganancia total entre ellas. Una apuesta vendida antes de tiempo cuenta en la ganancia y no en el porcentaje. Con pocas apuestas solo describe lo que pasó y no dice qué funciona.</p>
       <p><b>El porqué.</b> Son las cosas que el modelo prepartido sabe del partido, dichas en palabras y de la que más pesa a la que menos. No dice lo que va a pasar: dice de dónde sale su ventaja contra la línea de apertura.</p>
       <p><b>Lesionados.</b> El último reporte oficial de la NBA que guardó la PC, que lo baja cada hora. "Le falta" es la parte de la producción habitual del equipo que el modelo da por ausente con ese reporte.</p>
     </div></details>
@@ -583,7 +585,7 @@ const DETAIL = {bets: null, signals: null};  // el detalle abierto en el panel d
 const SHEETS = new Map();  // el detalle de cada apuesta y de cada señal en este repintado, para el panel
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
-const BUILD = 1794865733;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
+const BUILD = 1795010170;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
 let PAGEV = null;  // versión de la primera foto vista: solo se usa con BUILD en 0
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
@@ -591,7 +593,7 @@ if (PUBLIC) document.body.classList.add("public");
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
 const money = (v, sign) => v == null ? NIL : (v < 0 ? "−" : sign ? "+" : "") + "$" + Math.abs(v).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const pct = (v, d = 0) => v == null ? NIL : (100 * v).toFixed(d) + "%";
+const pct = (v, d = 0) => v == null ? NIL : (100 * v).toFixed(d).replace("-", "−") + "%";  // el menos tipográfico, como en el dinero
 const prob = v => v == null ? NIL : v > 0 && v < 0.005 ? "menos de 1%" : v < 1 && v >= 0.995 ? "más de 99%" : Math.round(100 * v) + "%";  // casi seguro no es seguro
 const big = v => v > 0 && v < 0.005 ? "&lt;1" : v < 1 && v >= 0.995 ? "&gt;99" : String(Math.round(100 * v));
 const centNum = v => { const c = Math.round(1000 * v) / 10; return Number.isInteger(c) ? String(c) : c.toFixed(1); };
@@ -1204,6 +1206,8 @@ function renderPerf() {
   const closed = S.positions.filter(p => p.exit);
   if (!closed.length) { put("perf", ""); return; }
   const settled = closed.filter(p => p.exit.how !== "sold"), wins = settled.filter(p => p.exit.won).length, staked = closed.reduce((t, p) => t + (p.cost || 0), 0), net = closed.reduce((t, p) => t + (p.profit || 0), 0);
+  const odds = closed.map(p => +decimal(p.contracts, p.cost)).filter(Number.isFinite), oddsAvg = odds.length ? odds.reduce((t, v) => t + v, 0) / odds.length : null;  // cuota promedio: se promedian los números, sin las que no tienen dato
+  const avg = list => list.length ? list.reduce((t, p) => t + (p.profit || 0), 0) / list.length : null, gains = settled.filter(p => p.exit.won), losses = settled.filter(p => !p.exit.won);  // ganancia por apuesta, y lo de las ganadas y las perdidas
   const exp = settled.reduce((t, p) => t + p.price, 0), dev = Math.sqrt(settled.reduce((t, p) => t + p.price * (1 - p.price), 0)), lo = Math.max(0, exp - 2 * dev), hi = Math.min(settled.length, exp + 2 * dev);  // dos desvíos: lo que la suerte sola da el 95% de las veces
   const where = wins < lo - 1e-9 ? "por debajo de" : wins > hi + 1e-9 ? "por encima de" : "dentro de";
   const fig = (k, v, d) => `<div><small>${k}</small><b>${v}</b><span>${d}</span></div>`;
@@ -1214,7 +1218,7 @@ function renderPerf() {
   const part = (title, rows, note) => { const t = perfTable(rows); return t ? `<div><h4 class="cap">${title}</h4>${t}${note ? `<p class="sub">${note}</p>` : ""}</div>` : ""; };
   const byTeam = teams.length ? `<div><details class="cap-sum" data-keep="perf-team"${keep("perf-team")}><summary>Por equipo · ${plural(teams.length, "equipo", "equipos")}</summary>${perfTable(teams)}<p class="sub">Las apuestas a un equipo, del hándicap y de ganador. Un total no es de ningún equipo.</p></details></div>` : "";
   put("perf", `<div class="cap-row"><h3 class="cap">${you("Cómo te ha ido", "Cómo le ha ido")}</h3><span class="capr">${plural(closed.length, "apuesta cerrada", "apuestas cerradas")}</span></div>
-    <div class="stats">${fig("Ganadas", wins + " de " + settled.length, settled.length ? Math.round(100 * wins / settled.length) + "%" + (closed.length > settled.length ? ", sin contar " + plural(closed.length - settled.length, "vendida", "vendidas") : "") : NIL)}${fig("Apostado", money(staked), "en " + plural(closed.length, "apuesta", "apuestas"))}${fig("Ganancia", `<span class="${cls(net)}">${money(net, true)}</span>`, staked > 0 ? pct(net / staked, 1) + " de lo apostado" : NIL)}</div>
+    <div class="stats">${fig("Ganadas", wins + " de " + settled.length, settled.length ? Math.round(100 * wins / settled.length) + "%" + (closed.length > settled.length ? ", sin contar " + plural(closed.length - settled.length, "vendida", "vendidas") : "") : NIL)}${fig("Apostado", money(staked), "en " + plural(closed.length, "apuesta", "apuestas"))}${fig("Ganancia", `<span class="${cls(net)}">${money(net, true)}</span>`, staked > 0 ? pct(net / staked, 1) + " de lo apostado" : NIL)}${fig("Tasa de apuesta promedio", oddsAvg == null ? NIL : oddsAvg.toFixed(2), oddsAvg == null ? "Sin dato de cuota" : "Cuota promedio de " + (odds.length === 1 ? you("tu única apuesta", "su única apuesta") : you("tus ", "sus ") + plural(odds.length, "apuesta", "apuestas")))}${fig("Ganancia promedio", `<span class="${cls(net / closed.length)}">${money(net / closed.length, true)}</span>`, "por apuesta" + (gains.length ? `<span class="sub2">Las ganadas dejan <span class="pos">${money(avg(gains), true)}</span></span>` : "") + (losses.length ? `<span class="sub2">Las perdidas se llevan <span class="neg">${money(Math.abs(avg(losses)))}</span></span>` : ""))}</div>
     ${settled.length ? `<p class="sub">Por los precios que ${you("pagaste", "pagó")} se esperaba ganar <b>${exp.toFixed(1)}</b> de ${settled.length}, y la suerte sola lo deja entre ${lo.toFixed(1)} y ${hi.toFixed(1)} el 95% de las veces. ${you("Ganaste", "Ganó")} ${wins}, ${where} ese rango.${settled.length < 30 ? " Con menos de 30 apuestas cerradas no se concluye nada." : ""}</p>` : ""}
     <div class="perf-grid">${part("Por tipo de apuesta", [["Hándicap", ofKind("spread")], ["Total", totals], ["Ganador", ofKind("winner")], ["Otras", ofKind("other")]])}${part("Favorito contra no favorito", [["Favorito", side.filter(favorite)], ["No favorito", side.filter(p => !favorite(p))]],
       "Favorito es el equipo que da puntos en el hándicap o el que costó 50¢ o más en ganador.")}${part("Local contra visitante", [["Local", side.filter(isHome)], ["Visitante", side.filter(p => !isHome(p))]])}${part("Totales: más contra menos", [["Más", totals.filter(p => p.side === "yes")], ["Menos", totals.filter(p => p.side !== "yes")]])}${byTeam}</div>
