@@ -185,7 +185,7 @@ details.cap-sum > summary { font: 600 13px/1.25 var(--font); color: var(--ink2);
 .ghost { position: absolute; top: -3px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; border: 2px solid #fff; background: var(--base); }
 .tags { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; margin-top: 8px; font: 500 12px/1.3 var(--font); color: var(--sec); }
 .tags span:last-child { margin-left: auto; text-align: right; }
-.cash { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; color: var(--sec); font-size: 13px; margin: 12px 2px 0; } .cash b { color: var(--ink); font-weight: 600; } .cash .odds { display: block; font-size: 11px; color: var(--sec); }
+.cash { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; color: var(--sec); font-size: 13px; margin: 12px 2px 0; } .cash b { color: var(--ink); font-weight: 600; } .cash .odds { display: block; font-size: 12px; color: var(--sec); }
 .stl { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; color: var(--sec); font-size: 13px; margin: 8px 2px 0; }
 .st { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); font-weight: 600; }
 .sdot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); flex: none; }
@@ -321,7 +321,9 @@ body.public .m-act { display: none; }
 
 /* PC, desde 1100 px: menú a la izquierda, el contenido centrado y el detalle en un panel a la derecha, como Bolsa o Casa en el Mac.
    Usa las mismas variables y tarjetas de arriba. En teléfono nada de esto aplica. */
+.wide-only { display: none; }
 @media (min-width: 1100px) {
+  .wide-only { display: inline-flex; }
   body { padding-left: 240px; }
   body.has-pane { padding-right: 420px; }
   .wrap { max-width: 1312px; padding: 26px 36px 48px; }  /* 1240 px de contenido y 36 de margen a cada lado */
@@ -446,6 +448,67 @@ body.public .m-act { display: none; }
   #tab-bets { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   body.has-pane #tab-bets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* Jugadores: el modelo de props, aparte del de partidos. Misma paleta. Nada baja de 12 px y la diferencia grande nunca va en verde */
+:root { --amber: rgb(255 159 10 / .78); }
+.sec-row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 22px 0 2px; }
+.etq { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; background: rgb(255 159 10 / .16); color: var(--orange); font: 600 12px/1.3 var(--font); }
+.pstatus { background: var(--card); border-radius: 14px; padding: 14px 16px 6px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.pstatus > p:first-child { font-size: 15px; } .pstatus .link { margin-left: -6px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.filters button { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; background: var(--card2); color: var(--sec); font: 500 13px/1 var(--font); }
+.filters button[aria-pressed="true"] { background: #fff; color: #000; }
+.tight { margin: -4px 4px 0; }
+.pfoot { color: var(--ink2); font-size: 12px; text-align: center; margin-top: 8px; }
+.pr { background: var(--card); border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.pr-top { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; }
+.pr-top img { width: 24px; height: 24px; object-fit: contain; }
+.pr-top b { font-weight: 700; font-size: 15px; }
+.pr-g { margin-left: auto; color: var(--ink2); font-size: 13px; }
+.pr-mk { font: 600 17px/1.25 var(--font); letter-spacing: -.2px; margin-top: 4px; }
+.pr-b { color: var(--ink2); font-size: 12px; }
+.pr-nums { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1fr); gap: 8px; margin-top: 8px; }
+.pr-nums .k { display: block; color: var(--ink2); font: 500 12px/1.3 var(--font); }
+.pr-nums b { display: block; font: 700 18px/1.25 var(--font); letter-spacing: -.3px; }
+.pr-nums b.d5 { color: var(--blue); } .pr-nums b.d10 { color: var(--amber); }
+.pr-l { color: var(--ink2); font-size: 12px; margin-top: 6px; }
+.pr.compact { gap: 2px; }
+.seg { display: grid; grid-template-columns: 1fr 1fr; padding: 2px; border-radius: 10px; background: var(--card2); }
+.seg button { min-height: 36px; padding: 7px 0; border-radius: 8px; background: transparent; color: var(--ink2); font: 600 14px/1.2 var(--font); }
+.seg button[aria-pressed="true"] { background: #636366; color: #fff; }
+.ptab { --nc: 40px; }
+.ptab .r { display: grid; grid-template-columns: minmax(0, 1fr) repeat(5, var(--nc)); align-items: center; padding: 9px 12px; font-size: 14px; }
+.ptab button.r { width: 100%; min-height: 44px; border-radius: 0; background: transparent; color: var(--ink); font-weight: 400; text-align: left; }
+.ptab button.r:hover { background: rgb(255 255 255 / .06); }
+.ptab .r > span + span { text-align: right; }
+.ptab .hd { color: var(--ink2); font-size: 12px; font-weight: 600; padding-top: 8px; padding-bottom: 8px; }
+.ptab .nm { font-weight: 500; line-height: 1.25; }
+.ptab .fuera { opacity: .45; }
+.ptab .sel, .ptab button.sel:hover { background: rgb(10 132 255 / .2); box-shadow: inset 0 0 0 1.5px var(--blue); }
+.tag { display: inline-block; font: 600 12px/1.3 var(--font); font-style: normal; padding: 0 7px; border-radius: 6px; margin-left: 4px; vertical-align: 1px; }
+.tag.dud { background: rgb(255 159 10 / .18); color: var(--orange); } .tag.out { background: rgb(255 69 58 / .18); color: var(--red); }
+.two-t { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.two-t .ptab { --nc: 30px; } .two-t .ptab .r { padding: 9px 6px; font-size: 13px; }
+.sh-t { font: 700 20px/1.25 var(--font); letter-spacing: -.3px; }
+.grab { width: 36px; height: 5px; border-radius: 3px; background: rgb(255 255 255 / .3); margin: 0 auto 12px; }
+.ladders { margin-top: 6px; }
+.lrow { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 10px; align-items: center; padding: 10px 0; border-top: .5px solid var(--line); }
+.lrow:first-child { border-top: 0; }
+.ln b { display: block; font: 600 14px/1.25 var(--font); } .ln small { display: block; color: var(--ink2); font-size: 13px; margin-top: 2px; }
+.lad { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+.lc { flex: none; min-width: 54px; text-align: center; padding: 6px 4px; border-radius: 10px; border: 1.5px solid transparent; background: var(--card2); display: flex; flex-direction: column; gap: 1px; }
+.lc .u { font: 600 13px/1.3 var(--font); color: var(--ink2); } .lc .m { font: 700 16px/1.25 var(--font); letter-spacing: -.3px; } .lc .k { font: 500 13px/1.3 var(--font); color: var(--ink2); }
+.lc.mas { border-color: var(--blue); } .lc.menos { border-color: var(--orange); }
+.legend { color: var(--ink2); font-size: 13px; margin-top: 10px; }
+.sw-l { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 6px; }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 2px solid transparent; } .sw.mas { border-color: var(--blue); } .sw.menos { border-color: var(--orange); }
+.sw + .sw, .sw ~ .sw { margin-left: 8px; }
+.pg-act { display: flex; justify-content: flex-end; margin: 0 -6px -6px 0; }
+.psec { display: flex; flex-direction: column; gap: 12px; }
+@media (max-width: 1099px) { #props { order: 1; } #signals-aside { order: 2; } }
+@media (min-width: 1100px) {
+  #props { grid-column: 1; grid-row: 4; } body.has-pane #props { grid-row: 5; }
+}
+@media (max-width: 380px) { .ptab { --nc: 34px; } .ptab .r { padding: 9px 8px; font-size: 13px; } .two-t .ptab { --nc: 28px; } }
 /* El logo junto al nombre: el mismo del ícono */
 .mark { height: .78em; width: auto; margin-right: .36em; vertical-align: -.04em; fill: var(--ink); flex: none; } .mark .g { fill: var(--green); }
 </style>
@@ -481,10 +544,11 @@ body.public .m-act { display: none; }
   <section id="tab-signals" class="stack" role="tabpanel" hidden>
     <div class="head"><div class="title-row"><h2 class="title">Señales</h2></div>
     <p class="lede" id="record"></p>
-    <div class="share-row day"><button class="link" data-img="day">Compartir el día</button></div></div>
-    <div id="signals" class="stack"><div class="empty">Cargando señales.</div></div>
+    <div class="share-row day"><button class="link" data-img="day">Compartir el día</button><button class="link wide-only" data-scroll="props">Jugadores</button></div></div>
+    <div id="signals"class="stack"><div class="empty">Cargando señales.</div></div>
     <div id="signals-aside" class="stack"></div>
     <div id="signals-note" class="stack"></div>
+    <div id="props" class="psec"></div>
   </section>
   <section id="tab-games" class="stack" role="tabpanel" hidden>
     <div class="head"><div class="title-row"><h2 class="title">Partidos</h2></div>
@@ -524,6 +588,7 @@ body.public .m-act { display: none; }
     </div></details>
   </footer>
 </div>
+<div class="shsheet" id="over" hidden role="dialog" aria-modal="true" aria-labelledby="over-t"><div><div class="grab"></div><h3 class="sh-t" id="over-t"></h3><p class="sub" id="over-s"></p><div id="over-b"></div><div class="acts"><button type="button" data-over-close>Cerrar</button></div></div></div>
 <aside class="pane" id="pane" hidden aria-label="Detalle">
   <div class="pane-head"><div><h2 id="pane-title"></h2><p class="sub" id="pane-sub"></p></div><button class="pane-x" id="pane-x" type="button" data-pane-close aria-label="Cerrar el detalle">✕</button></div>
   <div class="pane-body" id="pane-body"></div>
@@ -582,11 +647,14 @@ let S = null, lastOk = 0, contracts = [], selling = null, FEE = 0.07, TAB = "bet
 const LOAD = {fails: 0, busy: false, timer: 0, resuming: false, paint: false, starting: false};  // cómo va la carga: fallos seguidos, si hay una en curso, si se vuelve de segundo plano, si el pintado falló y si el motivo es que el panel arranca
 const FAILED = [];  // las pantallas que no se pudieron pintar en el último repintado
 const WIDE = matchMedia("(min-width: 1100px)");  // PC: menú a la izquierda y detalle en un panel a la derecha. Es la misma medida que usa el CSS
-const DETAIL = {bets: null, signals: null};  // el detalle abierto en el panel de PC, uno por pestaña
+const DETAIL = {bets: null, signals: null, games: null};  // el detalle abierto en el panel de PC, uno por pestaña
+const PR = {stat: "all", team: {}};  // el filtro de estadística y el equipo elegido en cada partido
+const GD = {game: null};  // el partido abierto en la pestaña Partidos
+const OVER = {key: null};  // la hoja abierta: "how" (cómo se mide) o un jugador, en teléfono
 const SHEETS = new Map();  // el detalle de cada apuesta y de cada señal en este repintado, para el panel
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
-const BUILD = 1795012404;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
+const BUILD = 1795034223;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
 let PAGEV = null;  // versión de la primera foto vista: solo se usa con BUILD en 0
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
@@ -666,6 +734,7 @@ const backTo = key => { const b = document.querySelector('[data-detail="' + CSS.
 // Al pasar de PC a teléfono (o al revés) el detalle cambia de lugar y el pie de la página también.
 function layout() {
   (WIDE.matches ? $("dock-foot") : $("wrap")).appendChild($("foot-box"));
+  if (WIDE.matches && OVER.key && OVER.key !== "how") OVER.key = null;
   if (!WIDE.matches) for (const tab of Object.keys(DETAIL)) if (DETAIL[tab]) { OPEN.add(DETAIL[tab]); DETAIL[tab] = null; }  // lo que estaba en el panel queda desplegado en su tarjeta
   if (S) paint(); else paintPane();
 }
@@ -760,7 +829,7 @@ function story(p, g) {
     return {title: (yes ? "Más" : "Menos") + " de " + p.strike + " puntos", text, dup: text !== "" && have == null, bar: {total: true, have, goal: yes ? top + 1 : top, goalText: (yes ? "Meta " : "Tope ") + (yes ? top + 1 : top),
       proj: done ? null : p.projection, haveText: have == null ? "" : (done ? "Terminó con " : "Van ") + have, projText: p.projection == null || done ? "" : (live ? "A este paso " : "El modelo espera ") + p.projection.toFixed(0)}};
   }
-  if (p.kind !== "spread" && p.kind !== "winner") return {title: p.label, text: "", bar: null};
+  if (p.kind !== "spread" && p.kind !== "winner") return {title: p.label, text: p.prop && p.need ? esc(p.need) + "." : "", bar: null};
   const who = cityOf(g, p.subject), n = p.kind === "spread" ? Math.floor(p.strike) : 0, goal = p.kind === "winner" ? 1 : yes ? n + 1 : -n;
   const m = live ? (p.subject === g.home.abbr ? 1 : -1) * (g.home.score - g.away.score) : null;
   const title = p.kind === "winner" ? "Gana " + who : yes ? `${who} gana por ${n + 1} o más` : `${who} pierde por ${n} o menos, o gana`;
@@ -880,14 +949,15 @@ function ticket(p) {
   const chance = main == null ? "" : `<div class="pct"><b class="${st.tone}">${big(main)}<i>%</i></b><small>de ganar</small></div>`;
   // la foto no es del momento: se dice de cuándo es, y solo lo que de verdad salió de ella
   const photo = !(PUBLIC && g && g.state === "in") ? "" : p.p_source === "marcador" ? " Calculada con el marcador y el precio de las " + endDot(snapAt()) : p.mid != null || p.p == null ? " El precio es de las " + endDot(snapAt()) : "";
-  const said = old ? `${g.status === "STATUS_FINAL" ? "El partido ya terminó." : "El partido ya no está en juego."} La probabilidad de las ${snapAt()} ya no vale.` : main == null ? "" : `${p.p != null ? cap(source[p.p_source] || "según el modelo") : "Según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la cotiza en " + prob(p.mid) + "." : ""}${photo}`;
+  const noLive = p.prop ? " Sin avance en vivo para las apuestas de jugador." : "";
+  const said0 = old ? `${g.status === "STATUS_FINAL" ? "El partido ya terminó." : "El partido ya no está en juego."} La probabilidad de las ${snapAt()} ya no vale.` : main == null ? "" : `${p.p != null ? cap(source[p.p_source] || "según el modelo") : "Según el precio de Kalshi"}.${p.p != null && p.mid != null ? " Kalshi la cotiza en " + prob(p.mid) + "." : ""}${photo}`, said = (said0 + noLive).trim();
   const fact = (k, v) => `<div class="row"><span>${k}</span><b>${v}</b></div>`;
   const chart = old ? "" : spark(p), worth = old ? "" : (p.expected == null ? "" : fact("Lo que vale según el modelo", `<span class="${cls(p.expected)}">${money(p.expected, true)}</span> esperado`)) +
     (p.p_overtime > 0.02 ? fact("Chance de tiempo extra", pct(p.p_overtime)) : "");
   const how = chart || worth ? `<h4 class="cap">Cómo va</h4><div class="group">${chart ? `<div class="cell">${chart}</div>` : ""}${worth}</div>` : "";
   const body = `${how}${betWhy(p)}${injuryBlock(g, "inj-pos-" + p.id)}
     <h4 class="cap">${you("Tu compra", "Su compra")}</h4><div class="group">` +
-    fact("Contrato", `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("En una casa como Bet365 sería", (p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + esc(p.label)) + fact("Cantidad", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
+    fact("Contrato", `${yes ? "Sí" : "No"} a «${esc(p.title_es || p.title)}»`) + fact("En una casa como Bet365 sería", p.prop ? "Jugador · " + esc(p.prop.bet365 || p.label) : (p.kind === "total" ? "Total" : p.kind === "spread" ? "Hándicap" : "Ganador") + " · " + esc(p.label)) + fact("Cantidad", `${qty(p.contracts)} contratos a ${cents(p.price)} más ${money(p.fee)} de comisión`) +
     fact("Costo por contrato", cents(p.needed) + " con comisión") + fact("Cuota decimal equivalente", decimal(p.contracts, p.cost) + (decimal(p.contracts, p.cost) === NIL ? "" : ", con comisión")) + (old ? "" : fact(you("Si vendes ahora", "Si vendiera a las " + snapAt()), p.sale == null ? you("Nadie compra ahora", "Nadie compraba") : `<span class="${cls(p.sale)}">${money(p.sale, true)}</span> vendiendo a ${cents(p.bid)}`)) +
     (p.note ? fact("Nota", esc(p.note)) : "") + `</div>
     <div class="card-actions"><button class="link" data-act="sell" data-id="${p.id}">Anotar venta</button><button class="link" data-act="settle" data-id="${p.id}">Liquidar a mano</button><button class="link danger" data-act="remove" data-id="${p.id}">Borrar</button></div>`;
@@ -1151,14 +1221,145 @@ function renderSignals() {
   put("signals-note", '<p class="note">Es la traducción de la señal a Kalshi. No es una recomendación de entrar ni de cuánto.</p>');
 }
 
+// --- Jugadores: el modelo de props de jugadores, aparte del de partidos. Todo lo que se muestra llega ya calculado en S.props ---
+const PSTATS = [["all", "Todas"], ["pts", "Puntos"], ["reb", "Rebotes"], ["ast", "Asistencias"], ["fg3m", "Triples"], ["pra", "P+R+A"], ["stl", "Robos"], ["blk", "Tapones"]];
+const PNAME = {pts: "Puntos", reb: "Rebotes", ast: "Asistencias", fg3m: "Triples", pra: "Puntos + rebotes + asistencias", stl: "Robos", blk: "Tapones"};
+const pnow = () => PUBLIC && S ? new Date(S.now).getTime() : Date.now();  // la copia pública habla de la hora de su foto
+const f1 = v => v == null || isNaN(v) ? NIL : Number(v).toFixed(1);
+const dsign = d => d == null ? NIL : (d < 0 ? "−" : "+") + Math.round(Math.abs(100 * d));
+const kalshiPair = m => m.has_price ? cents(m.bid) + " a " + cents(m.ask) : NIL;
+const podds = m => m.odds != null ? Number(m.odds).toFixed(2) : decimal(1, m.cost);
+const sideLine = m => `El modelo ve ${esc(m.sees)}. Lado ${esc(m.side)}. ${you("Tu costo", "Costo con comisión")} ${cents(m.cost)}, cuota ${podds(m)}`;
+const teamOf = abbr => { for (const g of S.games || []) { if (g.home && g.home.abbr === abbr) return g.home; if (g.away && g.away.abbr === abbr) return g.away; } return null; };
+const hourOf = t => t ? hour(new Date(t)) : NIL;
+function propCard(r, full) {
+  const tone = r.band === "grande" || Math.round(Math.abs(100 * r.diff)) >= 10 ? "d10" : "d5";
+  return `<article class="pr${full ? "" : " compact"}"><div class="pr-top">${full ? logo(teamOf(r.team), 24) : ""}<b>${esc(r.player)}</b><span class="pr-g">${full ? esc(r.match) + " · " + esc(hourOf(r.tipoff)) : esc(r.team)}</span></div>
+    <div class="pr-mk">${esc(r.text)}</div>${full ? `<div class="pr-b">En Bet365: ${esc(r.bet365)}</div>` : ""}
+    <div class="pr-nums"><div><span class="k">Modelo</span><b>${pct(r.model)}</b></div><div><span class="k">Kalshi</span><b class="nw">${kalshiPair(r)}</b></div><div><span class="k">Diferencia</span><b class="${tone}">${dsign(r.diff)}</b></div></div>
+    ${full ? `<div class="pr-l">${sideLine(r)}</div>` : ""}</article>`;
+}
+// El estado del modelo, en una frase: con el registro propio si ya alcanza y, si no, con la prueba contra la historia de Kalshi.
+function propStatus(rec) {
+  const bt = rec.backtest, since = rec.since ? day(rec.since + "T12:00:00") : "", ll = v => v == null ? NIL : Number(v).toFixed(3);
+  const own = since ? " El registro propio empezó el " + since + "." : "";
+  let main;
+  if (rec.enough && rec.model != null && rec.kalshi != null) main = `En ${qty(rec.markets)} mercados sellados, Kalshi ${ll(rec.kalshi)} contra ${ll(rec.model)} del modelo. ${rec.kalshi < rec.model ? "Va mejor Kalshi" : rec.model < rec.kalshi ? "Va mejor el modelo" : "Van parejos"} (menos es mejor).`;
+  else if (bt && bt.games) main = `En ${qty(bt.games)} partidos de prueba, ${bt.kalshi < bt.model ? "Kalshi pronosticó mejor que el modelo" : bt.model < bt.kalshi ? "el modelo pronosticó mejor que Kalshi" : "Kalshi y el modelo quedaron parejos"}.${own}`;
+  else main = "Todavía no hay una medición del modelo." + own;
+  return main;
+}
+function propHow(rec) {
+  const bt = rec.backtest, cost = you("Tu costo", "Costo con comisión");
+  const item = (k, v) => `<p class="concl"><b>${k}.</b> ${v}</p>`;
+  const test = bt ? item("La prueba", `Con ${qty(bt.games)} partidos y ${qty(bt.markets)} mercados ya cerrados, el error del modelo fue ${Number(bt.model).toFixed(3)} y el de Kalshi ${Number(bt.kalshi).toFixed(3)}. Menos es mejor. Una cuenta en papel con la ventaja del modelo dio ${bt.paper_cents < 0 ? "−" : ""}${Math.abs(bt.paper_cents)}¢ por contrato, con margen de ±${bt.paper_error}¢.`) : "";
+  const own = rec.since ? item("El registro propio", `Empezó el ${day(rec.since + "T12:00:00")}. ${rec.enough ? "Ya hay " + qty(rec.markets) + " mercados calificados." : "Todavía son pocos mercados para concluir algo."}`) : "";
+  return `<div class="group">${item("Un modelo aparte", "El modelo de jugadores tiene su propio nombre y su propio registro. No se mezcla con las señales de partido ni con las cifras de cómo le ha ido al modelo de partidos.")}
+    ${item("Modelo", "La probabilidad que el modelo le da a que el jugador llegue a la cifra, por ejemplo 25 o más puntos.")}
+    ${item("Kalshi", "Lo que pide y lo que paga el mercado por ese contrato. Entre los dos queda el precio medio, que se lee como probabilidad.")}
+    ${item("Diferencia", "El modelo menos el precio medio de Kalshi, en puntos de porcentaje. Con signo menos, el modelo ve menos que el mercado.")}
+    ${item(cost, "Lo que cuesta un contrato del lado que ve el modelo, con la comisión de Kalshi. La cuota es 1 entre ese costo.")}
+    ${item("Cómo se mide", "Se compara el error de pronóstico de los dos sobre los mismos mercados ya cerrados, con el log loss. Menos es mejor.")}${test}${own}
+    ${item("Aviso", "Es lo que marca un modelo. No es una recomendación de apuesta ni de cuánto.")}</div>`;
+}
+function renderProps() {
+  const P = S.props || {}, games = P.games || [], rec = P.record || {};
+  const head = '<div class="sec-row"><h3 class="h-sec">Jugadores</h3><span class="etq">En observación</span><span class="sub">Modelo de jugadores</span></div>';
+  SHEETS.set("how", {title: "Cómo se mide", sub: "Modelo de jugadores", body: propHow(rec)});
+  if (!games.length) { put("props", head + '<div class="empty">Sin mercados de jugadores para esta jornada todavía.</div>'); return; }
+  const started = r => new Date(r.tipoff).getTime() <= pnow();
+  const all = PR.stat === "all", cap = list => all ? list.slice(0, P.cap || 20) : list;
+  const shown = (P.top || []).filter(r => !started(r) && (all || r.stat === PR.stat)), mid = cap(shown.filter(r => r.band !== "grande")), big = cap(shown.filter(r => r.band === "grande"));
+  const card = `<div class="pstatus"><p>${esc(propStatus(rec))}</p><p class="sub">Una diferencia grande suele ser algo que el modelo no sabe: un cambio de papel o una baja de última hora.</p><button type="button" class="link" data-pr-how>Cómo se mide</button></div>`;
+  const chips = `<div class="filters" role="group" aria-label="Estadística">${PSTATS.map(([k, name]) => `<button type="button" data-ps="${k}" aria-pressed="${PR.stat === k}">${name}</button>`).join("")}</div>`;
+  const priced = P.priced ? `<p class="sub tight">${esc(endDot("Precios de Kalshi tomados " + stamp(P.priced)))}</p>` : "";
+  const group = (title, list, note) => list.length ? `<h4 class="cap">${title}</h4>${note ? `<p class="sub tight">${note}</p>` : ""}<div class="stack">${list.map(r => propCard(r, true)).join("")}</div>` : "";
+  const body = shown.length ? group("Diferencias de 5 a 9 puntos", mid) + group("Diferencias de 10 puntos o más", big, "Antes de creerle al modelo, mira las noticias del jugador.") :
+    `<div class="empty">No hay diferencias de 5 puntos o más${PR.stat === "all" ? "" : " en " + PNAME[PR.stat].toLowerCase()} por ahora.</div>`;
+  put("props", head + priced + card + chips + body + '<p class="pfoot">Cada grupo muestra solo las mayores diferencias. Es lo que marca el modelo. No es una recomendación de apuesta.</p>');
+}
+// El detalle de un partido en Partidos: los promedios que espera el modelo de cada jugador y sus mayores diferencias con Kalshi.
+function gameDetail() {
+  const P = S.props || {}, G = (P.games || []).find(x => x.game === GD.game);
+  if (!G) { GD.game = null; DETAIL.games = null; return false; }
+  const g = gameOf(G.game), wide = WIDE.matches, picked = PR.team[G.game] || G.home;
+  const sp = G.line ? `Total ${G.line.total} · ${esc(G.home)} ${G.line.home_spread < 0 ? "−" : "+"}${Math.abs(G.line.home_spread)}` : "Sin línea todavía";
+  const key = (p, i) => "pl-" + G.game + "-" + (p.id != null ? p.id : i);
+  const table = team => {
+    const list = G.players.map((p, i) => [p, i]).filter(([p]) => p.team === team).sort((a, b) => (b[0].min || 0) - (a[0].min || 0));
+    const row = ([p, i]) => {
+      const k = key(p, i), m = p.mean || {};
+      SHEETS.set(k, {title: p.name, sub: `${p.team} · ${f1(p.min)} minutos esperados${p.status ? " · " + p.status : ""}`, body: ladders(p)});
+      return `<button type="button" class="r${p.status === "Fuera" ? " fuera" : ""}${DETAIL.games === k ? " sel" : ""}" data-pl="${esc(k)}" aria-label="Escalera de ${esc(p.name)}"><span class="nm">${esc(p.name)}${p.status ? ` <i class="tag ${p.status === "Fuera" ? "out" : "dud"}">${esc(p.status)}</i>` : ""}</span><span>${f1(p.min)}</span><span>${f1(m.pts)}</span><span>${f1(m.reb)}</span><span>${f1(m.ast)}</span><span>${f1(m.fg3m)}</span></button>`;
+    };
+    return `<div class="group ptab"><div class="who">${logo(teamOf(team), 22)}<span>${esc(team)}</span></div><div class="r hd"><span>Jugador</span><span>Min</span><span>Pts</span><span>Reb</span><span>Ast</span><span>Tri</span></div>${list.length ? list.map(row).join("") : '<p class="gnote">Sin jugadores para este equipo.</p>'}</div>`;
+  };
+  const seg = `<div class="seg" role="group" aria-label="Equipo">${[G.home, G.away].map(t => `<button type="button" data-pt="${esc(t)}" aria-pressed="${t === picked}">${esc(t)}</button>`).join("")}</div>`;
+  const tables = wide ? `<div class="two-t">${table(G.home)}${table(G.away)}</div>` : seg + table(picked);
+  if (!wide) table(picked === G.home ? G.away : G.home);
+  const best = G.best || [];
+  const board3 = scoreRow({home: G.home, away: G.away}, g);
+  put("games-sub", "");
+  put("games", `<button type="button" class="link back" data-pg="">‹ Partidos</button>
+    <div class="game" style="${tints(g)}">${board3}<div class="bet"><div><h3>${esc(G.away)} en ${esc(G.home)}</h3><p>${sp}</p></div></div></div>
+    <div class="sec-row"><h3 class="h-sec">Jugadores</h3><span class="etq">En observación</span></div>${tables}
+    <p class="gfoot">Promedios que espera el modelo si el jugador juega.</p>
+    <h4 class="cap">Mayores diferencias con Kalshi en este partido</h4>
+    ${best.length ? `<div class="stack">${best.map(r => propCard(r, false)).join("")}</div>` : '<p class="sub">Sin precios de Kalshi para comparar en este partido.</p>'}`);
+  return true;
+}
+// La escalera de un jugador: por estadística, cada umbral con lo que dice el modelo y el precio medio de Kalshi. Con borde cuando difieren 5 puntos o más.
+function ladders(p) {
+  const rows = Object.keys(PNAME).map(k => {
+    const ms = (p.markets || []).filter(m => m[0] === k).sort((a, b) => a[1] - b[1]);
+    if (!ms.length) return "";
+    const cells = ms.map(([, n, model, bid, ask]) => {
+      const mid = bid == null || ask == null ? null : (bid + ask) / 2, d = mid == null ? null : model - mid;
+      const c = d != null && Math.abs(d) >= 0.05 - 1e-9 ? (d > 0 ? " mas" : " menos") : "";
+      return `<div class="lc${c}"${c ? ` title="El modelo ve ${c === " mas" ? "más" : "menos"}"` : ""}><b class="u">${n}+</b><b class="m">${pct(model)}</b><span class="k">${mid == null ? NIL : cents(mid)}</span></div>`;
+    }).join("");
+    return `<div class="lrow"><div class="ln"><b>${PNAME[k]}</b><small>espera ${f1((p.mean || {})[k])}</small></div><div class="lad">${cells}</div></div>`;
+  }).join("");
+  return rows ? `<div class="ladders">${rows}</div><p class="legend">Arriba el modelo, abajo el precio de Kalshi. Con borde cuando difieren 5 puntos o más.</p><p class="legend sw-l"><i class="sw mas"></i>El modelo ve más <i class="sw menos"></i>El modelo ve menos</p>` : '<p class="gnote">Sin mercados para este jugador.</p>';
+}
+// Las hojas: en teléfono suben desde abajo, en PC el jugador va al panel de la derecha. "Cómo se mide" es una hoja en los dos.
+function paintOver() {
+  const el = $("over"), sh = OVER.key && SHEETS.get(OVER.key);
+  if (OVER.key && !sh && !FAILED.length) OVER.key = null;
+  el.hidden = !(OVER.key && sh);
+  if (el.hidden) { document.documentElement.style.overflow = ""; return; }
+  $("over-t").textContent = sh.title; $("over-s").textContent = sh.sub; put("over-b", sh.body);
+  document.documentElement.style.overflow = "hidden";
+}
+function openGame(id) {
+  GD.game = id || null; OVER.key = null; DETAIL.games = null;
+  if (S) paint();
+  window.scrollTo(0, 0);
+}
+const openPlayer = key => { if (WIDE.matches) openDetail(key); else { OVER.key = key; paintOver(); } };
+document.addEventListener("click", e => {
+  const t = e.target, hit = sel => t.closest(sel);
+  let b;
+  if ((b = hit("[data-ps]"))) { PR.stat = b.dataset.ps; if (S) paint(); }
+  else if ((b = hit("[data-pg]"))) openGame(b.dataset.pg);
+  else if ((b = hit("[data-pt]"))) { PR.team[GD.game] = b.dataset.pt; if (S) paint(); }
+  else if ((b = hit("[data-pl]"))) openPlayer(b.dataset.pl);
+  else if (hit("[data-pr-how]")) { OVER.key = "how"; paintOver(); }
+  else if (hit("[data-over-close]") || t === $("over")) { OVER.key = null; paintOver(); }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && OVER.key) { OVER.key = null; paintOver(); } });
+
 function renderGames() {
+  forget("pl-");
   const today = slate(), live = S.games.filter(g => g.state === "in"), soon = S.games.filter(g => g.state === "pre" && jornada(g.tipoff) === today);
   $("n-games").textContent = live.length || "";
+  if (GD.game && gameDetail()) return;
   if (!S.games.length) { put("games-sub", ""); put("games", '<div class="empty">No hay partidos en la jornada.</div>'); return; }
   const rest = S.games.filter(g => !live.includes(g) && !soon.includes(g)), ended = rest.filter(g => g.state === "post").length, later = rest.length - ended;
   const dates = [...new Set(rest.filter(g => g.state !== "post").map(g => new Date(g.tipoff).toLocaleDateString("es", {weekday: "short", day: "numeric"})))], otherDays = dates.length === 1 ? "otro día (" + dates[0] + ")" : dates.length === 2 ? "otros días (" + dates.join(" y ") + ")" : "otros días";
   put("games-sub", [live.length ? live.length + " en juego" : "", soon.length ? soon.length + " por empezar hoy" : ""].filter(Boolean).join(" · ") || you("Nada en juego ahora", "Nada en juego"));
   const by = {modelo: "modelo prepartido", "línea": "línea de la casa", marcador: PUBLIC ? "modelo con el marcador de las " + snapAt() : "modelo en vivo"};
+  const hasProps = g => ((S.props || {}).games || []).some(x => x.game === g.id);
   const row = g => {
     const o = g.outlook, over = g.state === "post";
     const line = !g.line ? "Sin línea todavía" : (g.line.margin === 0 ? "Parejo" : esc(g.home.abbr) + " " + (g.line.margin > 0 ? "−" : "+") + Math.abs(g.line.margin)) + " · total " + g.line.total;
@@ -1170,7 +1371,7 @@ function renderGames() {
       .map(([k, v], i, all) => `<div class="said"><span class="k">${k}</span><b>${v}</b>${wide && i === all.length - 1 ? buy : ""}</div>`).join("\n      ");
     return `<div class="match">${board(g.away, g.home, g.state !== "pre", chipFor(g), 34)}
       <div class="saids">${said}
-      ${over || wide ? "" : `<div class="m-act">${buy}</div>`}</div></div>`;
+      ${over || wide ? "" : `<div class="m-act">${buy}</div>`}${hasProps(g) ? `<div class="pg-act"><button type="button" class="link" data-pg="${esc(g.id)}">Ver jugadores</button></div>` : ""}</div></div>`;
   };
   const today3 = WIDE.matches && live.length + soon.length ? `<div class="cap-row"><h3 class="cap">Hoy</h3><span class="capr">${esc(cap(day(slate() + "T12:00:00", {weekday: "long", day: "numeric", month: "short"})))}</span></div>` : "";
   let html = live.length + soon.length ? today3 + `<div class="group">${[...live, ...soon].map(row).join("")}</div>` : '<div class="empty">No hay partidos en juego ni por empezar hoy.</div>';
@@ -1185,7 +1386,7 @@ let picksSeeded = false;
 const sealedWords = h => { if (!(h > 0)) return ""; const m = Math.max(5, 5 * Math.round(12 * h)), hh = Math.floor(m / 60), mm = m % 60; return "sellado " + (hh ? "cerca de " + hh + " h" + (mm ? " " + mm + " min" : "") : "cerca de " + mm + " min") + " antes"; };
 function renderPicks() {
   const rows = S.history || [];
-  if (!rows.length) { put("picks", ""); return; }
+  if (!rows.length || GD.game) { put("picks", ""); return; }
   const count = list => list.filter(c => c.result === "ganó").length + " de " + list.length, live = list => list.filter(c => c.result !== "empate");
   const all = live(rows.flatMap(r => r.calls)), strong = all.filter(c => c.strength), days = [...new Set(rows.map(r => r.day))];
   if (!picksSeeded) { OPEN.add("picks-" + days[0]); picksSeeded = true; }  // el día más reciente arranca desplegado
@@ -1458,9 +1659,10 @@ function render() {
   FAILED.length = 0;
   FEE = S.fee_rate || FEE;
   safe("la cuenta", renderAccount);
-  safe("la pestaña Cuenta", renderBank); safe("los resultados de la cuenta", renderPerf); safe("las apuestas", renderBets); safe("las señales", renderSignals); safe("los partidos", renderGames);
+  safe("la pestaña Cuenta", renderBank); safe("los resultados de la cuenta", renderPerf); safe("las apuestas", renderBets); safe("las señales", renderSignals); safe("los jugadores", renderProps); safe("los partidos", renderGames);
   safe("el historial de predicciones", renderPicks); safe("el historial", renderHistory);
   safe("el resumen de tu última visita", renderSince);
+  safe("la hoja", paintOver);
   safe("el detalle", paintPane);
   paintAlerts();
   return !FAILED.length;
