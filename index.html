@@ -759,7 +759,7 @@ const CALCS = new Map();  // lo que cada jugador lleva en su calculadora: la est
 const SHEETS = new Map();  // el detalle de cada apuesta y de cada señal en este repintado, para el panel
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
-const BUILD = 1795049942;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
+const BUILD = 1795060987;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
 let PAGEV = null;  // versión de la primera foto vista: solo se usa con BUILD en 0
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
@@ -2207,7 +2207,7 @@ function safe(name, work) { try { work(); } catch (e) { console.error(name, e); 
 const SOURCE = name => name.startsWith("marcador") ? "el marcador" : name === "kalshi" || name === "precios" ? "los precios de Kalshi" : null;
 function alertsHtml() {
   const a = S.account || {}, ages = S.ages || {}, board = Object.entries(ages).filter(e => e[0].startsWith("marcador")).map(e => e[1]);
-  const keys = Object.keys(S.errors || {}), errors = PUBLIC ? [...new Set(keys.map(SOURCE).filter(Boolean))] : keys.filter(k => k !== "avisos" && k !== "cierres"), broken = S.bank.broken || [], gaps = a.mismatch || [], late = [];
+  const keys = Object.keys(S.errors || {}), errors = PUBLIC ? [...new Set(keys.map(SOURCE).filter(Boolean))] : keys.filter(k => k !== "avisos" && k !== "cierres" && k !== "previa"), broken = S.bank.broken || [], gaps = a.mismatch || [], late = [];
   const names = {max_position_pct: "una apuesta pasa tu tope por apuesta", max_open_pct: "lo que tienes en juego pasa tu tope", max_day_loss_pct: "la pérdida de hoy pasó tu freno del día"};
   const before = PUBLIC ? "Al sacar la foto, " : "";  // en la copia pública el atraso es el que traía la foto, no el de ahora
   const lag = s => s < 120 ? s + " s" : Math.round(s / 60) + " min", slow = [];  // en minutos para quien lee, y un solo aviso
@@ -2220,6 +2220,7 @@ function alertsHtml() {
     (gaps.length ? `<div class="warn">El libro no cuadra con Kalshi en ${gaps.map(x => esc(x.ticker) + " (libro " + x.book + ", Kalshi " + x.kalshi + ")").join(", ")}. Se arregla con <b>python -m pipelines.panel cuenta rehacer</b>.</div>` : "") +
     (!PUBLIC && (S.errors || {}).avisos ? `<div class="warn">${esc(S.errors.avisos)}</div>` : "") +  // el fallo de los avisos al teléfono no es una fuente que no responde
     (!PUBLIC && (S.errors || {}).cierres ? `<div class="warn">No pude leer las capturas guardadas, así que el precio de cierre queda sin dato por ahora. Se vuelve a intentar solo.</div>` : "") +  // la búsqueda de cierres tampoco es una fuente en vivo
+    (!PUBLIC && (S.errors || {}).previa ? `<div class="warn">La captura de antes del partido lleva varias pasadas sin poder guardar las alineaciones o los precios, que sirven para medir el modelo de jugadores. Se vuelve a intentar sola en la hora previa a cada partido.</div>` : "") +  // la captura previa guarda datos, no pinta nada: su fallo se dice con sus palabras
     (errors.length ? `<div class="warn">${PUBLIC ? "Al sacar la foto no respondían " + errors.join(" ni ") + ". Se muestra lo último que se vio." : "Una fuente no responde y se muestra lo último que se vio: " + errors.map(esc).join(", ") + "."}</div>` : "") +
     late.map(text => `<div class="warn">${text}</div>`).join("");
 }
