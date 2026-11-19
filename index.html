@@ -325,7 +325,7 @@ body.public .m-act { display: none; }
 @media (min-width: 1100px) {
   .wide-only { display: inline-flex; }
   body { padding-left: 240px; }
-  body.has-pane { padding-right: 420px; }
+  body.has-pane { padding-right: var(--panew, 420px); }
   .wrap { max-width: 1312px; padding: 26px 36px 48px; }  /* 1240 px de contenido y 36 de margen a cada lado */
   body.has-pane .wrap { padding-left: 24px; padding-right: 24px; }
   .topbar { display: none; }
@@ -432,10 +432,14 @@ body.public .m-act { display: none; }
   #history .row { min-height: 0; padding: 10px 16px; }
 
   /* 5. El detalle en un panel a la derecha: la lista se queda quieta y el detalle se ve al lado */
-  .pane { display: flex; flex-direction: column; position: fixed; top: 0; right: 0; bottom: 0; z-index: 8; width: 420px; background: var(--base); border-left: .5px solid var(--line); }
+  .pane { display: flex; flex-direction: column; position: fixed; top: 0; right: 0; bottom: 0; z-index: 8; width: var(--panew, 420px); background: var(--base); border-left: .5px solid var(--line); }
+  .grip { position: absolute; left: -11px; top: 0; bottom: 0; width: 22px; z-index: 5; cursor: col-resize; touch-action: none; }
+  .grip::after { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: transparent; }
+  .grip:hover::after, .grip.on::after, .grip:focus-visible::after { background: var(--blue); }
+  .grip:focus-visible { outline: none; }
   .pane-head { display: flex; align-items: flex-start; gap: 12px; padding: 18px 16px 12px 20px; border-bottom: .5px solid var(--line); }
   .pane-head > div { flex: 1; min-width: 0; } .pane-head h2 { font: 700 20px/1.25 var(--font); letter-spacing: -.3px; text-wrap: balance; } .pane-head .sub { margin-top: 2px; }
-  .pane-x { flex: none; width: 36px; min-height: 36px; padding: 0; border-radius: 50%; font-size: 15px; line-height: 1; color: var(--ink2); }
+  .pane-x { flex: none; width: 44px; min-height: 44px; padding: 0; border-radius: 50%; font-size: 15px; line-height: 1; color: var(--ink2); }
   .pane-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 24px; }
   .pane .sheet > .cap:first-child { margin-top: 12px; }
   .pane .card-actions { position: sticky; bottom: 0; padding: 8px 0 4px; background: var(--base); }
@@ -474,7 +478,7 @@ body.public .m-act { display: none; }
 .pr-l { color: var(--ink2); font-size: 12px; margin-top: 6px; }
 .pr.compact { gap: 2px; }
 .seg { display: grid; grid-template-columns: 1fr 1fr; padding: 2px; border-radius: 10px; background: var(--card2); }
-.seg button { min-height: 36px; padding: 7px 0; border-radius: 8px; background: transparent; color: var(--ink2); font: 600 14px/1.2 var(--font); }
+.seg button { min-height: 44px; padding: 7px 0; border-radius: 8px; background: transparent; color: var(--ink2); font: 600 14px/1.2 var(--font); }
 .seg button[aria-pressed="true"] { background: #636366; color: #fff; }
 .ptab { --nc: 40px; }
 .ptab .r { display: grid; grid-template-columns: minmax(0, 1fr) repeat(5, var(--nc)); align-items: center; padding: 9px 12px; font-size: 14px; }
@@ -487,8 +491,6 @@ body.public .m-act { display: none; }
 .ptab .sel, .ptab button.sel:hover { background: rgb(10 132 255 / .2); box-shadow: inset 0 0 0 1.5px var(--blue); }
 .tag { display: inline-block; font: 600 12px/1.3 var(--font); font-style: normal; padding: 0 7px; border-radius: 6px; margin-left: 4px; vertical-align: 1px; }
 .tag.dud { background: rgb(255 159 10 / .18); color: var(--orange); } .tag.out { background: rgb(255 69 58 / .18); color: var(--red); }
-.two-t { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
-.two-t .ptab { --nc: 30px; } .two-t .ptab .r { padding: 9px 6px; font-size: 13px; }
 .sh-t { font: 700 20px/1.25 var(--font); letter-spacing: -.3px; }
 .grab { width: 36px; height: 5px; border-radius: 3px; background: rgb(255 255 255 / .3); margin: 0 auto 12px; }
 .ladders { margin-top: 6px; }
@@ -504,13 +506,110 @@ body.public .m-act { display: none; }
 .sw-l { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 6px; }
 .sw { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 2px solid transparent; } .sw.mas { border-color: var(--blue); } .sw.menos { border-color: var(--orange); }
 .sw + .sw, .sw ~ .sw { margin-left: 8px; }
-.pg-act { display: flex; justify-content: flex-end; margin: 0 -6px -6px 0; }
 .psec { display: flex; flex-direction: column; gap: 12px; }
 @media (max-width: 1099px) { #props { order: 1; } #signals-aside { order: 2; } }
 @media (min-width: 1100px) {
   #props { grid-column: 1; grid-row: 4; } body.has-pane #props { grid-row: 5; }
 }
-@media (max-width: 380px) { .ptab { --nc: 34px; } .ptab .r { padding: 9px 8px; font-size: 13px; } .two-t .ptab { --nc: 28px; } }
+@media (max-width: 380px) { .ptab { --nc: 34px; } .ptab .r { padding: 9px 8px; font-size: 13px; } }
+/* Partidos: la lista de tarjetas que se tocan enteras y el detalle de cada partido. Nada baja de 12 px */
+a { color: inherit; text-decoration: none; }
+.back { padding-left: 0; align-self: flex-start; }
+details > .stack { margin-top: 4px; }
+.gcard { display: block; padding: 14px 38px 14px 16px; scroll-margin: 70px 0 24px; cursor: pointer; }
+.gcard:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.gcard::after { content: ""; position: absolute; right: 16px; top: 50%; width: 8px; height: 8px; border: solid var(--ink2); border-width: 0 2px 2px 0; transform: translateY(-50%) rotate(-45deg); }
+.gcard:hover { filter: brightness(1.12); }
+.gcard .team img { width: 40px; height: 40px; }
+.gcard .team b, .gcard .when b, .ghero .when b { display: block; font: 700 20px/1.1 var(--font); letter-spacing: -.3px; }
+.gcard .when b, .ghero .when b { color: var(--ink); white-space: nowrap; }
+.gcard .when b { font-size: 17px; letter-spacing: -.2px; }
+.gcard .when .sc, .ghero .when .sc { font: 800 26px/1.1 var(--font); letter-spacing: -.6px; }
+.gcard .team small { margin-top: 2px; }
+.gvenue { color: var(--sec); font-size: 13px; margin-top: 10px; }
+.godds { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; margin-top: 8px; color: var(--sec); font-size: 13px; }
+.godds b { color: var(--ink); font-weight: 600; }
+.favbar { position: relative; height: 4px; border-radius: 2px; background: var(--soft); margin-top: 6px; }
+.favbar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 2px; background: var(--blue); }
+.favbar u { position: absolute; left: 50%; top: -3px; width: 1px; height: 10px; background: rgb(255 255 255 / .5); }
+.tagrow { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; } .tagrow:empty { display: none; }
+.pill { display: inline-flex; align-items: center; gap: 6px; min-height: 24px; padding: 2px 10px; border-radius: 999px; background: rgb(255 255 255 / .1); color: var(--ink); font: 600 12px/1.3 var(--font); }
+.pill.sig { background: rgb(255 159 10 / .16); color: var(--orange); }
+.pill.mine { background: rgb(10 132 255 / .22); color: #7fbcff; }
+.ghero { padding: 18px 12px 16px; }
+.ghd { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; align-items: start; }
+.gtv { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; gap: 2px; }
+.gtv img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 4px; }
+.gtv small { color: var(--sec); font-size: 13px; }
+.gtv .nm { font: 700 17px/1.2 var(--font); letter-spacing: -.2px; overflow-wrap: anywhere; }
+.gtv .grec { font: 800 24px/1.1 var(--font); letter-spacing: -.5px; margin-top: 4px; }
+.ghero .when { max-width: 120px; padding-top: 14px; }
+.ghero .when b { font-size: 20px; } .ghero .when .sc { font-size: 30px; }
+.fav-row { padding: 12px 16px; display: grid; gap: 8px; }
+.fav-row .t { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; } .fav-row .t span { color: var(--ink2); } .fav-row .t b { font-weight: 600; }
+.fav-row .favbar { margin-top: 0; }
+.row.weak { padding: 8px 16px; min-height: 0; font-size: 13px; color: var(--ink2); } .row.weak b { color: var(--sec); font-weight: 500; }
+.gsig-top { display: flex; align-items: center; gap: 8px; font: 600 13px/1.3 var(--font); color: var(--sec); }
+.gsig-name { font: 700 26px/1.1 var(--font); letter-spacing: -.5px; }
+.det > .group + .group.deal, .det > .group + .verdict, .det > .group.deal { margin-top: 0; }
+.det > .verdict { color: var(--sec); font-size: 13px; margin: 0 2px; }
+.gform { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; padding: 12px 10px; }
+.gform > div { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; font-size: 12px; color: var(--ink2); line-height: 1.25; }
+.gform b { color: var(--ink); font-weight: 600; font-size: 12px; }
+.fi { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 700 13px/1 var(--font); color: #000; background: var(--green); }
+.fi.l { background: var(--red); }
+.lad { scrollbar-width: none; } .lad::-webkit-scrollbar { display: none; }
+.lad:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+@media (max-width: 430px) { .gcard .team img { width: 34px; height: 34px; } }
+@media (max-width: 360px) { .gcard .team img { width: 28px; height: 28px; } }
+@media (min-width: 1100px) {
+  .shsheet { align-items: center; padding: 24px; }
+  .shsheet > div { width: min(100%, 760px); border-radius: 22px; padding-bottom: 16px; }
+  .lrow { grid-template-columns: 150px minmax(0, 1fr); }
+  .lad { flex-wrap: wrap; overflow: visible; padding-bottom: 0; }
+}
+/* Momentum: el área sube con el local y baja con el visitante. Los rótulos son HTML para que no se encojan con el SVG */
+.mm { padding: 12px 12px 10px; }
+.mm-read { font: 600 14px/1.3 var(--font); min-height: 20px; } .mm-read.idle { color: var(--ink2); font-weight: 500; font-size: 13px; }
+.mm-plot { position: relative; height: 190px; margin-top: 8px; touch-action: pan-y; cursor: crosshair; -webkit-user-select: none; user-select: none; border-radius: 6px; }
+.mm-plot:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.mm-plot svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.mm-yl { position: absolute; left: 4px; font: 500 12px/1 var(--font); color: var(--ink2); pointer-events: none; }
+.mm-yl.u { transform: translateY(-115%); } .mm-yl.d { transform: translateY(15%); }
+.mm-dot { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; border: 2px solid #000; pointer-events: none; }
+.mm-end { position: absolute; padding: 1px 7px; border-radius: 6px; background: rgb(0 0 0 / .62); font: 700 13px/1.35 var(--font); white-space: nowrap; pointer-events: none; transform: translateY(-135%); }
+.mm-end.low { transform: translateY(35%); }
+.mm-guide { position: absolute; top: 0; bottom: 0; width: 1px; margin-left: -.5px; background: rgb(255 255 255 / .75); pointer-events: none; }
+.mm-ax { position: relative; height: 20px; margin-top: 4px; }
+.mm-ax span { position: absolute; top: 0; transform: translateX(-100%); padding-right: 4px; font: 600 12px/1.6 var(--font); color: var(--ink2); }
+.mm-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px 8px; margin-top: 10px; padding-top: 10px; border-top: .5px solid var(--line); }
+.mm-stats > div { display: flex; flex-direction: column; justify-content: space-between; }
+.mm-stats .k { display: block; color: var(--ink2); font: 500 12px/1.3 var(--font); }
+.mm-stats b { display: block; font: 700 17px/1.25 var(--font); letter-spacing: -.3px; }
+.mm .gnote { padding: 8px 0 0; }
+.mm-mini { height: 28px; margin-top: 10px; border-radius: 6px; overflow: hidden; background: rgb(255 255 255 / .05); }
+.mm-mini svg { display: block; width: 100%; height: 100%; }
+.qt .r { display: grid; grid-template-columns: minmax(0, 1fr) repeat(var(--n, 4), 34px) 46px; align-items: center; padding: 10px 16px; font-size: 14px; min-height: 44px; }
+.qt .r > span + span { text-align: right; }
+.qt .hd { color: var(--ink2); font-size: 12px; font-weight: 600; min-height: 0; padding-top: 8px; padding-bottom: 8px; }
+.qt .r b { font-weight: 700; }
+/* Calculadora de la hoja del jugador: el modelo solo, con la curva completa de cada estadística */
+.pcalc { background: var(--card); border-radius: 16px; padding: 14px 14px 12px; margin: 4px 0 16px; display: flex; flex-direction: column; gap: 10px; }
+.pcalc:empty { display: none; }
+.pcalc .cap { margin: 0; }
+.pc-pick { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.pc-pick label { flex: 1 1 200px; min-width: 0; }
+.pc-pick select, .pc-pick input { background: var(--card2); }
+.pc-num { display: flex; align-items: stretch; gap: 6px; flex: 0 0 auto; }
+.pc-num input { width: 96px; text-align: center; font-weight: 700; font-size: 18px; -moz-appearance: textfield; }
+.pc-num button { flex: none; min-width: 44px; min-height: 44px; padding: 0; border-radius: 10px; background: var(--card2); color: var(--ink); font: 600 22px/1 var(--font); }
+.pc-res { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pc-card { background: var(--card2); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pc-card .k { color: var(--ink2); font: 600 13px/1.3 var(--font); }
+.pc-card b { font: 800 28px/1.15 var(--font); letter-spacing: -.6px; overflow-wrap: anywhere; }
+.pc-card .s { color: var(--sec); font: 500 13px/1.3 var(--font); }
+.pc-exp { color: var(--ink2); font-size: 13px; } .pc-exp b { color: var(--ink); font-weight: 600; }
+.pcalc .gfoot { margin: 0; }
 /* El logo junto al nombre: el mismo del ícono */
 .mark { height: .78em; width: auto; margin-right: .36em; vertical-align: -.04em; fill: var(--ink); flex: none; } .mark .g { fill: var(--green); }
 </style>
@@ -553,7 +652,7 @@ body.public .m-act { display: none; }
     <div id="props" class="psec"></div>
   </section>
   <section id="tab-games" class="stack" role="tabpanel" hidden>
-    <div class="head"><div class="title-row"><h2 class="title">Partidos</h2></div>
+    <div class="head" id="games-head"><div class="title-row"><h2 class="title">Partidos</h2></div>
     <p class="lede" id="games-sub"></p></div>
     <div id="games" class="stack"><div class="empty">Cargando partidos.</div></div>
     <div id="picks" class="stack"></div>
@@ -592,6 +691,7 @@ body.public .m-act { display: none; }
 </div>
 <div class="shsheet" id="over" hidden role="dialog" aria-modal="true" aria-labelledby="over-t"><div><div class="grab"></div><h3 class="sh-t" id="over-t"></h3><p class="sub" id="over-s"></p><div id="over-b"></div><div class="acts"><button type="button" data-over-close>Cerrar</button></div></div></div>
 <aside class="pane" id="pane" hidden aria-label="Detalle">
+  <div class="grip" id="grip" role="separator" aria-orientation="vertical" aria-label="Ancho del detalle. Flechas izquierda y derecha para ensanchar o angostar, Inicio y Fin para el mínimo y el máximo, doble clic para volver al ancho normal" aria-valuemin="360" aria-valuemax="660" aria-valuenow="420" tabindex="0" title="Arrastra para ensanchar. Doble clic para volver al ancho normal"></div>
   <div class="pane-head"><div><h2 id="pane-title"></h2><p class="sub" id="pane-sub"></p></div><button class="pane-x" id="pane-x" type="button" data-pane-close aria-label="Cerrar el detalle">✕</button></div>
   <div class="pane-body" id="pane-body"></div>
 </aside>
@@ -653,10 +753,13 @@ const DETAIL = {bets: null, signals: null, games: null};  // el detalle abierto 
 const PR = {stat: "all", team: {}};  // el filtro de estadística y el equipo elegido en cada partido
 const GD = {game: null};  // el partido abierto en la pestaña Partidos
 const OVER = {key: null};  // la hoja abierta: "how" (cómo se mide) o un jugador, en teléfono
+const MM = {id: null, t: null};  // la lectura puesta en la gráfica de momentum: de qué partido y a qué segundo
+const CURVES = new Map();  // las curvas de cada partido que ya se pidieron: cargando, listas o sin sello todavía
+const CALCS = new Map();  // lo que cada jugador lleva en su calculadora: la estadística y lo escrito
 const SHEETS = new Map();  // el detalle de cada apuesta y de cada señal en este repintado, para el panel
 const NIL = "n/d", OPEN = new Set(), GOOD = 0.6, BAD = 0.4;  // de 60% para arriba "va bien", por debajo de 40% "va mal"
 const PUBLIC = true;  // la copia que se publica para los amigos lleva true: solo lectura, con la foto que sube la PC
-const BUILD = 1795035629;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
+const BUILD = 1795049942;  // la versión de esta página: al publicar la sustituye la fecha del archivo. Con 0 se compara contra la primera foto vista
 let PAGEV = null;  // versión de la primera foto vista: solo se usa con BUILD en 0
 const you = (mine, theirs) => PUBLIC ? theirs : mine;  // la copia pública habla de su dueño en tercera persona
 const owner = () => (S && S.public && S.public.name) || "la casa";
@@ -692,7 +795,30 @@ const snapAt = () => hour(new Date(S.now));
 const endDot = t => t.endsWith(".") ? t : t + ".";  // la hora de es-GT ya termina en punto ("p. m."): al cerrar la frase no se duplica
 const asNow = () => PUBLIC && S ? "las " + snapAt() : "ahora";
 const modelNote = s => s.p_source === "marcador" ? (PUBLIC ? ", con el marcador de las " + snapAt() : " en vivo") : "";
-function put(id, html) { const el = $(id); if (el._html !== html) { el.innerHTML = html; el._html = html; } }
+// Al repintar un bloque, el foco vuelve al mismo botón o tarjeta si sigue existiendo: el repintado de cada 5 segundos no lo quita.
+function focusSel(el) {
+  const attrs = [...el.attributes].filter(a => a.name.startsWith("data-")).map(a => "[" + a.name + '="' + CSS.escape(a.value) + '"]').join("");
+  return attrs ? el.tagName.toLowerCase() + attrs : el.id ? "#" + CSS.escape(el.id) : null;
+}
+// Dos bloques viven aparte del repintado: la calculadora y la gráfica de momentum (data-hold). Se sacan antes de rehacer el bloque y vuelven a su lugar,
+// la gráfica con sus partes nuevas (data-part), para no perder lo escrito, la lectura puesta ni el puntero.
+function refill(el, html) {
+  const f = document.activeElement, sel = f && f !== document.body && el.contains(f) ? focusSel(f) : null;
+  const held = [...el.querySelectorAll("[data-hold]")];
+  for (const n of held) n.remove();
+  el.innerHTML = html; el._html = html;
+  for (const slot of el.querySelectorAll("[data-hold]")) {
+    const old = held.find(n => n.dataset.hold === slot.dataset.hold);
+    if (!old) continue;
+    for (const part of slot.querySelectorAll("[data-part]")) { const into = old.querySelector('[data-part="' + part.dataset.part + '"]'); if (into) into.innerHTML = part.innerHTML; }
+    if (slot.dataset.up) old.dataset.up = slot.dataset.up;
+    slot.replaceWith(old);
+  }
+  for (const n of el.querySelectorAll("[data-hold]")) holdFix(n);
+  const again = sel && el.querySelector(sel);
+  if (again) again.focus({preventScroll: true});
+}
+function put(id, html) { const el = $(id); if (el._html !== html) refill(el, html); }
 // Lo que el usuario despliega se queda desplegado aunque la página se vuelva a pintar cada pocos segundos.
 document.addEventListener("toggle", e => { const key = e.target.dataset && e.target.dataset.keep; if (key) e.target.open ? OPEN.add(key) : OPEN.delete(key); }, true);
 
@@ -717,7 +843,7 @@ function paintPane() {
   if (!sh) return;  // sin el detalle de este repintado se deja lo último que se mostró
   const html = '<div class="sheet">' + sh.body + "</div>", top = pane.dataset.key === key ? box.scrollTop : 0;
   $("pane-title").textContent = sh.title; $("pane-sub").textContent = sh.sub;
-  if (box._html !== html) { box.innerHTML = html; box._html = html; }
+  if (box._html !== html) refill(box, html);
   box.scrollTop = top; pane.dataset.key = key;
 }
 function openDetail(key) {
@@ -736,11 +862,40 @@ const backTo = key => { const b = document.querySelector('[data-detail="' + CSS.
 // Al pasar de PC a teléfono (o al revés) el detalle cambia de lugar y el pie de la página también.
 function layout() {
   (WIDE.matches ? $("dock-foot") : $("wrap")).appendChild($("foot-box"));
-  if (WIDE.matches && OVER.key && OVER.key !== "how") OVER.key = null;
+  if (WIDE.matches && GD.game) { DETAIL.games = "game-" + GD.game; GD.game = null; }
+  if (!WIDE.matches && DETAIL.games) { GD.game = DETAIL.games.slice(5); DETAIL.games = null; }
   if (!WIDE.matches) for (const tab of Object.keys(DETAIL)) if (DETAIL[tab]) { OPEN.add(DETAIL[tab]); DETAIL[tab] = null; }  // lo que estaba en el panel queda desplegado en su tarjeta
   if (S) paint(); else paintPane();
 }
 WIDE.addEventListener("change", layout);
+// El panel derecho se ensancha arrastrando su borde izquierdo. Mínimo 360 px y máximo 60% de la ventana, sin dejar la lista con menos de 380 px.
+// El ancho se recuerda si el navegador deja guardarlo.
+const PW = {min: 360, def: 420, key: "rodrindex-ancho-panel", w: 420, want: 420, grab: false};
+const cw = () => document.documentElement.clientWidth;
+const pwMax = () => Math.max(PW.min, Math.min(Math.floor(innerWidth * 0.6), innerWidth - 240 - 380));
+function setPW(w, save, keep) {
+  if (!keep) PW.want = w;
+  PW.w = Math.min(pwMax(), Math.max(PW.min, Math.round(w)));
+  document.documentElement.style.setProperty("--panew", PW.w + "px");
+  const grip = $("grip");
+  grip.setAttribute("aria-valuenow", String(PW.w)); grip.setAttribute("aria-valuemax", String(pwMax()));
+  if (!save) return;
+  try { localStorage.setItem(PW.key, String(PW.w)); } catch (e) { /* sin memoria del navegador, vale hasta cerrar la página */ }
+}
+try { const v = Number(localStorage.getItem(PW.key)); if (v > 0) PW.want = v; } catch (e) { /* se queda en el ancho normal */ }
+setPW(PW.want, false);
+$("grip").addEventListener("pointerdown", e => { e.preventDefault(); PW.grab = true; $("grip").classList.add("on"); try { $("grip").setPointerCapture(e.pointerId); } catch (err) { PW.grab = true; } });
+$("grip").addEventListener("pointermove", e => { if (PW.grab) setPW(cw() - e.clientX, false); });
+const letGo = () => { if (!PW.grab) return; PW.grab = false; $("grip").classList.remove("on"); setPW(PW.w, true); };
+$("grip").addEventListener("pointerup", letGo);
+$("grip").addEventListener("pointercancel", letGo);
+$("grip").addEventListener("keydown", e => {
+  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+  e.preventDefault();
+  setPW(e.key === "Home" ? PW.min : e.key === "End" ? pwMax() : PW.w + (e.key === "ArrowLeft" ? 24 : -24), true);
+});
+$("grip").addEventListener("dblclick", () => setPW(PW.def, true));
+window.addEventListener("resize", () => setPW(PW.want, false, true));
 $("tabs").addEventListener("click", e => { const b = e.target.closest("button[data-tab]"); if (b) { showTab(b.dataset.tab); window.scrollTo(0, 0); } });
 document.addEventListener("click", e => {
   const d = e.target.closest("[data-detail]");
@@ -899,12 +1054,12 @@ function spark(p) {
     <p class="read">${esc(reading(p, pts, model, market))}</p>`;
 }
 // El porqué de una señal: lo que empuja a favor y lo que empuja en contra, de lo que más pesa a lo que menos.
-function whyBlock(s, title) {
+function whyBlock(s, title, plain) {
   const w = s && s.why;
   if (!w || !(w.for.length + w.against.length)) return "";
   const row = (r, pro) => `<div class="why"><i class="${pro ? "yes" : "no"}" aria-hidden="true">${pro ? "+" : "−"}</i><div><span class="sr">${pro ? "A favor: " : "En contra: "}</span>${esc(r.text)}${r.note ? `<em>${esc(r.note)}</em>` : ""}</div></div>`;
   // Primero la conclusión de una línea y después las razones, de la que más pesa a la que menos.
-  return `<h4 class="cap">Por qué</h4><div class="group"><div class="ghead">${esc(title)}</div>
+  return `${plain ? "" : '<h4 class="cap">Por qué</h4>'}<div class="group">${plain ? "" : `<div class="ghead">${esc(title)}</div>`}
     <p class="concl">Todo junto, el modelo espera <b>${w.points.toFixed(1)} puntos</b> de ventaja contra la línea de apertura. Pide ${w.cut.toFixed(1)} para llamarla señal fuerte.</p>${w.for.map(r => row(r, true)).join("")}${w.against.map(r => row(r, false)).join("")}
     <p class="gnote">De las bajas solo sabe quién faltó en el partido anterior: no conoce el reporte de hoy.</p></div>`;
 }
@@ -920,7 +1075,7 @@ const STATUS = {Out: ["Fuera", "bad"], Doubtful: ["Casi seguro fuera", "bad"], Q
 // Los lesionados van plegados, con en el título cuánto le falta a cada equipo.
 function injuryBlock(g, from) {
   const inj = g && g.injuries;
-  if (!inj) return "";
+  if (!inj || !inj.home || !inj.away) return "";
   const team = side => {
     const t = inj[side], head = `<div class="who">${logo(g[side], 22)}<span>${esc(g[side].city || g[side].abbr)}</span>${t.listed && t.submitted && t.missing != null ? `<span class="mis">le falta ${pct(t.missing)}</span>` : ""}</div>`;  // sin reporte enviado el 0 es de relleno, no una medida
     if (!t.listed) return head + '<div class="row msg"><span>El último reporte todavía no trae a este equipo para este partido.</span></div>';
@@ -1068,7 +1223,7 @@ function dealBox(s, o, near) {
   return `<div class="group deal"><div class="deal-top"><div><small>${you("Cómo se compra en Kalshi", "Contrato en Kalshi")}${near ? " · línea cercana" : ""}${held ? you(" · ya la tienes", " · " + esc(owner()) + " ya la tiene") : ""}</small><b><span class="side">${o.yes ? "SÍ" : "NO"}</span> en «${esc(o.title_es || o.title)}»</b></div><div class="price">${o.price == null ? '<span class="sub">sin oferta</span>' : cents(o.price)}</div></div>` + bookBox(s, o) +
     (o.p_model == null || o.needed == null ? "" : `<div class="versus"><span>Modelo${modelNote(s)}</span><div class="b"><i style="width:${100 * o.p_model}%"></i></div><b>${prob(o.p_model)}</b>
       <span>${you("Tu costo sería", "Costo con comisión")}</span><div class="b"><i class="cost" style="width:${100 * o.needed}%"></i></div><b>${cents(o.needed)}</b></div>`) +
-    (verdict ? `<p class="verdict">${verdict}</p>` : "") + `<div class="card-actions"><button class="link" data-act="buy" data-game="${s.game_id}" data-ticker="${esc(o.ticker)}" data-side="${o.yes ? "yes" : "no"}">${held ? "Anotar otra compra" : "Anotar compra"}</button></div></div>`;
+    (verdict ? `<p class="verdict">${verdict}</p>` : "") + (PUBLIC ? "" : `<div class="card-actions"><button class="link" data-act="buy" data-game="${s.game_id}" data-ticker="${esc(o.ticker)}" data-side="${o.yes ? "yes" : "no"}">${held ? "Anotar otra compra" : "Anotar compra"}</button></div>`) + "</div>";
 }
 // Una celda de resultados: con menos de 10 casos el dato principal es "X de Y" y el porcentaje queda atenuado.
 const rate = c => !c || !c.bets ? `<small>${NIL}</small>` : c.bets < 10 ? `<b>${c.wins} de ${c.bets}</b><small>${Math.round(100 * c.wins / c.bets)}%</small>` : `<b>${Math.round(100 * c.wins / c.bets)}%</b><small>${c.wins} de ${c.bets}</small>`;
@@ -1282,36 +1437,412 @@ function renderProps() {
     `<div class="empty">No hay diferencias de 5 puntos o más${PR.stat === "all" ? "" : " en " + PNAME[PR.stat].toLowerCase()} por ahora.</div>`;
   put("props", head + priced + card + chips + body + '<p class="pfoot">Cada grupo muestra solo las mayores diferencias. Es lo que marca el modelo. No es una recomendación de apuesta.</p>');
 }
-// El detalle de un partido en Partidos: los promedios que espera el modelo de cada jugador y sus mayores diferencias con Kalshi.
-function gameDetail() {
-  const P = S.props || {}, G = (P.games || []).find(x => x.game === GD.game);
-  if (!G) { GD.game = null; DETAIL.games = null; return false; }
-  const g = gameOf(G.game), wide = WIDE.matches, picked = PR.team[G.game] || G.home;
-  const sp = G.line ? `Total ${G.line.total} · ${esc(G.home)} ${G.line.home_spread < 0 ? "−" : "+"}${Math.abs(G.line.home_spread)}` : "Sin línea todavía";
-  const key = (p, i) => "pl-" + G.game + "-" + (p.id != null ? p.id : i);
-  const table = team => {
-    const list = G.players.map((p, i) => [p, i]).filter(([p]) => p.team === team).sort((a, b) => (b[0].min || 0) - (a[0].min || 0));
-    const row = ([p, i]) => {
-      const k = key(p, i), m = p.mean || {};
-      SHEETS.set(k, {title: p.name, sub: `${p.team} · ${f1(p.min)} minutos esperados${p.status ? " · " + p.status : ""}`, body: ladders(p)});
-      return `<button type="button" class="r${p.status === "Fuera" ? " fuera" : ""}${DETAIL.games === k ? " sel" : ""}" data-pl="${esc(k)}" aria-label="Escalera de ${esc(p.name)}"><span class="nm">${esc(p.name)}${p.status ? ` <i class="tag ${p.status === "Fuera" ? "out" : "dud"}">${esc(p.status)}</i>` : ""}</span><span>${f1(p.min)}</span><span>${f1(m.pts)}</span><span>${f1(m.reb)}</span><span>${f1(m.ast)}</span><span>${f1(m.fg3m)}</span></button>`;
-    };
-    return `<div class="group ptab"><div class="who">${logo(teamOf(team), 22)}<span>${esc(team)}</span></div><div class="r hd"><span>Jugador</span><span>Min</span><span>Pts</span><span>Reb</span><span>Ast</span><span>Tri</span></div>${list.length ? list.map(row).join("") : '<p class="gnote">Sin jugadores para este equipo.</p>'}</div>`;
-  };
-  const seg = `<div class="seg" role="group" aria-label="Equipo">${[G.home, G.away].map(t => `<button type="button" data-pt="${esc(t)}" aria-pressed="${t === picked}">${esc(t)}</button>`).join("")}</div>`;
-  const tables = wide ? `<div class="two-t">${table(G.home)}${table(G.away)}</div>` : seg + table(picked);
-  if (!wide) table(picked === G.home ? G.away : G.home);
-  const best = G.best || [];
-  const board3 = scoreRow({home: G.home, away: G.away}, g);
-  put("games-sub", "");
-  put("games", `<button type="button" class="link back" data-pg="">‹ Partidos</button>
-    <div class="game" style="${tints(g)}">${board3}<div class="bet"><div><h3>${esc(G.away)} en ${esc(G.home)}</h3><p>${sp}</p></div></div></div>
-    <div class="sec-row"><h3 class="h-sec">Jugadores</h3><span class="etq">En observación</span></div>${tables}
-    <p class="gfoot">Promedios que espera el modelo si el jugador juega.</p>
-    <h4 class="cap">Mayores diferencias con Kalshi en este partido</h4>
-    ${best.length ? `<div class="stack">${best.map(r => propCard(r, false)).join("")}</div>` : '<p class="sub">Sin precios de Kalshi para comparar en este partido.</p>'}`);
-  return true;
+// --- Partidos: la lista de tarjetas y el detalle de cada partido. Lo que falta se omite o dice n/d ---
+const has = v => v != null && !(typeof v === "number" && isNaN(v));
+const ucf = s => s.charAt(0).toUpperCase() + s.slice(1);
+const shortDay = t => ucf(day(t, {weekday: "short", day: "numeric", month: "short"}).replace(/[.,]/g, ""));
+const dayWord = g => jornada(g.tipoff) === slate() ? "Hoy" : shortDay(g.tipoff);
+const gRec = (g, side, kind) => { const r = g.info && g.info.records && g.info.records[side]; return r && r[kind] ? r[kind] : ""; };
+const gVenue = g => { const v = g.info && g.info.venue; return v ? [v.city, v.name].filter(Boolean).join(" · ") : ""; };
+const gScore = g => has(g.away.score) && has(g.home.score) ? g.away.score + "-" + g.home.score : NIL;
+const gFinal = g => g.state === "post" && g.status === "STATUS_FINAL";
+const gLine = g => {
+  if (!g.line || !has(g.line.margin)) return "Sin línea todavía";
+  const side = g.line.margin === 0 ? "Parejo" : g.home.abbr + " " + (g.line.margin > 0 ? "−" : "+") + Math.abs(g.line.margin);
+  return side + (has(g.line.total) ? " · total " + g.line.total : "");
+};
+const gFav = g => !has(g.p_home) || g.state === "post" ? null : g.p_home >= 0.5 ? {abbr: g.home.abbr, p: g.p_home} : {abbr: g.away.abbr, p: 1 - g.p_home};
+const gSignals = g => (S.signals || []).filter(s => s.game_id === g.id);
+const gStrong = g => gSignals(g).filter(s => s.strength).sort((a, b) => (b.strength === "0.1") - (a.strength === "0.1"));
+const gBets = g => (S.positions || []).filter(p => p.game && p.game.id === g.id);
+const strengthWord = s => s.strength === "0.1" ? "Señal muy fuerte" : "Señal fuerte";
+const meterHtml = top => `<span class="meter"><span aria-hidden="true"><i></i><i></i><i${top ? "" : ' class="off"'}></i></span></span>`;
+const favBar = (fav, label) => `<div class="favbar" role="img" aria-label="${esc(label + ": " + fav.abbr + " " + pct(fav.p))}"><i style="width:${Math.round(100 * fav.p)}%"></i><u></u></div>`;
+const gKey = id => "game-" + id;
+const LISTAT = {y: 0};
+
+// --- Momentum: cómo fue cambiando el marcador de un partido en juego o terminado. Cada escalón es una canasta de las jugadas de ESPN ---
+const REG = 2880, QLEN = 720, OTLEN = 300;
+const pStart = n => n <= 4 ? (n - 1) * QLEN : REG + (n - 5) * OTLEN;
+const rowAt = (rows, t) => { let r = rows[0]; for (const x of rows) { if (x[0] <= t) r = x; else break; } return r; };
+const mmKey = g => String(g.id).replace(/[^A-Za-z0-9]/g, "");
+// Los puntos de g.flow ya listos para dibujar. Sin partido en juego o terminado, o con menos de dos puntos, no hay gráfica.
+function mmOf(g) {
+  const f = g.flow, live = g.state === "in";
+  if (!f || !Array.isArray(f.points) || (!live && g.state !== "post")) return null;
+  const flow = f.points.filter(r => Array.isArray(r) && has(r[0]) && has(r[1]) && has(r[2])).sort((a, b) => a[0] - b[0]);
+  if (flow.length < 2) return null;
+  const last = flow[flow.length - 1][0], per = Math.max(1, Number(g.period) || 1);
+  const wp = Array.isArray(f.wp) ? f.wp.filter(r => Array.isArray(r) && has(r[0]) && has(r[1])).sort((a, b) => a[0] - b[0]) : [];
+  const endOf = n => n <= 4 ? n * QLEN : REG + (n - 4) * OTLEN;
+  if (live) {
+    const len = per <= 4 ? QLEN : OTLEN, end = endOf(per), at = end - Math.min(len, Math.max(0, Number(g.clock) || 0));
+    return {flow, wp, live, upto: Math.min(end, Math.max(last, at)), domain: per > 4 ? end : REG};
+  }
+  const base = per > 4 ? endOf(per) : REG, domain = last > base ? REG + OTLEN * Math.ceil((last - REG) / OTLEN) : base;
+  return {flow, wp, live, upto: domain, domain};
 }
+function rgbOf(t) {
+  let h = t && /^([0-9a-f]{3}){1,2}$/i.test(t.color || "") ? t.color : "8e8e93";
+  if (h.length === 3) h = [...h].map(c => c + c).join("");
+  return [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+}
+// El color de cada equipo se aclara si queda muy oscuro sobre el fondo negro, y si los dos se parecen el visitante pasa a gris
+function lighten(c) {
+  let [r, g, b] = c, n = 0;
+  while (0.2126 * r + 0.7152 * g + 0.0722 * b < 120 && n++ < 24) { r += (255 - r) * 0.12; g += (255 - g) * 0.12; b += (255 - b) * 0.12; }
+  return [r, g, b].map(Math.round);
+}
+function mmColors(g) {
+  const h = lighten(rgbOf(g.home));
+  let a = lighten(rgbOf(g.away));
+  if (Math.abs(h[0] - a[0]) + Math.abs(h[1] - a[1]) + Math.abs(h[2] - a[2]) < 90) a = [200, 200, 205];
+  return [h, a].map(c => `rgb(${c[0]} ${c[1]} ${c[2]})`);
+}
+function mmStats(flow, upTo) {
+  let bh = 0, ba = 0, ch = 0, ties = 0, lead = 0, prev = 0;
+  for (const [t, h, a] of flow) {
+    if (t > upTo) break;
+    const d = h - a;
+    bh = Math.max(bh, d); ba = Math.max(ba, -d);
+    if (d === 0 && prev !== 0) ties++;
+    if (d !== 0) { const s = d > 0 ? 1 : -1; if (lead && s !== lead) ch++; lead = s; }
+    prev = d;
+  }
+  return {bh, ba, ch, ties};
+}
+const mmScale = m => { let top = 0; for (const r of m.flow) if (r[0] <= m.upto) top = Math.max(top, Math.abs(r[1] - r[2])); return Math.max(10, Math.ceil((top + 2) / 5) * 5); };
+function mmClock(m, t) {
+  let name, left;
+  if (t > 0 && t % QLEN === 0 && t <= REG) { const q = t / QLEN; return q + "C 0:00"; }
+  if (t < REG) { const q = Math.min(Math.floor(t / QLEN), 3); name = (q + 1) + "C"; left = (q + 1) * QLEN - t; }
+  else { const last = Math.max(0, Math.ceil((m.domain - REG) / OTLEN) - 1), k = Math.min(Math.floor((t - REG) / OTLEN), last); name = k === 0 ? "TE" : (k + 1) + "TE"; left = REG + (k + 1) * OTLEN - t; }
+  const s = Math.max(0, Math.round(left));
+  return name + " " + Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+}
+const mmRead = (g, m, t) => { const r = rowAt(m.flow, t); return mmClock(m, t) + " · " + g.home.abbr + " " + r[1] + ", " + g.away.abbr + " " + r[2]; };
+function mmSaid(g, m, upTo) {
+  const r = rowAt(m.flow, upTo), s = mmStats(m.flow, upTo), h = g.home.abbr, a = g.away.abbr;
+  const when = m.live ? (PUBLIC && !g.over ? "En juego, " : "En vivo, ") + mmClock(m, upTo) : g.period > 4 ? "Final en tiempo extra" : "Final";
+  return `Gráfica de momentum de ${a} en ${h}. ${when}: ${h} ${r[1]}, ${a} ${r[2]}. Mayor ventaja de ${h} ${s.bh} puntos y de ${a} ${s.ba}. ${plural(s.ch, "cambio de líder", "cambios de líder")} y ${plural(s.ties, "empate", "empates")}.`;
+}
+// El área en escalones: arriba del cero va el local y abajo el visitante. La tirita de la tarjeta es la misma gráfica sin ejes ni rótulos.
+function mmShape(g, m, upTo, mini) {
+  const ym = mmScale(m), id = "mm" + mmKey(g) + (mini ? "m" : "p"), [ch, ca] = mmColors(g);
+  const X = t => (1000 * t / m.domain).toFixed(1), Y = d => (200 * (1 - (d + ym) / (2 * ym))).toFixed(1), z = Y(0);
+  const pts = [];
+  for (const r of m.flow) if (r[0] <= upTo) pts.push([r[0], r[1] - r[2]]);
+  if (!pts.length) pts.push([0, 0]);
+  const last = pts[pts.length - 1];
+  if (last[0] < upTo) pts.push([upTo, last[1]]);
+  let steps = "";
+  for (let i = 1; i < pts.length; i++) steps += "H" + X(pts[i][0]) + "V" + Y(pts[i][1]);
+  const line = "M" + X(pts[0][0]) + "," + Y(pts[0][1]) + steps, area = "M" + X(pts[0][0]) + "," + z + "V" + Y(pts[0][1]) + steps + "V" + z + "Z";
+  const ln = (x1, x2, y1, y2, o) => `<line x1="${x1}" x2="${x2}" y1="${y1}" y2="${y2}" stroke="rgb(255 255 255 / ${o})" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+  let grid = ln(0, 1000, z, z, mini ? ".25" : ".5");
+  if (!mini) {
+    grid += ln(0, 1000, Y(ym / 2), Y(ym / 2), ".1") + ln(0, 1000, Y(-ym / 2), Y(-ym / 2), ".1");
+    for (let n = 2; pStart(n) < m.domain - 0.5; n++) grid += ln(X(pStart(n)), X(pStart(n)), 0, 200, ".16");
+  }
+  const attrs = mini ? 'aria-hidden="true" focusable="false"' : `role="img" aria-label="${esc(mmSaid(g, m, upTo))}"`;
+  const svg = `<svg viewBox="0 0 1000 200" preserveAspectRatio="none" ${attrs}><defs><clipPath id="${id}u"><rect x="0" y="0" width="1000" height="${z}"/></clipPath><clipPath id="${id}d"><rect x="0" y="${z}" width="1000" height="${200 - z}"/></clipPath></defs>${grid}` +
+    `<path d="${area}" fill="${ch}" fill-opacity=".6" clip-path="url(#${id}u)"/><path d="${area}" fill="${ca}" fill-opacity=".6" clip-path="url(#${id}d)"/><path d="${line}" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width="${mini ? 1 : 1.6}" vector-effect="non-scaling-stroke"/></svg>`;
+  return {svg, ym, d: last[1], x: 100 * upTo / m.domain, y: Y(last[1]) / 2, ch, ca};
+}
+function mmPlotHtml(g, m, upTo) {
+  const s = mmShape(g, m, upTo, false), h = g.home.abbr, a = g.away.abbr, d = s.d;
+  const yl = (v, c, txt) => `<span class="mm-yl ${c}" style="top:${(100 * (1 - (v + s.ym) / (2 * s.ym))).toFixed(1)}%">${txt}</span>`;
+  const word = d > 0 ? h + " +" + d : d < 0 ? a + " +" + (-d) : "Empate";
+  const over = upTo > 0 ? `<i class="mm-dot" style="left:${s.x.toFixed(2)}%;top:${s.y.toFixed(1)}%;background:${d > 0 ? s.ch : d < 0 ? s.ca : "#fff"}"></i><span class="mm-end${s.y < 24 ? " low" : ""}" style="right:calc(${(100 - s.x).toFixed(2)}% + 10px);top:${s.y.toFixed(1)}%">${esc(word)}</span>` : "";
+  return `${s.svg}<div aria-hidden="true">${yl(s.ym, "d", esc(h) + " +" + s.ym)}${yl(0, "u", "0")}${yl(-s.ym, "u", esc(a) + " +" + s.ym)}${over}<i class="mm-guide" hidden></i></div>`;
+}
+function mmStatsHtml(g, m, upTo) {
+  const s = mmStats(m.flow, upTo), [ch, ca] = mmColors(g);
+  const it = (k, v, c) => `<div><span class="k">${k}</span><b${c ? ` style="color:${c}"` : ""}>${v}</b></div>`;
+  return it("Mayor ventaja", esc(g.home.abbr) + " " + (s.bh ? "+" + s.bh : "0"), ch) + it("Mayor ventaja", esc(g.away.abbr) + " " + (s.ba ? "+" + s.ba : "0"), ca) + it("Cambios de líder", String(s.ch)) + it("Empates", String(s.ties));
+}
+// La tabla por cuartos de g.flow.lines: en vivo o con el resultado
+function gQuarters(g, live) {
+  const L = g.flow && g.flow.lines;
+  if (!L || !Array.isArray(L.home) || !Array.isArray(L.away)) return "";
+  const cell = (a, i) => has(a[i]) ? String(a[i]) : NIL, tot = a => a.reduce((x, y) => x + (has(y) ? y : 0), 0);
+  const cols = Array.from({length: Math.max(live ? 1 : 4, L.home.length, L.away.length)}, (_, i) => i);
+  const name = i => i < 4 ? String(i + 1) : i === 4 ? "TE" : (i - 3) + "TE";
+  const row = (t, a) => `<div class="r"><span>${esc(t.abbr)}</span>${cols.map(i => `<span>${cell(a, i)}</span>`).join("")}<span><b>${tot(a)}</b></span></div>`;
+  const head = `<div class="r hd"><span>${live ? esc(clock(g)) : "Por cuartos"}</span>${cols.map(i => `<span>${name(i)}</span>`).join("")}<span>Total</span></div>`;
+  return `<h3 class="cap">${live ? (PUBLIC && !g.over ? "En juego" : "En vivo") : "Resultado"}</h3><div class="group qt" style="--n:${cols.length}">${head}${row(g.away, L.away)}${row(g.home, L.home)}</div>`;
+}
+// La sección bajo la cabecera del detalle. El nodo .mm no se rehace en cada repintado: refill le pone las partes nuevas (data-part).
+function gMomentum(g) {
+  const m = mmOf(g);
+  if (!m) return "";
+  const ends = [];
+  for (let n = 2; pStart(n) < m.domain - 0.5; n++) ends.push(pStart(n));
+  ends.push(m.domain);
+  const ax = ends.map((t, i) => `<span style="left:${(100 * t / m.domain).toFixed(2)}%">${i < 4 ? (i + 1) + "C" : i === 4 ? "TE" : (i - 3) + "TE"}</span>`).join("");
+  const wp = m.wp.length ? rowAt(m.wp, m.upto) : null;
+  const espn = m.live && wp && has(wp[1]) ? " " + endDot("ESPN daba a " + g.home.abbr + " " + pct(wp[1]) + " de ganar " + (PUBLIC ? "a las " + snapAt() : "en este momento")) : "";
+  const id = esc(g.id);
+  return `<h3 class="cap">Momentum</h3><div class="group mm" data-hold="mm:${id}" data-mm="${id}" data-up="${m.upto}"><div class="mm-read idle" data-mm-read>Recorre la gráfica para ver el marcador</div>` +
+    `<div class="mm-plot" data-part="plot" data-mm-plot="${id}" tabindex="0" role="group" aria-label="Recorrer la gráfica con las flechas izquierda y derecha">${mmPlotHtml(g, m, m.upto)}</div><div class="mm-ax" data-part="ax" aria-hidden="true">${ax}</div>` +
+    `<div class="mm-stats" data-part="stats">${mmStatsHtml(g, m, m.upto)}</div><p class="gnote" data-part="note">Jugadas reales de ESPN. Cada escalón es una canasta. Arriba del cero va ${esc(g.home.abbr)} y abajo va ${esc(g.away.abbr)}.${esc(espn)}</p></div>` + gQuarters(g, m.live);
+}
+function mmShow(box, g, m, t) {
+  const guide = box.querySelector(".mm-guide"), read = box.querySelector("[data-mm-read]");
+  if (guide) { guide.hidden = false; guide.style.left = (100 * t / m.domain) + "%"; }
+  read.textContent = mmRead(g, m, t); read.classList.remove("idle");
+  MM.id = box.dataset.mm; MM.t = t;
+}
+function mmClear(box) {
+  const guide = box.querySelector(".mm-guide"), read = box.querySelector("[data-mm-read]");
+  if (guide) guide.hidden = true;
+  read.textContent = "Recorre la gráfica para ver el marcador"; read.classList.add("idle");
+  MM.t = null;
+}
+// Tras un repintado la lectura que el usuario tenía puesta sigue ahí, en el mismo segundo
+function mmFix(box) {
+  const g = S && gameOf(box.dataset.mm), m = g && mmOf(g);
+  if (!m) return;
+  if (MM.id !== box.dataset.mm) { MM.id = box.dataset.mm; MM.t = null; }
+  if (MM.t != null) mmShow(box, g, m, Math.min(MM.t, Number(box.dataset.up)));
+}
+function mmPoint(plot, clientX) {
+  const box = plot.closest(".mm"), g = box && S && gameOf(box.dataset.mm), m = g && mmOf(g), r = plot.getBoundingClientRect();
+  if (!m || !(r.width > 0)) return;
+  mmShow(box, g, m, Math.max(0, Math.min(Number(box.dataset.up), m.domain * (clientX - r.left) / r.width)));
+}
+const plotOf = e => e.target && e.target.closest ? e.target.closest(".mm-plot") : null;
+document.addEventListener("pointermove", e => { const p = plotOf(e); if (p) mmPoint(p, e.clientX); });
+document.addEventListener("pointerdown", e => { const p = plotOf(e); if (p) mmPoint(p, e.clientX); });
+document.addEventListener("pointerout", e => { const p = plotOf(e); if (p && e.pointerType === "mouse" && !p.contains(e.relatedTarget)) mmClear(p.closest(".mm")); });
+document.addEventListener("keydown", e => {
+  const p = e.target && e.target.classList && e.target.classList.contains("mm-plot") ? e.target : null;
+  if (!p || !["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+  const box = p.closest(".mm"), g = S && gameOf(box.dataset.mm), m = g && mmOf(g);
+  if (!m) return;
+  e.preventDefault();
+  const up = Number(box.dataset.up), at = MM.id === box.dataset.mm && MM.t != null ? MM.t : up;
+  const t = e.key === "Home" ? 0 : e.key === "End" ? up : Math.max(0, Math.min(up, at + (e.key === "ArrowLeft" ? -30 : 30)));
+  box.querySelector("[data-mm-read]").setAttribute("aria-live", "polite");
+  mmShow(box, g, m, t);
+});
+
+// --- Calculadora: con la curva del modelo para un jugador, la probabilidad de quedarse arriba o abajo de cualquier número ---
+// Una curva es [k0, [S(k0), S(k0+1), ...]] y S(k) es la probabilidad de hacer k o más. Antes de k0 vale 1 y después del final vale 0.
+const survival = (c, k) => { if (!Array.isArray(c) || !Array.isArray(c[1]) || !has(c[0])) return null; if (k < c[0]) return 1; const v = c[1][k - c[0]]; return has(v) ? v : 0; };
+const curveOk = c => Array.isArray(c) && Array.isArray(c[1]) && c[1].length > 0 && has(c[0]);
+// El texto de una probabilidad del modelo: lo seguro se dice "más de 99%" y lo imposible "menos de 1%", como en el resto de la página
+const calcProb = v => prob(v >= 1 ? 0.999 : v <= 0 ? 0.001 : v);
+const CALC_MAX = 999;
+const dec = n => String(n);
+const calcOdds = v => v > 0 ? (1 / v).toFixed(2) : NIL;
+const calcSlot = key => `<div class="pcalc" data-hold="calc:${esc(key)}" data-calc="${esc(key)}"></div>`;
+const calcStats = pl => pl ? Object.keys(PNAME).filter(k => curveOk(pl.curves && pl.curves[k])) : [];
+const calcMarkets = (p, stat) => (p && p.markets || []).filter(m => m[0] === stat);
+// El número con el que arranca: el umbral de Kalshi más cercano a lo que espera el modelo, o lo que espera redondeado si no hay mercado
+function calcStart(p, pl, stat) {
+  const mean = has(pl.mean && pl.mean[stat]) ? pl.mean[stat] : has(p.mean && p.mean[stat]) ? p.mean[stat] : 0;
+  const ns = calcMarkets(p, stat).map(m => m[1]).filter(has);
+  if (!ns.length) return String(Math.max(1, Math.round(mean)));
+  return String(ns.reduce((best, n) => Math.abs(n - mean) < Math.abs(best - mean) ? n : best));
+}
+function ensureCurves(game) {
+  const cur = CURVES.get(game), now = Date.now();
+  if (cur && (cur.busy || now - cur.at < (cur.state === "ok" ? 300000 : 60000))) return;
+  const ent = cur || {state: "loading", doc: null};
+  ent.busy = true; ent.at = now; CURVES.set(game, ent);
+  const url = PUBLIC ? "curvas/" + encodeURIComponent(game) + ".json" : "/api/curvas/" + encodeURIComponent(game);
+  fetch(url, {cache: "no-store"}).then(r => r.ok ? r.json() : null).catch(() => null).then(doc => {
+    ent.busy = false;
+    if (doc && doc.players && typeof doc.players === "object") { ent.state = "ok"; ent.doc = doc; } else if (ent.state !== "ok") ent.state = "none";
+    fillCalcs();
+  });
+}
+setInterval(() => { for (const n of document.querySelectorAll(".pcalc[data-calc]")) { const sh = SHEETS.get(n.dataset.calc); if (sh && sh.game) ensureCurves(sh.game); } }, 60000);
+const fillCalcs = () => { for (const n of document.querySelectorAll(".pcalc[data-hold]")) fillCalc(n); };
+function fillCalc(box) {
+  const key = box.dataset.calc, sh = SHEETS.get(key), p = sh && sh.p, ent = sh && CURVES.get(sh.game);
+  if (!p) return;
+  const pl = ent && ent.state === "ok" && ent.doc.players[String(p.id)], stats = calcStats(pl);
+  const st = !ent || ent.state === "loading" ? "loading" : stats.length ? "ok" : "none";
+  if (box.dataset.st !== st) {
+    box.dataset.st = st;
+    if (st === "ok") {
+      const mine = CALCS.get(key) || {stat: stats.includes("pts") ? "pts" : stats[0]};
+      if (!stats.includes(mine.stat)) mine.stat = stats[0];
+      if (mine.text == null) mine.text = calcStart(p, pl, mine.stat);
+      CALCS.set(key, mine);
+      box.innerHTML = `<h4 class="cap">Calculadora</h4><div class="pc-pick"><label>Estadística<select data-calc-stat>${stats.map(k => `<option value="${k}"${k === mine.stat ? " selected" : ""}>${esc(PNAME[k])}</option>`).join("")}</select></label>` +
+        `<div class="pc-num"><button type="button" data-calc-step="-1" aria-label="Restar 1">−</button><input type="number" data-calc-in inputmode="decimal" step="0.5" min="0" max="999" aria-label="Número a comparar" value="${esc(mine.text)}"><button type="button" data-calc-step="1" aria-label="Sumar 1">+</button></div></div>` +
+        `<div class="pc-res" data-calc-res aria-live="polite"></div><p class="pc-exp" data-calc-exp></p>` +
+        `<p class="gfoot">Es el modelo solo, sin anclar al precio de Kalshi. No es una recomendación de apuesta.</p>`;
+    } else box.innerHTML = `<h4 class="cap">Calculadora</h4><p class="gnote">${st === "loading" ? "Cargando la calculadora" : "Sin curvas para este partido todavía. Se vuelve a intentar sola."}</p>`;
+  }
+  if (st === "ok") calcPaint(box, p, pl);
+}
+// Lo que dicen los dos lados para el número que hay en el campo. Se lee del campo mismo: nada se repinta mientras se escribe.
+function calcPaint(box, p, pl) {
+  const stat = box.querySelector("[data-calc-stat]").value, text = box.querySelector("[data-calc-in]").value.trim(), v = text === "" ? NaN : Number(text);
+  const res = box.querySelector("[data-calc-res]"), exp = box.querySelector("[data-calc-exp]");
+  const mean = has(pl.mean && pl.mean[stat]) ? pl.mean[stat] : p.mean && p.mean[stat];
+  const expText = has(mean) ? `<span>el modelo espera</span> <b>${f1(mean)}</b> ${esc(PNAME[stat].toLowerCase())}` : "";
+  let html, kal = "";
+  if (!(v >= 0 && v <= CALC_MAX)) html = `<p class="gnote" style="grid-column:1/-1">${text === "" || Number.isNaN(v) ? "Escribe un número" : "Escribe un número entre 0 y " + CALC_MAX} de ${esc(PNAME[stat].toLowerCase())} para ver su probabilidad.</p>`;
+  else {
+    const whole = Number.isInteger(v), k = Math.ceil(v), over = survival(pl.curves[stat], k), under = 1 - over;
+    const card = (label, pr) => `<div class="pc-card"><span class="k">${esc(label)}</span><b>${calcProb(pr)}</b><span class="s">cuota ${calcOdds(pr)}</span></div>`;
+    html = card(whole ? dec(v) + " o más" : "más de " + dec(v), over) + card("menos de " + dec(v), under);
+    const m = calcMarkets(p, stat).find(x => x[1] === k), mid = m && has(m[3]) && has(m[4]) ? (m[3] + m[4]) / 2 : null;
+    if (mid != null && mid > 0 && mid < 1) kal = `<br>Kalshi cotiza ${k} o más a <b>${cents(mid)}</b>, cuota implícita ${decimal(1, mid)}.`;
+  }
+  if (res._html !== html) { res.innerHTML = html; res._html = html; }
+  const all = expText + kal;
+  if (exp._html !== all) { exp.innerHTML = all; exp._html = all; }
+}
+function calcEdit(box, what) {
+  const sh = SHEETS.get(box.dataset.calc), p = sh && sh.p, ent = sh && CURVES.get(sh.game), pl = p && ent && ent.state === "ok" && ent.doc.players[String(p.id)];
+  if (!pl) return;
+  const sel = box.querySelector("[data-calc-stat]"), inp = box.querySelector("[data-calc-in]");
+  if (what === "stat") inp.value = calcStart(p, pl, sel.value);
+  else if (what) inp.value = String(Math.max(0, Number(((Number(inp.value) || 0) + what).toFixed(2))));
+  CALCS.set(box.dataset.calc, {stat: sel.value, text: inp.value});
+  calcPaint(box, p, pl);
+}
+const holdFix = n => { if (n.dataset.hold.startsWith("calc:")) fillCalc(n); else mmFix(n); };
+document.addEventListener("input", e => { const t = e.target; if (t.closest && t.closest("[data-calc-in]")) calcEdit(t.closest(".pcalc")); });
+document.addEventListener("change", e => { const t = e.target; if (t.closest && t.closest("[data-calc-stat]")) calcEdit(t.closest(".pcalc"), "stat"); });
+document.addEventListener("click", e => { const b = e.target.closest && e.target.closest("[data-calc-step]"); if (b) calcEdit(b.closest(".pcalc"), Number(b.dataset.calcStep)); });
+
+// La tarjeta de la lista: se toca entera. En teléfono abre el detalle en lugar de la lista y en PC en el panel de la derecha.
+function gameCard(g) {
+  const live = g.state === "in", post = g.state === "post", fav = gFav(g), top = gStrong(g)[0], tv = ((g.info && g.info.tv && g.info.tv.national) || []).filter(Boolean);
+  const mid = live ? `<span class="live"><i></i>${PUBLIC && !g.over ? "En juego" : "En vivo"}</span><b class="sc">${esc(gScore(g))}</b>${esc(clock(g))}` :
+    post ? `${esc(clock(g))}${gFinal(g) ? `<b class="sc">${esc(gScore(g))}</b>` : ""}` : `<b>${esc(hourOf(g.tipoff))}</b>${esc(dayWord(g))}`;
+  const team = (t, side, kind) => `<div class="team${side}">${logo(t, 40)}<div><b>${esc(t.abbr)}</b>${gRec(g, kind, "total") ? `<small>${esc(gRec(g, kind, "total"))}</small>` : ""}</div></div>`;
+  const mine = gBets(g).some(p => !p.exit);
+  const tags = (top ? `<span class="pill sig">${strengthWord(top)} ${meterHtml(top.strength === "0.1")}</span>` : "") +
+    (mine ? `<span class="pill mine">${you("Tu apuesta", "Apuesta de " + esc(owner()))}</span>` : "") + tv.map(c => `<span class="pill">${esc(c)}</span>`).join("");
+  const mm = mmOf(g), strip = mm ? `<div class="mm-mini" aria-hidden="true">${mmShape(g, mm, mm.upto, true).svg}</div>` : "";
+  const venue = gVenue(g), lineText = !g.line && (live || post) ? "" : gLine(g);
+  const odds = (lineText || fav ? `<div class="godds"><span>${esc(lineText)}</span>${fav ? `<b>${esc(fav.abbr)} ${pct(fav.p)}</b>` : ""}</div>` : "") + (fav ? favBar(fav, "Favorito del modelo") : "");
+  const said = `${g.away.abbr}${gRec(g, "away", "total") ? ", récord " + gRec(g, "away", "total") : ""}, en ${g.home.abbr}${gRec(g, "home", "total") ? ", récord " + gRec(g, "home", "total") : ""}. ` +
+    (live ? "En vivo, " + gScore(g) : post ? clock(g) + (gFinal(g) ? ", " + gScore(g) : "") : dayWord(g) + " " + hourOf(g.tipoff)) + (top ? ". " + strengthWord(top) : "") +
+    (lineText ? ". " + lineText : "") + (fav ? ". Favorito del modelo " + fav.abbr + " " + pct(fav.p) : "") + (venue ? ". " + venue : "") + (tv.length ? ". En " + tv.join(", ") : "");
+  const key = gKey(g.id), wide = WIDE.matches;
+  return `<a class="game gcard${sel("games", key)}" href="#partido-${esc(g.id)}" data-game="${esc(g.id)}"${wide ? ` data-detail="${esc(key)}"` : ""}${wide && DETAIL.games === key ? ' aria-current="true"' : ""} aria-label="${esc(said)}" style="${tints(g)}">` +
+    `<div class="top">${team(g.away, "", "away")}<div class="when">${mid}</div>${team(g.home, " h", "home")}</div>${strip}${venue ? `<p class="gvenue">${esc(venue)}</p>` : ""}${odds}<div class="tagrow">${tags}</div></a>`;
+}
+
+// Las secciones del detalle, en orden. Cada una devuelve "" si no tiene datos.
+function gHero(g) {
+  const live = g.state === "in", post = g.state === "post";
+  const team = (t, kind, label) => {
+    const total = gRec(g, kind, "total"), part = gRec(g, kind, kind === "home" ? "home" : "road");
+    return `<div class="gtv">${logo(t, 56)}<small>${esc(t.city || t.abbr)}</small><span class="nm">${esc(t.name || t.abbr)}</span>${total ? `<span class="grec">${esc(total)}</span>` : ""}${part ? `<small>${esc(label + " " + part)}</small>` : ""}</div>`;
+  };
+  const mid = live ? `<span class="live"><i></i>${PUBLIC && !g.over ? "En juego a las " + snapAt() : "En vivo"}</span><b class="sc">${esc(gScore(g))}</b>${esc(clock(g))}` :
+    post ? `${esc(clock(g))}${gFinal(g) ? `<b class="sc">${esc(gScore(g))}</b>` : ""}${esc(shortDay(g.tipoff))}` : `<b>${esc(hourOf(g.tipoff))}</b>${esc(dayWord(g))}`;
+  return `<div class="game ghero" style="${tints(g)}"><div class="ghd">${team(g.away, "away", "de visita")}<div class="when">${mid}</div>${team(g.home, "home", "en casa")}</div></div>`;
+}
+function gInfo(g) {
+  const i = g.info, v = i && i.venue, tv = (i && i.tv) || {}, rows = [];
+  if (v && v.name) rows.push(`<div class="row"><span>Sede</span><b>${esc(v.name)}${[v.city, v.state].filter(Boolean).length ? `<small>${esc([v.city, v.state].filter(Boolean).join(", "))}</small>` : ""}</b></div>`);
+  rows.push(`<div class="row"><span>Hora</span><b>${esc(shortDay(g.tipoff))}, ${esc(hourOf(g.tipoff))}</b></div>`);
+  const nat = (tv.national || []).filter(Boolean), loc = [[g.away, tv.away], [g.home, tv.home]].filter(([, l]) => l && l.length);
+  if (nat.length || loc.length) rows.push(`<div class="row"><span>Transmisión</span><b>${nat.length ? `${esc(nat.join(", "))}<small>Cadena nacional</small>` : ""}${loc.map(([t, l]) => `<small>${esc(t.city || t.abbr)}: ${esc(l.join(", "))}</small>`).join("")}<small>Canales en Estados Unidos</small></b></div>`);
+  const rest = (t, r) => {
+    if (!r || !has(r.days)) return null;
+    if (r.pending) return esc(t.abbr) + " juega antes" + (r.last ? ", el " + esc(low(shortDay(r.last + "T12:00:00"))) : "");
+    return esc(t.abbr) + " " + (r.back_to_back ? "jugó anoche" : plural(r.days, "día", "días") + " de descanso");
+  };
+  const rests = i && i.rest ? [rest(g.away, i.rest.away), rest(g.home, i.rest.home)].filter(Boolean) : [];
+  if (rests.length) rows.push(`<div class="row"><span>Descanso</span><b>${rests[0]}${rests[1] ? `<small>${rests[1]}</small>` : ""}</b></div>`);
+  if (i) { const refs = (i.officials || []).filter(Boolean); rows.push(`<div class="row"><span>Árbitros</span><b>${refs.length ? esc(refs.join(", ")) : "Aún sin anunciar"}</b></div>`); }
+  return `<h3 class="cap">El partido</h3><div class="group">${rows.join("")}</div>`;
+}
+function gModel(g) {
+  const o = g.outlook, fav = gFav(g), rows = [];
+  const by = {modelo: "modelo prepartido", "línea": "línea de la casa", marcador: PUBLIC ? "modelo con el marcador de las " + snapAt() : "modelo en vivo"};
+  if (g.line && has(g.line.margin)) rows.push(`<div class="row"><span>Línea de la casa</span><b>${esc(gLine(g))}${g.line.source ? `<small>${esc(g.line.source)}</small>` : ""}</b></div>`);
+  if (o && g.state !== "post" && has(o.home) && has(o.away)) rows.push(`<div class="row"><span>Proyección del modelo</span><b>${esc(g.away.abbr)} ${o.away.toFixed(0)} · ${esc(g.home.abbr)} ${o.home.toFixed(0)}<small>${has(o.expected_total) ? "Total " + o.expected_total.toFixed(1) : ""}${has(o.expected_total) && by[g.source] ? " · " : ""}${esc(by[g.source] || "")}</small></b></div>`);
+  if (fav) rows.push(`<div class="fav-row"><div class="t"><span>${g.state === "pre" ? "Favorito del modelo" : PUBLIC ? "Favorito a las " + snapAt() : "Favorito ahora"}</span><b>${esc(fav.abbr)} ${pct(fav.p)}</b></div>${favBar(fav, "Favorito del modelo")}</div>`);
+  if (!rows.length) return "";
+  return `<h3 class="cap">Línea y modelo</h3><div class="group">${rows.join("")}<p class="gnote">${esc(endDot("Datos de las " + hour(new Date(S.now))))}</p></div>`;
+}
+function gSignalsHtml(g) {
+  const all = gSignals(g), strong = gStrong(g), weak = all.filter(s => !s.strength), post = g.state === "post";
+  if (!all.length && !g.outlook && !g.line) return "";
+  const big = s => {
+    const top = s.strength === "0.1", deal = s.kalshi, opening = !has(s.line) ? NIL : s.market === "total" ? String(s.line) : signalName(s), key = "why-" + g.id + "-" + s.market;
+    const head = `<div class="cell"><div class="gsig-top">${meterHtml(top)} ${strengthWord(s)}</div><div class="gsig-name">${esc(signalName(s))}</div><p class="belief">El modelo cree que <b>${esc(belief(s, g))}</b>.</p></div>` +
+      `<div class="row"><span>Ventaja que ve el modelo</span><b>${f1(s.points)} puntos</b></div><div class="row"><span>Línea de apertura</span><b>${esc(opening)}${moved(s) ? `<small>${moved(s)}</small>` : ""}</b></div>`;
+    const why = whyBlock(s, "", true);
+    let html = `<div class="group">${head}</div>`;
+    if (!post && deal && deal.found) html += dealBox(s, deal) + belowNote(s, [deal]);
+    else if (!post && deal) html += `<p class="verdict">Kalshi no tiene esa línea exacta${deal.options && deal.options.length ? ". Estas son las dos más cercanas, sin elegir una" : ""}.</p>` + (deal.options || []).map(o => dealBox(s, o, true)).join("") + belowNote(s, deal.options || []);
+    return html + (why ? `<details class="inj" data-keep="${esc(key)}"${keep(key)}><summary>Por qué el modelo va con ${esc(signalName(s))}</summary>${why}</details>` : "");
+  };
+  const small = s => `<div class="row weak"><span>${esc(signalName(s))}</span><b>${f1(s.points)} puntos de ventaja</b></div>`;
+  let body = strong.map(big).join("");
+  if (weak.length) body += `<h4 class="cap">${strong.length ? "Señales más débiles" : "Todavía débiles"}</h4><div class="group">${weak.map(small).join("")}</div>`;
+  if (!all.length) body = `<div class="group"><p class="gnote">El modelo no marca nada en este partido.</p></div>`;
+  const past = post ? "Lo que marcaba el modelo antes del partido. " : g.state === "in" ? "Señales calculadas antes del partido. " : "";
+  return `<h3 class="cap">${post ? "Lo que marcaba el modelo" : "Señales del modelo"}</h3>${body}<p class="gfoot">${past}Es lo que marca el modelo. No es una recomendación de apuesta.</p>`;
+}
+function gForm(g) {
+  const i = g.info;
+  if (!i) return "";
+  const l5 = i.last5 || {}, streak = i.streak || {}, lead = i.leaders || {}, s = i.series;
+  const word = st => !st || !has(st.n) ? "" : st.n === 1 ? (st.won ? "Ganó el último" : "Perdió el último") : (st.won ? "Ganó " : "Perdió ") + st.n + " seguidos";
+  const chips = list => list.slice().reverse().map(x => {
+    const said = `${x.won ? "Ganó" : "Perdió"} ${x.own} a ${x.other} ${x.at === "casa" ? "contra" : "en la cancha de"} ${x.rival}`;
+    return `<div role="img" aria-label="${esc(said)}"><span class="fi${x.won ? "" : " l"}">${x.won ? "G" : "P"}</span><span>${x.at === "casa" ? "vs" : "@"} ${esc(x.rival)}</span><b>${esc(has(x.own) ? x.own : NIL)}-${esc(has(x.other) ? x.other : NIL)}</b></div>`;
+  }).join("");
+  const names = {pts: "Puntos", reb: "Rebotes", ast: "Asistencias"};
+  const team = side => {
+    const t = g[side], list = l5[side] || [], l = lead[side] || [], w = word(streak[side]), total = gRec(g, side, "total");
+    return `<div class="who">${logo(t, 22)}<span>${esc(t.city || t.abbr)}</span>${total ? `<span class="mis">${esc(total)}</span>` : ""}</div>` +
+      (list.length ? `<div class="gform">${chips(list)}</div>` : '<div class="row msg"><span>Sin partidos previos esta temporada.</span></div>') + (w ? `<div class="row"><span>Racha</span><b>${esc(w)}</b></div>` : "") +
+      l.map(x => `<div class="row"><span>${esc(names[x.stat] || x.stat)}</span><b>${esc(x.name || NIL)}<small>${f1(x.value)} por partido</small></b></div>`).join("");
+  };
+  const games = s && s.games ? s.games : [];
+  const series = s && (s.summary || games.length) ? `<div class="group"><div class="row"><span>Serie de la temporada</span><b>${esc(s.summary || NIL)}</b></div>${games.map(x => `<div class="row"><span>${esc(shortDay(x.date + "T12:00:00"))}</span><b>${esc(x.away)} ${esc(has(x.away_score) ? x.away_score : NIL)} en ${esc(x.home)} ${esc(has(x.home_score) ? x.home_score : NIL)}</b></div>`).join("")}</div>` : "";
+  const any = ["home", "away"].some(k => (l5[k] || []).length || (lead[k] || []).length || word(streak[k]));
+  if (!any && !series) return "";
+  return `<h3 class="cap">Cómo llegan</h3><div class="group">${team("away")}</div><div class="group">${team("home")}</div><p class="gfoot">Las fichas van del más viejo al más reciente. G es ganó y P es perdió.</p>${series}`;
+}
+function gPlayers(g) {
+  const G = ((S.props || {}).games || []).find(x => x.game === g.id);
+  if (!G || !(G.players || []).length) return "";
+  const picked = PR.team[G.game] || G.home;
+  const key = (p, i) => "pl-" + G.game + "-" + (p.id != null ? p.id : i);
+  G.players.forEach((p, i) => SHEETS.set(key(p, i), {title: p.name, sub: `${p.team} · ${f1(p.min)} minutos esperados${p.status ? " · " + p.status : ""}`, body: calcSlot(key(p, i)) + ladders(p), p, game: G.game}));
+  const list = G.players.map((p, i) => [p, i]).filter(([p]) => p.team === picked).sort((a, b) => (b[0].min || 0) - (a[0].min || 0));
+  const row = ([p, i]) => {
+    const m = p.mean || {};
+    return `<button type="button" class="r${p.status === "Fuera" ? " fuera" : ""}" data-pl="${esc(key(p, i))}" aria-label="Escalera de ${esc(p.name)}"><span class="nm">${esc(p.name)}${p.status ? ` <i class="tag ${p.status === "Fuera" ? "out" : "dud"}">${esc(p.status)}</i>` : ""}</span><span>${f1(p.min)}</span><span>${f1(m.pts)}</span><span>${f1(m.reb)}</span><span>${f1(m.ast)}</span><span>${f1(m.fg3m)}</span></button>`;
+  };
+  const seg = `<div class="seg" role="group" aria-label="Equipo">${[G.home, G.away].map(t => `<button type="button" data-pt="${esc(t)}" data-pgame="${esc(G.game)}" aria-pressed="${t === picked}">${esc(t)}</button>`).join("")}</div>`;
+  const table = `<div class="group ptab"><div class="who">${logo(teamOf(picked), 22)}<span>${esc(picked)}</span></div><div class="r hd"><span>Jugador</span><span>Min</span><span>Pts</span><span>Reb</span><span>Ast</span><span>Tri</span></div>${list.length ? list.map(row).join("") : '<p class="gnote">Sin jugadores para este equipo.</p>'}</div>`;
+  const best = G.best || [];
+  return `<div class="sec-row"><h3 class="h-sec">Jugadores</h3><span class="etq">En observación</span></div>${seg}${table}
+    <p class="gfoot">Promedios que espera el modelo si el jugador juega. Toca un jugador para ver su escalera.</p>
+    <h4 class="cap">Mayores diferencias con Kalshi en este partido</h4>
+    ${best.length ? `<div class="stack">${best.map(r => propCard(r, false)).join("")}</div>` : '<p class="sub">Sin precios de Kalshi para comparar en este partido.</p>'}`;
+}
+function gBetsHtml(g) {
+  const list = gBets(g).sort((a, b) => !!a.exit - !!b.exit);
+  if (!list.length) return "";
+  const state = p => !p.exit ? "" : p.exit.how === "sold" ? " · vendida" : p.exit.won ? " · ganó" : " · perdió";
+  return `<h3 class="cap">${you("Tus apuestas en este partido", "Apuestas de " + esc(owner()) + " en este partido")}</h3><div class="group">${list.map(p => `<div class="row"><b>${esc(p.title_es || p.label || NIL)}<small>Lado ${p.side === "no" ? "NO" : "SÍ"}${state(p)}</small></b><b>${cents(p.price)}<small>${has(p.contracts) ? plural(p.contracts, "contrato", "contratos") : NIL}</small></b></div>`).join("")}</div>`;
+}
+// El detalle completo de un partido. Para agregar una sección nueva (el momentum va justo bajo la cabecera) se mete en esta lista.
+function gameBody(g) {
+  const parts = [gHero(g), gMomentum(g), gInfo(g), gModel(g), gSignalsHtml(g), injuryBlock(g, "inj-game-" + g.id), gForm(g), gPlayers(g), gBetsHtml(g),
+    PUBLIC ? "" : `<button type="button" class="primary" data-act="buy" data-game="${esc(g.id)}">Anotar compra</button>`];
+  return `<div class="stack det">${parts.filter(Boolean).join("")}</div>`;
+}
+const gameHead = g => ({title: g.away.abbr + " en " + g.home.abbr, sub: shortDay(g.tipoff) + ", " + hourOf(g.tipoff) + (gVenue(g) ? " · " + gVenue(g) : "")});
 // La escalera de un jugador: por estadística, cada umbral con lo que dice el modelo y el precio medio de Kalshi. Con borde cuando difieren 5 puntos o más.
 function ladders(p) {
   const rows = Object.keys(PNAME).map(k => {
@@ -1322,11 +1853,11 @@ function ladders(p) {
       const c = d != null && Math.abs(d) >= 0.05 - 1e-9 ? (d > 0 ? " mas" : " menos") : "";
       return `<div class="lc${c}"${c ? ` title="El modelo ve ${c === " mas" ? "más" : "menos"}"` : ""}><b class="u">${n}+</b><b class="m">${pct(model)}</b>${mid == null ? `<span class="k">${NIL}</span>` : `<span class="k">${cents(mid)}</span><span class="k">${decimal(1, mid)}</span>`}</div>`;
     }).join("");
-    return `<div class="lrow"><div class="ln"><b>${PNAME[k]}</b>${(p.mean || {})[k] != null ? `<small>el modelo espera</small><em>${f1(p.mean[k])}</em>` : ""}</div><div class="lad">${cells}</div></div>`;
+    return `<div class="lrow"><div class="ln"><b>${PNAME[k]}</b>${(p.mean || {})[k] != null ? `<small>el modelo espera</small><em>${f1(p.mean[k])}</em>` : ""}</div><div class="lad" role="group" tabindex="0" aria-label="${esc("Umbrales de " + PNAME[k])}">${cells}</div></div>`;
   }).join("");
   return rows ? `<div class="ladders">${rows}</div><p class="legend">Arriba el modelo, abajo el precio de Kalshi. La última cifra es la cuota que implica ese precio. Con borde cuando difieren 5 puntos o más.</p><p class="legend sw-l"><i class="sw mas"></i>El modelo ve más <i class="sw menos"></i>El modelo ve menos</p>` : '<p class="gnote">Sin mercados para este jugador.</p>';
 }
-// Las hojas: en teléfono suben desde abajo, en PC el jugador va al panel de la derecha. "Cómo se mide" es una hoja en los dos.
+// Las hojas: la escalera de un jugador y "Cómo se mide". En teléfono suben desde abajo y en PC se abren al centro, de hasta 760 px.
 function paintOver() {
   const el = $("over"), sh = OVER.key && SHEETS.get(OVER.key);
   if (OVER.key && !sh && !FAILED.length) OVER.key = null;
@@ -1335,51 +1866,88 @@ function paintOver() {
   $("over-t").textContent = sh.title; $("over-s").textContent = sh.sub; put("over-b", sh.body);
   document.documentElement.style.overflow = "hidden";
 }
-function openGame(id) {
-  GD.game = id || null; OVER.key = null; DETAIL.games = null;
-  if (S) paint();
-  window.scrollTo(0, 0);
+// Abre o cierra el detalle de un partido en teléfono. En PC el detalle va en el panel y lo maneja openDetail.
+// Una sola entrada del historial por encima de la de la lista representa "hay un detalle o una hoja abierta": Atrás la cierra en el teléfono en vez de salir de la página.
+const HIST = {pushed: false};
+function histSync() {
+  const open = GD.game || OVER.key, st = open ? {pg: GD.game, o: OVER.key} : {};
+  try { if (open && !HIST.pushed) { history.pushState(st, ""); HIST.pushed = true; } else if (HIST.pushed) history.replaceState(st, ""); } catch (e) { /* sin historial: Atrás sale de la página */ }
 }
-const openPlayer = key => { if (WIDE.matches) openDetail(key); else { OVER.key = key; paintOver(); } };
+function openGame(id) {
+  const from = GD.game;
+  if (id) LISTAT.y = window.scrollY;
+  GD.game = id || null; OVER.key = null; histSync();
+  if (S) paint();
+  window.scrollTo(0, id ? 0 : LISTAT.y);
+  const el = id ? document.querySelector("[data-back]") : from && document.querySelector('.gcard[data-game="' + CSS.escape(from) + '"]');
+  if (el) el.focus({preventScroll: true});
+}
+// La escalera de un jugador se abre en la hoja, en teléfono y en PC. El foco pasa a su botón de cerrar y vuelve a la fila al cerrar.
+function openPlayer(key) {
+  OVER.key = key; OVER.from = key;
+  histSync();
+  const sh = SHEETS.get(key);
+  if (sh && sh.game) ensureCurves(sh.game);
+  paintOver();
+  const x = $("over").querySelector("[data-over-close]");
+  if (x && !$("over").hidden) x.focus({preventScroll: true});
+}
+function closeOver() {
+  const from = OVER.from;
+  OVER.key = null; OVER.from = null; histSync(); paintOver();
+  const row = from && document.querySelector('[data-pl="' + CSS.escape(from) + '"]');
+  if (row) row.focus({preventScroll: true});
+}
 document.addEventListener("click", e => {
   const t = e.target, hit = sel => t.closest(sel);
   let b;
   if ((b = hit("[data-ps]"))) { PR.stat = b.dataset.ps; if (S) paint(); }
-  else if ((b = hit("[data-pg]"))) openGame(b.dataset.pg);
-  else if ((b = hit("[data-pt]"))) { PR.team[GD.game] = b.dataset.pt; if (S) paint(); }
+  else if ((b = hit(".gcard"))) { e.preventDefault(); if (!WIDE.matches) openGame(b.dataset.game); }
+  else if (hit("[data-back]")) openGame(null);
+  else if ((b = hit("[data-pt]"))) { PR.team[b.dataset.pgame] = b.dataset.pt; if (S) paint(); }
   else if ((b = hit("[data-pl]"))) openPlayer(b.dataset.pl);
-  else if (hit("[data-pr-how]")) { OVER.key = "how"; paintOver(); }
-  else if (hit("[data-over-close]") || t === $("over")) { OVER.key = null; paintOver(); }
+  else if (hit("[data-pr-how]")) { OVER.key = "how"; OVER.from = null; paintOver(); }
+  else if (hit("[data-over-close]") || t === $("over")) closeOver();
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape" && OVER.key) { OVER.key = null; paintOver(); } });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && OVER.key) closeOver();
+  if (e.key === "Tab" && OVER.key && !$("over").hidden) {
+    const f = [...$("over").querySelectorAll("button, input, select, a[href], [tabindex]:not([tabindex='-1'])")].filter(n => !n.disabled && n.offsetParent !== null);
+    if (!f.length) return;
+    const at = f.indexOf(document.activeElement), end = e.shiftKey ? at <= 0 : at === f.length - 1;
+    if (at < 0 || end) { e.preventDefault(); f[e.shiftKey ? f.length - 1 : 0].focus(); }
+  }
+});
+window.addEventListener("popstate", e => {
+  const st = e.state || {}, from = OVER.from;
+  HIST.pushed = !!(e.state && ("pg" in e.state || "o" in e.state));
+  if (OVER.key !== (st.o || null)) { OVER.key = st.o || null; paintOver(); }
+  if (!WIDE.matches && GD.game !== (st.pg || null)) { GD.game = st.pg || null; if (S) paint(); window.scrollTo(0, GD.game ? 0 : LISTAT.y); }
+  const row = !OVER.key && from && document.querySelector('[data-pl="' + CSS.escape(from) + '"]');
+  if (row) row.focus({preventScroll: true});
+});
 
 function renderGames() {
-  forget("pl-");
+  forget("pl-"); forget("game-");
   const today = slate(), live = S.games.filter(g => g.state === "in"), soon = S.games.filter(g => g.state === "pre" && jornada(g.tipoff) === today);
   $("n-games").textContent = live.length || "";
-  if (GD.game && gameDetail()) return;
+  const wide = WIDE.matches, key = DETAIL.games, picked = wide && key ? S.games.find(g => gKey(g.id) === key) : null;
+  if (picked) SHEETS.set(key, {...gameHead(picked), body: gameBody(picked)});
+  const open = !wide && GD.game ? gameOf(GD.game) : null;
+  if (GD.game && !open) GD.game = null;
+  $("games-head").hidden = !!open;
+  if (open) {
+    put("games-sub", "");
+    put("games", `<button type="button" class="link back" data-back>‹ Partidos</button><h2 class="sr">${esc(open.away.abbr + " en " + open.home.abbr)}</h2>${gameBody(open)}`);
+    return;
+  }
   if (!S.games.length) { put("games-sub", ""); put("games", '<div class="empty">No hay partidos en la jornada.</div>'); return; }
   const rest = S.games.filter(g => !live.includes(g) && !soon.includes(g)), ended = rest.filter(g => g.state === "post").length, later = rest.length - ended;
   const dates = [...new Set(rest.filter(g => g.state !== "post").map(g => new Date(g.tipoff).toLocaleDateString("es", {weekday: "short", day: "numeric"})))], otherDays = dates.length === 1 ? "otro día (" + dates[0] + ")" : dates.length === 2 ? "otros días (" + dates.join(" y ") + ")" : "otros días";
   put("games-sub", [live.length ? live.length + " en juego" : "", soon.length ? soon.length + " por empezar hoy" : ""].filter(Boolean).join(" · ") || you("Nada en juego ahora", "Nada en juego"));
-  const by = {modelo: "modelo prepartido", "línea": "línea de la casa", marcador: PUBLIC ? "modelo con el marcador de las " + snapAt() : "modelo en vivo"};
-  const hasProps = g => ((S.props || {}).games || []).some(x => x.game === g.id);
-  const row = g => {
-    const o = g.outlook, over = g.state === "post";
-    const line = !g.line ? "Sin línea todavía" : (g.line.margin === 0 ? "Parejo" : esc(g.home.abbr) + " " + (g.line.margin > 0 ? "−" : "+") + Math.abs(g.line.margin)) + " · total " + g.line.total;
-    const proj = o && !over ? `${esc(g.away.abbr)} ${o.away.toFixed(0)} · ${esc(g.home.abbr)} ${o.home.toFixed(0)} · total ${o.expected_total.toFixed(1)} <span class="nw">(${by[g.source]})</span>` : "";
-    const fav = g.p_home == null || over ? "" : g.p_home >= 0.5 ? esc(g.home.abbr) + " " + prob(g.p_home) : esc(g.away.abbr) + " " + prob(1 - g.p_home);
-    // En PC el botón de anotar va al final de la última línea de datos. En teléfono va en su propia línea.
-    const buy = `<button class="link" data-act="buy" data-game="${g.id}">Anotar compra</button>`, wide = WIDE.matches && !over;
-    const said = [["Línea prepartido", line], proj ? ["Proyección", proj] : null, fav ? [PUBLIC ? "Favorito a las " + snapAt() : "Favorito ahora", fav] : null].filter(Boolean)
-      .map(([k, v], i, all) => `<div class="said"><span class="k">${k}</span><b>${v}</b>${wide && i === all.length - 1 ? buy : ""}</div>`).join("\n      ");
-    return `<div class="match">${board(g.away, g.home, g.state !== "pre", chipFor(g), 34)}
-      <div class="saids">${said}
-      ${over || wide ? "" : `<div class="m-act">${buy}</div>`}${hasProps(g) ? `<div class="pg-act"><button type="button" class="link" data-pg="${esc(g.id)}">Ver jugadores</button></div>` : ""}</div></div>`;
-  };
   const today3 = WIDE.matches && live.length + soon.length ? `<div class="cap-row"><h3 class="cap">Hoy</h3><span class="capr">${esc(cap(day(slate() + "T12:00:00", {weekday: "long", day: "numeric", month: "short"})))}</span></div>` : "";
-  let html = live.length + soon.length ? today3 + `<div class="group">${[...live, ...soon].map(row).join("")}</div>` : '<div class="empty">No hay partidos en juego ni por empezar hoy.</div>';
-  if (rest.length) html += `<details data-keep="games-rest"${keep("games-rest")}><summary>${[ended ? plural(ended, "terminado", "terminados") : "", later ? plural(later, "partido", "partidos") + " de " + otherDays + ", aparte porque no se juegan hoy" : ""].filter(Boolean).join(" y ")}</summary><div class="group">${rest.map(row).join("")}</div></details>`;
+  let html = live.length + soon.length ? today3 + [...live, ...soon].map(gameCard).join("") : '<div class="empty">No hay partidos en juego ni por empezar hoy.</div>';
+  if (rest.length) html += `<details data-keep="games-rest"${keep("games-rest")}><summary>${[ended ? plural(ended, "terminado", "terminados") : "", later ? plural(later, "partido", "partidos") + " de " + otherDays + ", aparte porque no se juegan hoy" : ""].filter(Boolean).join(" y ")}</summary><div class="stack gcards">${rest.map(gameCard).join("")}</div></details>`;
   put("games", html);
 }
 
